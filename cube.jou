@@ -1,0 +1,7 @@
+# sample commands for generating an exodus file
+brick x 0.5 y 0.5 z 0.5
+surface 1 2 3 4 5 6 size auto factor 1
+mesh surface 1 2 3 4 5 6
+set duplicate block elements off
+block 1 surface 1 2 3 4 5 6
+export mesh '/Users/luis/w/sloc/cube.exo' dimension 3 block 1 overwrite
