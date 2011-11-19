@@ -1,0 +1,12 @@
+---high------------------------------------------------------------------------
+- Make bem_solve read data from UCD meshes (instead of the exodus meshes)
+- Run bem_solve with small UCD meshes
+- Fill in the lead matrix values using the forward solution
+
+---normal----------------------------------------------------------------------
+- Convert STL files to UCD
+- Convert triangular mesh to quadrilateral mesh
+
+---low-------------------------------------------------------------------------
+- Library for mesh coarsening?
+
