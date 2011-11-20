@@ -267,7 +267,7 @@ void BEM_ForwardProblem::configure()
     solver_control.set_tolerance(1.0e-10);
 
     // read the boundary mesh for our domain
-    read_exo_surface_mesh("sphere.exo", tria);
+    read_ucd_mesh("sphere.surf.ucd", tria);
     write_triangulation("sphere.inp", tria);
 
     // initialize vectors
@@ -384,11 +384,8 @@ void BEM_ForwardProblem::compute_exterior_solution()
 {
     deallog << "BEM_ForwardProblem::compute_exterior_solution() " << timer.wall_time() << std::endl;
 
-    // Manual generation of a rectangular box. Needs to be modified to work with all mesh shapes.
     Triangulation<3> external_tria;
-    Point<3> p1(-1.0, -1.5, -2.0);
-    Point<3> p2(+1.0, +1.5, +2.0);
-    GridGenerator::hyper_rectangle(external_tria, p1, p2);
+    read_ucd_mesh("sphere.ucd", external_tria);
 
     FE_Q<3>         external_fe(1);
     DoFHandler<3>   external_dh(external_tria);
