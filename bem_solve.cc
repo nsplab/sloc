@@ -499,7 +499,7 @@ int main(void)
 {
     deallog.depth_console(3);
 
-    deallog << "main()" << endl;
+    deallog << "main()" << std::endl;
 
     try
     {
