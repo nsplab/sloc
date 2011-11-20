@@ -379,7 +379,7 @@ void BEM_ForwardProblem::output_results()
     data_out.write_vtk(file);
 }
 
-/*
+
 void BEM_ForwardProblem::compute_exterior_solution()
 {
     deallog << "BEM_ForwardProblem::compute_exterior_solution() " << timer.wall_time() << std::endl;
@@ -413,6 +413,8 @@ void BEM_ForwardProblem::compute_exterior_solution()
     std::vector<Point<3> > external_support_points(external_dh.n_dofs());
     DoFTools::map_dofs_to_support_points<3>(StaticMappingQ1<3>::mapping, external_dh, external_support_points);
 
+    const double sigma_avg = 1.0;
+
     for (unsigned int i = 0; i < external_dh.n_dofs(); ++i)
     {
         external_phi(i) = dipole_source.primary_contribution(external_support_points[i]) / sigma_avg;
@@ -424,6 +426,9 @@ void BEM_ForwardProblem::compute_exterior_solution()
 
         const std::vector<Point<3> > &q_points = fe_v.get_quadrature_points();
         const std::vector<Point<3> > &normals = fe_v.get_cell_normal_vectors();
+
+        const double sigma_int = material_data->get_sigma_int(cell->material_id());
+        const double sigma_ext = material_data->get_sigma_ext(cell->material_id());
 
         cell->get_dof_indices(dofs);
         fe_v.get_function_values(phi, local_phi);
@@ -446,7 +451,7 @@ void BEM_ForwardProblem::compute_exterior_solution()
     data_out.build_patches();
     data_out.write_vtk(file);
 }
-*/
+
 
 // just a test.
 // we calculate the area by integrating the scalar 1
@@ -488,7 +493,7 @@ void BEM_ForwardProblem::run()
     assemble_system();
     solve_system();
     output_results();
-    //compute_exterior_solution();
+    compute_exterior_solution();
     deallog << "last timer = " << timer.wall_time() << std::endl;
 }
 
