@@ -499,6 +499,8 @@ int main(void)
 {
     deallog.depth_console(3);
 
+    deallog << "main()" << endl;
+
     try
     {
         BEM_ForwardProblem fwd_problem;
