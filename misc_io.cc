@@ -14,24 +14,6 @@
 using namespace std;
 using namespace dealii;
 
-template <int dim, int spacedim>
-void read_ucd_mesh(const std::string &filename, Triangulation<dim,spacedim> &tria)
-{
-    deallog << "read_ucd_mesh()" << endl;
-
-    GridIn<dim,spacedim> grid_in;
-    grid_in.attach_triangulation(tria);
-
-    std::ifstream input_file(filename.c_str());
-    grid_in.read_ucd(input_file);
-
-    if (true)
-    {
-        cout << "Number of active cells: " << tria.n_active_cells() << endl;
-        cout << "Total number of cells : " << tria.n_cells() << endl;
-    }
-}
-
 // Here's a function to read mesh from a NetCDF file
 // For now, we just assume our information is stored in block 1
 void read_exo_surface_mesh(const std::string &filename, Triangulation<2,3> &tria)
