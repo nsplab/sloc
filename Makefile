@@ -1,5 +1,6 @@
 
 target = bem_solve
+
 run-parameters = 
 debug-mode = on
 clean-up-files = *dat
@@ -9,53 +10,62 @@ D = $(HOME)/dev/deal.II
 # -----------------------------------------------------------------------------
 include $D/common/Make.global_options
 
-cc-files    := $(shell echo *.cc)
-o-files     := $(cc-files:%.cc=%.$(OBJEXT))
-go-files    := $(cc-files:%.cc=%.g.$(OBJEXT))
-h-files     := $(wildcard *.h)
 lib-h-files := $(shell echo $D/include/deal.II/*/*.h)
+h-files     := $(wildcard include/*.h)
+
+cc-files    := $(shell echo src/*.cc)
+o-files     := $(cc-files:src/%.cc=lib/%.$(OBJEXT))
+go-files    := $(cc-files:src/%.cc=lib/%.g.$(OBJEXT))
+
+cc-targets  := $(shell echo *.cc)
+o-targets   := $(cc-targets:%.cc=%.$(OBJEXT))
+go-targets  := $(cc-targets:%.cc=%.g.$(OBJEXT))
 
 libs.g := $(lib-deal2.g)
 libs.o := $(lib-deal2.o)
 
 ifeq ($(debug-mode),on)
+  flags     = $(CXXFLAGS.g) -Iinclude
   libraries = $(go-files) $(libs.g)
-  flags     = $(CXXFLAGS.g) -I.
+  targets   = $(go-targets)
+  target_o  = lib/$(target).g.$(OBJEXT)
 else
+  flags     = $(CXXFLAGS.o) -Iinclude
   libraries = $(o-files) $(libs.o)
-  flags     = $(CXXFLAGS.o) -I.
+  targets   = $(o-targets)
+  target_o  = lib/$(target).$(OBJEXT)
 endif
 
-./%.g.$(OBJEXT):
+lib/%.g.$(OBJEXT):
 	@echo "==============debug========= $(<F)  ->  $@"
 	$(CXX) $(flags) -c $< -o $@
 
-./%.$(OBJEXT):
+lib/%.$(OBJEXT):
 	@echo "==============optimized===== $(<F)  ->  $@"
 	$(CXX) $(flags) -c $< -o $@
 
-$(target)$(EXEEXT): $(libraries) Makefile
+$(target)$(EXEEXT): $(target_o) $(libraries) Makefile
 	@echo "============================ Linking $@"
-	$(CXX) -o $@ $(libraries) $(LIBS) $(LDFLAGS)
+	$(CXX) -o $@ lib/$(target).g.o $(libraries) $(LIBS) $(LDFLAGS)
 
 run: $(target)$(EXEEXT)
 	@echo "============================ Running $<"
 	./$(target)$(EXEEXT) $(run-parameters)
 
 clean: clean-lib clean-data
-	-rm -f *~ */*~ */*/*~ Makefile.dep
+	-rm -f *~ */*~ */*/*~ lib/Makefile.dep
 
 clean-lib:
-	-rm -f *.$(OBJEXT) *.g.$(OBJEXT) $(target)$(EXEEXT) tags TAGS
+	-rm -f lib/*.$(OBJEXT) lib/*.g.$(OBJEXT) $(target)$(EXEEXT) lib/TAGS lib/tags
 
 clean-data:
 	-rm -f $(clean-up-files)
 
 .PHONY: run clean clean-data clean-lib
 
-Makefile.dep: $(target).cc Makefile $(shell echo $D/include/deal.II/*/*.h)
+lib/Makefile.dep: $(cc-targets) $(cc-files) $(h-files) $(lib-h-files) Makefile
 	@echo "============================ Remaking $@"
-	$D/common/scripts/make_dependencies $(INCLUDE) -B. $(cc-files) > $@ || (rm -f $@; false)
+	$D/common/scripts/make_dependencies $(INCLUDE) -Blib $(cc-targets) $(cc-files) > $@ || (rm -f $@; false)
 	if test -s $@; then : else rm -f $@ ; fi
 
-include Makefile.dep
+include lib/Makefile.dep
