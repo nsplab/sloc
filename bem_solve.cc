@@ -267,8 +267,8 @@ void BEM_ForwardProblem::configure()
     solver_control.set_tolerance(1.0e-10);
 
     // read the boundary mesh for our domain
-    read_ucd_mesh("sphere.surf.ucd", tria);
-    write_triangulation("sphere.inp", tria);
+    read_ucd_mesh("boxsurf.ucd", tria);
+    write_triangulation("box.inp", tria);
 
     // initialize vectors
     dh.distribute_dofs(fe);
@@ -385,13 +385,13 @@ void BEM_ForwardProblem::compute_exterior_solution()
     deallog << "BEM_ForwardProblem::compute_exterior_solution() " << timer.wall_time() << std::endl;
 
     Triangulation<3> external_tria;
-    read_ucd_mesh("sphere.ucd", external_tria);
+    read_ucd_mesh("box.ucd", external_tria);
 
     FE_Q<3>         external_fe(1);
     DoFHandler<3>   external_dh(external_tria);
     Vector<double>  external_phi;
 
-    external_tria.refine_global(5);
+    //    external_tria.refine_global(5);
     external_dh.distribute_dofs(external_fe);
     external_phi.reinit(external_dh.n_dofs());
 
@@ -443,6 +443,13 @@ void BEM_ForwardProblem::compute_exterior_solution()
                 external_phi(i) += K * (local_phi[q] * (R / R3) * normals[q]) * fe_v.JxW(q);
         }
     }
+    // Timer after loops.
+    //    deallog << "Writing external image file: " << timer.wall_time() << std::endl;
+    // Number of degrees of freedom:
+    //deallog << "Number of degrees of freedom:" << external_dh.n_dofs() << std::endl;
+    // Number of quadrature points:
+    //deallog << "Number of q_points:" << n_q_points << std::endl;
+
 
     std::ofstream file("external_phi.vtk");
     DataOut<3> data_out;
