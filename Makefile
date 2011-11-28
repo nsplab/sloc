@@ -74,7 +74,7 @@ clean: clean-lib clean-data
 	-rm -f *~ */*~ */*/*~ lib/Makefile.dep
 
 clean-lib:
-	-rm -f lib/*.$(OBJEXT) lib/*.g.$(OBJEXT) $(target)$(EXEEXT) lib/TAGS lib/tags
+	-rm -f lib/*.$(OBJEXT) lib/*.g.$(OBJEXT) $(target)$(EXEEXT) $(targets) lib/TAGS lib/tags
 
 clean-data:
 	-rm -f $(clean-up-files)
