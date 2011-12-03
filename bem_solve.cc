@@ -102,17 +102,24 @@ class MaterialData
 
         double get_sigma_ext(const unsigned int material_id) const;
 
-        void _init(const double data[][2]);
+        double get_sigma_avg(const unsigned int material_id) const;
+
+  //void _init(const double data[][2]);
+
+        void _init(const double data[][2], const double average_data[][1]);
+
     private:
         const unsigned int n_layers;
         Table<2,double> sigma;
+        Table<2,double> average_sigma;
 };
 
 //Conductivities stored in a table, interior conductivity in first column.
 MaterialData::MaterialData(const unsigned int n_layers)
     :
     n_layers(n_layers),
-    sigma(n_layers, 2)
+    sigma(n_layers, 2),
+    average_sigma(n_layers, 2)
 {}
 
 double MaterialData::get_sigma_int(const unsigned int material_id) const
@@ -129,12 +136,28 @@ double MaterialData::get_sigma_ext(const unsigned int material_id) const
     return sigma[material_id][1];
 }
 
-void MaterialData::_init(const double data[][2])
+//void MaterialData::_init(const double data[][2])
+//{
+//    for(unsigned int m = 0; m < n_layers; ++m)
+//    {
+//        sigma[m][0] = data[m][0];
+//        sigma[m][1] = data[m][1];
+//    }
+//}
+double MaterialData::get_sigma_avg(const unsigned int material_id) const
+{
+    Assert(material_id < n_layers,
+           ExcIndexRange(material_id, 0, n_layers));
+    return average_sigma[material_id][0];
+}
+
+void MaterialData::_init(const double data[][2], const double average_data[][1])
 {
     for(unsigned int m = 0; m < n_layers; ++m)
     {
         sigma[m][0] = data[m][0];
         sigma[m][1] = data[m][1];
+        average_sigma[m][0] = average_data[m][0];
     }
 }
 
@@ -216,10 +239,10 @@ void BEM_ForwardProblem::configure()
 {
     using namespace std;
 
-    deallog << "BEM_ForwardProblem::configure() " << timer.wall_time() << std::endl;
+    deallog << "BEM_ForwardProblem::configure() " << timer.wall_time() << endl;
 
     // configure the dipole source
-    const double d = std::pow(1/3.0, 0.5);
+    const double d = pow(1/3.0, 0.5);
     dipole_source.position = Point<3>(0.5, 0.5, 0.5);
     dipole_source.dipole = Point<3>(d, d, d);
     //sigma_avg = (sigma_int + sigma_ext) / 2.0;
@@ -248,13 +271,20 @@ void BEM_ForwardProblem::configure()
 
     // Sample array of conductivities with 3 surfaces.
     const double sigma_data[3][2] = {
-      {0, 1.5},
-      {1.5, 2.5},
-      {2.5, 0}
+      {0, 2000},
+      {2000, 10},
+      {10, 0}
     }; 
 
+    const double avg_sigma_data[3][1] = {
+      {0},
+      {1.5},
+      {100},
+    };
+
     material_data = new MaterialData(3);
-    material_data->_init(sigma_data);
+    //    material_data->_init(sigma_data);
+    material_data->_init(sigma_data, avg_sigma_data);
 
     // use Gauss-Legendre quadrature rule of order 4
     quadrature = QGauss<2>(4);
@@ -267,8 +297,8 @@ void BEM_ForwardProblem::configure()
     solver_control.set_tolerance(1.0e-10);
 
     // read the boundary mesh for our domain
-    read_ucd_mesh("boxsurf.ucd", tria);
-    write_triangulation("box.inp", tria);
+    read_ucd_mesh("doublespheresurf.ucd", tria);
+    write_triangulation("sphere.inp", tria);
 
     // initialize vectors
     dh.distribute_dofs(fe);
@@ -303,12 +333,11 @@ void BEM_ForwardProblem::assemble_system()
         cell = dh.begin_active(),
         endc = dh.end();
 
-    // Set sigma_avg to 1 for now.
-    const double sigma_avg = 1.0;
+    double sigma_avg;
 
     for (unsigned int i = 0; i < n_dofs; ++i)
     {
-        system_rhs(i) = dipole_source.primary_contribution(support_points[i]) / sigma_avg;
+        system_rhs(i) = 2 * dipole_source.primary_contribution(support_points[i]);
     }
 
     //std::ofstream q_out, n_out;
@@ -328,7 +357,7 @@ void BEM_ForwardProblem::assemble_system()
 
         const double sigma_int = material_data->get_sigma_int(cell->material_id());
         const double sigma_ext = material_data->get_sigma_ext(cell->material_id());
-
+        sigma_avg = (sigma_int + sigma_ext)/2;
 
         for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -336,7 +365,7 @@ void BEM_ForwardProblem::assemble_system()
 
             for (unsigned int q = 0; q < n_q_points; ++q)
             {
-                const double K = (1.0/(4 * numbers::PI * sigma0)) * ((sigma_int - sigma_ext) / sigma_avg);
+                const double K = (1.0/(4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
                 const Point<3> R = q_points[q] - dipole_source.position;
                 double R3 = std::pow(R.square(), 1.5);
 
@@ -385,7 +414,7 @@ void BEM_ForwardProblem::compute_exterior_solution()
     deallog << "BEM_ForwardProblem::compute_exterior_solution() " << timer.wall_time() << std::endl;
 
     Triangulation<3> external_tria;
-    read_ucd_mesh("box.ucd", external_tria);
+    read_ucd_mesh("doublesphere.ucd", external_tria);
 
     FE_Q<3>         external_fe(1);
     DoFHandler<3>   external_dh(external_tria);
@@ -413,11 +442,11 @@ void BEM_ForwardProblem::compute_exterior_solution()
     std::vector<Point<3> > external_support_points(external_dh.n_dofs());
     DoFTools::map_dofs_to_support_points<3>(StaticMappingQ1<3>::mapping, external_dh, external_support_points);
 
-    const double sigma_avg = 1.0;
+    double sigma_avg;
 
     for (unsigned int i = 0; i < external_dh.n_dofs(); ++i)
     {
-        external_phi(i) = dipole_source.primary_contribution(external_support_points[i]) / sigma_avg;
+        external_phi(i) = 2 * dipole_source.primary_contribution(external_support_points[i]);
     }
 
     for (cell = dh.begin_active(); cell != endc; ++cell)
@@ -429,13 +458,14 @@ void BEM_ForwardProblem::compute_exterior_solution()
 
         const double sigma_int = material_data->get_sigma_int(cell->material_id());
         const double sigma_ext = material_data->get_sigma_ext(cell->material_id());
+        sigma_avg = (sigma_int + sigma_ext) / 2;
 
         cell->get_dof_indices(dofs);
         fe_v.get_function_values(phi, local_phi);
 
         for (unsigned int q = 0; q < n_q_points; ++q)
         {
-            const double K = (1.0/(4 * numbers::PI * sigma0)) * ((sigma_int - sigma_ext) / sigma_avg);
+            const double K = (1.0/(4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
             const Point<3> R = q_points[q] - dipole_source.position;
             double R3 = std::pow(R.square(), 1.5);
 
