@@ -29,13 +29,39 @@ int main()
 {
     deallog << "main()" << endl;
 
-    // surface triangulation
-    Triangulation<2,3> tria2;
-    read_ucd_mesh("tmp/sphere.surf.ucd", tria2);
+    Triangulation<3> tria;
+    read_ucd_mesh("doublesphere.ucd", tria);
 
-    // volume triangulation
-    Triangulation<3> tria3;
-    read_ucd_mesh("tmp/sphere.ucd", tria3);
+    Triangulation<3>::active_cell_iterator
+      cell,
+      endc = tria.end();
 
+    int n = GeometryInfo<3>::vertices_per_cell;
+
+    ofstream out;
+    out.open("doublesphere.mat");
+
+    for (cell = tria.begin_active(); cell != endc; ++cell)
+    {
+      Point<3> center(0,0,0);
+
+      for(int v = 0; v < n; ++v)
+      {
+        center += cell->vertex(v);
+      }
+      center /= n;
+
+      double distance2 = center.square();
+      if (distance2 <= 4)
+      {
+        out << "1" << endl;
+      }
+      else
+      {
+        out << "2" << endl;
+      }
+    }
+    out.close();
+    cout << "Wrote material id to file doublesphere.mat" << endl;
     return 0;
 }
