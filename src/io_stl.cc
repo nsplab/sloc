@@ -1,4 +1,5 @@
 #include "io_stl.h"
+#include <stdint.h>
 #include <iostream>
 #include <fstream>
 
