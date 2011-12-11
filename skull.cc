@@ -1,3 +1,7 @@
+/* Program to convert Bone2.stl and Artery2.stl into .ucd files
+ * In the process, we also need to split up every triangle into
+ * three quadrilateral elements.
+ */
 #include <iostream>
 #include "io_stl.h"
 
