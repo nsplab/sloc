@@ -18,9 +18,9 @@ Mesh::~Mesh()
 
 void Mesh::init_points(int npts, int ndim)
 {
-    _npts = npts;
+    _npoints = npts;
     _ndim = ndim;
-    _pts = new double[_npts * _ndim];
+    _pts = new double[_npoints * _ndim];
 }
 
 void Mesh::init_cells(int ncells, int ncellnodes)
@@ -46,13 +46,13 @@ void Mesh::clear_cells()
     _cells = 0;
 }
 
-void get_point(int n, double *point)
+void Mesh::get_point(int n, double *point)
 {
     for (int i = 0; i < _ndim; i++)
         point[i] = _pts[_ndim * n + i];
 }
 
-void get_cell(int e, long *cell)
+void Mesh::get_cell(int e, long *cell)
 {
     for (int i = 0; i < _ncellnodes; i++)
         cell[i] = _cells[_ncellnodes * e + i];

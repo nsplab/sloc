@@ -10,9 +10,9 @@ public:
     ~Mesh();
 
     int n_dim() const;
-    int n_cells() const;
     int n_points() const;
-
+    int n_cells() const;
+    int n_cell_nodes() const;
 
     void init_points(int npts, int ndim);
     void clear_points();
@@ -32,9 +32,9 @@ private:
     long *_cells;
 };
 
-inline int Mesh::n_dim() { return _ndim; }
-inline int Mesh::n_points() { return _npoints; }
-inline int Mesh::n_cells() { return _ncells; }
-inline int Mesh::n_cell_nodes() { return _ncellnodes; }
+inline int Mesh::n_dim() const { return _ndim; }
+inline int Mesh::n_points() const { return _npoints; }
+inline int Mesh::n_cells() const { return _ncells; }
+inline int Mesh::n_cell_nodes() const { return _ncellnodes; }
 
 #endif
