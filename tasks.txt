@@ -3,6 +3,8 @@
 - Mesh class
 - UCD writer
 - Reading deal2 parameter files
+- Validate the BEM equation
+- Write up derivation of charge dipole equation
 - Make bem_solve read data from UCD meshes (instead of the exodus meshes)
 - Run bem_solve with small UCD meshes
 - Lay down framework for solving the inverse problem
