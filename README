@@ -1,4 +1,8 @@
 
-Dipole Source Localization
-* http://www.scholarpedia.org/article/Source_localization
+Installation Requirements
+-------------------------
 
+For building `bem_solve`, you'll need to install the deal.II finite
+element software library.
+
+.. vim: ft=rst

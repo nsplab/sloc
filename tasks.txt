@@ -1,11 +1,18 @@
 ---high------------------------------------------------------------------------
+- STL reader
+- Mesh class
+- UCD writer
+- Reading deal2 parameter files
 - Make bem_solve read data from UCD meshes (instead of the exodus meshes)
 - Run bem_solve with small UCD meshes
+- Lay down framework for solving the inverse problem
 - Fill in the lead matrix values using the forward solution
 
 ---normal----------------------------------------------------------------------
 - Convert STL files to UCD
 - Convert triangular mesh to quadrilateral mesh
+- Write down derivation of formulas used in bem_solve.cc
+- Provide installation instructions for all dependencies
 
 ---low-------------------------------------------------------------------------
 - Library for mesh coarsening?
