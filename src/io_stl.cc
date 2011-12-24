@@ -2,12 +2,13 @@
 #include <stdint.h>
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 using namespace std;
 
 STL_Mesh::STL_Mesh()
 {
-    n_facets = 0;
+    nfacets = 0;
     normal = 0;
     va = vb = vc = 0;
 }
@@ -23,7 +24,7 @@ void STL_Mesh::clear()
     if (va != 0) delete [] va;
     if (vb != 0) delete [] vb;
     if (vc != 0) delete [] vc;
-    n_facets = 0;
+    nfacets = 0;
     normal = 0;
     va = vb = vb = 0;
 }
@@ -31,7 +32,7 @@ void STL_Mesh::clear()
 void STL_Mesh::set_facets(int n)
 {
     clear();
-    n_facets = n;
+    nfacets = n;
     normal = new float[n * 3];
     va = new float[n * 3];
     vb = new float[n * 3];
@@ -62,7 +63,14 @@ void STL_Mesh::set_facet_vertex(int i, int j, float x, float y, float z)
         vc[3*i + 2] = z;
     } else {
         // XXX: unreachable! emit error to log...
+        assert(false);
     }
+}
+
+void STL_Mesh::read(const char *filename)
+{
+    cout << "Reading " << filename << endl;
+    stl_read(filename, *this);
 }
 
 
