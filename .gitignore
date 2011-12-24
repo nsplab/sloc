@@ -2,3 +2,5 @@
 Makefile.dep
 bem_solve
 fem_solve
+skull
+tmp
