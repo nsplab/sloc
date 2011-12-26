@@ -6,19 +6,19 @@
 
 using namespace std;
 
-STL_Mesh::STL_Mesh()
+STL_File::STL_File()
 {
     nfacets = 0;
     normal = 0;
     va = vb = vc = 0;
 }
 
-STL_Mesh::~STL_Mesh()
+STL_File::~STL_File()
 {
     clear();
 }
 
-void STL_Mesh::clear()
+void STL_File::clear()
 {
     if (normal != 0) delete [] normal;
     if (va != 0) delete [] va;
@@ -29,7 +29,7 @@ void STL_Mesh::clear()
     va = vb = vb = 0;
 }
 
-void STL_Mesh::set_facets(int n)
+void STL_File::set_facets(int n)
 {
     clear();
     nfacets = n;
@@ -39,14 +39,14 @@ void STL_Mesh::set_facets(int n)
     vc = new float[n * 3];
 }
 
-void STL_Mesh::set_normal(int i, float nx, float ny, float nz)
+void STL_File::set_normal(int i, float nx, float ny, float nz)
 {
     normal[3*i + 0] = nx;
     normal[3*i + 1] = ny;
     normal[3*i + 2] = nz;
 }
 
-void STL_Mesh::set_facet_vertex(int i, int j, float x, float y, float z)
+void STL_File::set_facet_vertex(int i, int j, float x, float y, float z)
 {
     // setting vertex j of triangle i
     if (j == 0) {
@@ -67,7 +67,7 @@ void STL_Mesh::set_facet_vertex(int i, int j, float x, float y, float z)
     }
 }
 
-void STL_Mesh::read(const char *filename)
+void STL_File::read(const char *filename)
 {
     cout << "Reading " << filename << endl;
     stl_read(filename, *this);
@@ -85,7 +85,7 @@ T read_binary_type(std::ifstream& in)
     return *ptr;
 }
 
-void stl_read(const std::string& filename, STL_Mesh& mesh)
+void stl_read(const std::string& filename, STL_File& mesh)
 {
     ifstream file;
     unsigned int i,j;

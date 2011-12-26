@@ -3,11 +3,11 @@
 
 #include <string>
 
-class STL_Mesh
+class STL_File
 {
 public:
-    STL_Mesh();
-    ~STL_Mesh();
+    STL_File();
+    ~STL_File();
     void read(const char *filename);
 
     void clear();
@@ -25,8 +25,8 @@ public:
     float *vc;
 };
 
-inline int STL_Mesh::n_facets() const { return nfacets; }
+inline int STL_File::n_facets() const { return nfacets; }
 
-void stl_read(const std::string& filename, STL_Mesh& mesh);
+void stl_read(const std::string& filename, STL_File& mesh);
 
 #endif

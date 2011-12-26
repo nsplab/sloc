@@ -42,7 +42,7 @@ void tri2quad(long t[3], long u[4], long q[3*4])
     q[4*2+0] = C; q[4*2+1] = G; q[4*2+2] = D; q[4*2+3] = F;
 }
 
-void stl2tmesh2qmesh(STL_Mesh &stl, Mesh &tmesh, Mesh &qmesh)
+void stl2tmesh2qmesh(STL_File &stl, Mesh &tmesh, Mesh &qmesh)
 {
     // Get rid of duplicate points in .stl mesh,
     // and convert every triangle into a quadrilateral.
@@ -236,7 +236,7 @@ void stl2tmesh2qmesh(STL_Mesh &stl, Mesh &tmesh, Mesh &qmesh)
 
 int main(void)
 {
-    STL_Mesh stl;
+    STL_File stl;
     Mesh tmesh;
     Mesh qmesh;
 
