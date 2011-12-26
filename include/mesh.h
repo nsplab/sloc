@@ -44,5 +44,6 @@ inline int Mesh::n_cells() const { return _ncells; }
 inline int Mesh::n_cell_nodes() const { return _ncellnodes; }
 
 void ucd_write(const char *filename, Mesh& mesh);
+void ucd_read(const char *filename, Mesh& mesh);
 
 #endif

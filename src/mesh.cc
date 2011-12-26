@@ -1,8 +1,9 @@
-#include "mesh.h"
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <cstring>
+#include "mesh.h"
+#include "io_ucd.h"
 
 using namespace std;
 
@@ -144,6 +145,37 @@ void ucd_write(const char *filename, Mesh& mesh)
     delete [] cell;
 
     file.close();
+}
+
+void ucd_read(const char *filename, Mesh& mesh)
+{
+    UCD_File ucd;
+    ucd.read(filename);
+
+    // copy nodes
+    mesh.init_points(ucd.num_nodes, 3);
+    for (int n = 0; n < mesh.n_points(); n++)
+    {
+        double point[3];
+        point[0] = ucd._nodes[3*n+0];
+        point[1] = ucd._nodes[3*n+1];
+        point[2] = ucd._nodes[3*n+2];
+        mesh.set_point(n, point);
+    }
+
+    // copy cells
+    mesh.init_cells(ucd.num_cells, ucd._cells[0]->num_vertices());
+    long *cell = new long[mesh.n_cell_nodes()];
+    for (int e = 0; e < mesh.n_cells(); e++)
+    {
+        UCD_Cell *c = ucd._cells[e];
+        for (int i = 0; i < mesh.n_cell_nodes(); i++)
+            cell[i] = c->cell_verts[i];
+        mesh.set_cell(e, cell);
+    }
+    delete [] cell;
+
+    ucd.clear();
 }
 
 // EOF
