@@ -6,6 +6,7 @@
 #include "io_ucd.h"
 
 using namespace std;
+using namespace sloc;
 
 Mesh::Mesh()
 {
@@ -88,7 +89,7 @@ void Mesh::write_ucd(const char *filename)
 
 // ----------------------------------------------------------------------------
 
-void ucd_write(const char *filename, Mesh& mesh)
+void sloc::ucd_write(const char *filename, Mesh& mesh)
 {
     int e,n,i;
     ofstream file;
@@ -147,7 +148,7 @@ void ucd_write(const char *filename, Mesh& mesh)
     file.close();
 }
 
-void ucd_read(const char *filename, Mesh& mesh)
+void sloc::ucd_read(const char *filename, Mesh& mesh)
 {
     UCD_File ucd;
     ucd.read(filename);
