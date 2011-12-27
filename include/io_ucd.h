@@ -6,6 +6,8 @@
 #include <valarray>
 #include <fstream>
 
+namespace sloc
+{
 // ----------------------------------------------------------------------------
 
 enum UCD_Cell_Type { NONE=0, TRI, QUAD };
@@ -59,5 +61,7 @@ public:
     std::vector<UCD_Cell*> _cells;
 };
 
+// ----------------------------------------------------------------------------
+}
 
 #endif

@@ -3,6 +3,7 @@
 #include <cassert>
 
 using namespace std;
+using namespace sloc;
 
 // ----------------------------------------------------------------------------
 
@@ -30,7 +31,7 @@ int UCD_Cell::num_vertices() const
     }
 }
 
-enum UCD_Cell_Type string2celltype(const string& cell_type)
+enum UCD_Cell_Type sloc::string2celltype(const string& cell_type)
 {
     if (cell_type == "tri")
         return TRI;
@@ -39,7 +40,7 @@ enum UCD_Cell_Type string2celltype(const string& cell_type)
     return NONE;
 }
 
-string celltype2string(enum UCD_Cell_Type cell_type)
+string sloc::celltype2string(enum UCD_Cell_Type cell_type)
 {
     switch (cell_type)
     {
