@@ -71,7 +71,7 @@ bool PointCloud::naive_search(double x, double y, double z, long *id)
     double p[3];
     p[0] = x; p[1] = y; p[2] = z;
 
-    for (long i = 0; i < points.size(); i++)
+    for (unsigned long i = 0; i < points.size(); i++)
     {
         if (dist2(p, points[i]) < tol)
         {
