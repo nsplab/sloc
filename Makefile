@@ -12,61 +12,98 @@ D = $(HOME)/dev/deal.II
 # -----------------------------------------------------------------------------
 include $D/common/Make.global_options
 
+# deal.II include files
 lib-h-files := $(shell echo $D/include/deal.II/*/*.h)
 h-files     := $(wildcard include/*.h)
 
+# deal.II library (debug & optimized)
+libs.g := $(lib-deal2.g)
+libs.o := $(lib-deal2.o)
+
+# -----------------------------------------------------------------------------
+
+# load target source files
+include ./Makefile.targets
+
+# stuff from src/
 cc-files    := $(shell echo src/*.cc)
 o-files     := $(cc-files:src/%.cc=lib/%.$(OBJEXT))
 go-files    := $(cc-files:src/%.cc=lib/%.g.$(OBJEXT))
 
-libs.g := $(lib-deal2.g)
-libs.o := $(lib-deal2.o)
+# stuff from bin/
+bin-o  := $(bin-cc:bin/%.cc=lib/%.$(OBJEXT))
+bin-go := $(bin-cc:bin/%.cc=lib/%.g.$(OBJEXT))
+
+# stuff from tests/
+tests-o  := $(tests-cc:tests/%.cc=lib/%.$(OBJEXT))
+tests-go := $(tests-cc:tests/%.cc=lib/%.g.$(OBJEXT))
 
 ifeq ($(debug-mode),on)
   flags     = $(CXXFLAGS.g) -Iinclude
   libraries = $(go-files) $(libs.g)
-  target_o  = lib/$(target).g.$(OBJEXT)
+  target-o  = lib/$(target).g.$(OBJEXT)
 else
   flags     = $(CXXFLAGS.o) -Iinclude
   libraries = $(o-files) $(libs.o)
-  target_o  = lib/$(target).$(OBJEXT)
+  target-o  = lib/$(target).$(OBJEXT)
 endif
 
-lib/%.g.$(OBJEXT):
+# complete list of target source files (main target included)
+cc-targets := $(bin-cc) $(tests-cc)
+
+# actual targets (strip .cc extension)
+targets := $(cc-targets:.cc=$(EXEEXT))
+
+# -----------------------------------------------------------------------------
+# Rules
+
+# by default, build only the main target
+default: bin/$(target)$(EXEEXT)
+
+# run the main target
+run: bin/$(target)$(EXEEXT)
+	@echo "============================ Running $<"
+	./bin/$(target)$(EXEEXT) $(run-parameters)
+
+# rule for building everything
+all: $(targets)
+
+# -----------------------------------------------------------------------------
+
+# rule for debug object files originating from src/
+lib/%.g.$(OBJEXT): src/%.cc
 	@echo "==============debug========= $(<F)  ->  $@"
 	$(CXX) $(flags) -c $< -o $@
 
-lib/%.$(OBJEXT):
+# rule for optimized object files originating from src/
+lib/%.$(OBJEXT): src/%.cc
 	@echo "==============optimized===== $(<F)  ->  $@"
 	$(CXX) $(flags) -c $< -o $@
 
-$(target)$(EXEEXT): $(target_o) $(libraries) Makefile
-	@echo "============================ Linking $@"
-	$(CXX) -o $@ $(target_o) $(libraries) $(LIBS) $(LDFLAGS)
+# -----------------------------------------------------------------------------
 
-run: $(target)$(EXEEXT)
-	@echo "============================ Running $<"
-	./$(target)$(EXEEXT) $(run-parameters)
+# generic rule for targets in bin/
+bin/%: lib/%.g.$(OBJEXT) $(libraries) Makefile
+	@echo "============================ Linking $@"
+	$(CXX) -o $@ $< $(libraries) $(LIBS) $(LDFLAGS)
+
+# rule for debug object files originating from bin/
+lib/%.g.$(OBJEXT): bin/%.cc
+	@echo "==============debug========= $(<F)  ->  $@"
+	$(CXX) $(flags) -c $< -o $@
 
 # -----------------------------------------------------------------------------
-# Other targets
 
-cc-targets := $(shell echo *.cc)
-targets    := $(cc-targets:.cc=)
-
-fem_solve: lib/fem_solve.g.o $(libraries) Makefile
+# generic rule for targets in tests/
+tests/%: lib/%.g.$(OBJEXT) $(libraries) Makefile
 	@echo "============================ Linking $@"
-	$(CXX) -o $@ lib/fem_solve.g.o $(libraries) $(LIBS) $(LDFLAGS)
+	$(CXX) -o $@ $< $(libraries) $(LIBS) $(LDFLAGS)
 
-sphere: lib/sphere.g.o $(libraries) Makefile
-	@echo "============================ Linking $@"
-	$(CXX) -o $@ lib/sphere.g.o $(libraries) $(LIBS) $(LDFLAGS)
+# rule for debug object files originating from tests/
+lib/%.g.$(OBJEXT): tests/%.cc
+	@echo "==============debug========= $(<F)  ->  $@"
+	$(CXX) $(flags) -c $< -o $@
 
-skull: lib/skull.g.o $(libraries) Makefile
-	@echo "============================ Linking $@"
-	$(CXX) -o $@ lib/skull.g.o $(libraries) $(LIBS) $(LDFLAGS)
-
-all: $(targets)
 
 # -----------------------------------------------------------------------------
 

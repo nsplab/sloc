@@ -1,6 +1,9 @@
-/* Program to convert Bone2.stl and Artery2.stl into .ucd files
+/* skull.cc
+ *
+ * Program to convert Bone2.stl and Artery2.stl into .ucd files
  * In the process, we also need to split up every triangle into
  * three quadrilateral elements.
+ *
  */
 #include <iostream>
 #include <ctime>
@@ -10,6 +13,7 @@
 #include "progress_timer.h"
 
 using namespace std;
+using namespace sloc;
 
 
 void centroid(double A[3], double B[3], double C[3], double D[3])

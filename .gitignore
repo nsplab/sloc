@@ -1,6 +1,11 @@
 *~
 Makefile.dep
-bem_solve
-fem_solve
-skull
+bin/bem_solve
+bin/fem_solve
+bin/mesh_info
+tests/skull
+tests/sphere
+tests/sphere2
+tests/stacked_cubes
+tests/hello
 tmp

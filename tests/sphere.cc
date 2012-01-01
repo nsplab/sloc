@@ -17,7 +17,7 @@
 #include <fstream>
 #include <string>
 
-#include "misc_io.h"
+#include "io_dealii.h"
 
 // namespaces
 using namespace std;
@@ -30,7 +30,7 @@ int main()
     deallog << "main()" << endl;
 
     Triangulation<3> tria;
-    read_ucd_mesh("doublesphere.ucd", tria);
+    sloc::read_ucd_mesh("doublesphere.ucd", tria);
 
     Triangulation<3>::active_cell_iterator
       cell,

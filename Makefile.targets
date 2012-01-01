@@ -1,0 +1,25 @@
+# -----------------------------------------------------------------------------
+# Makefile.targets
+#
+# We list the targets explicitly in here, in a separate file,
+# in order to avoid modifying the main Makefile so much whenever
+# we add or remove source files.
+#
+# -----------------------------------------------------------------------------
+
+# target source files from bin/ directory
+bin-cc := \
+	bin/bem_solve.cc \
+	bin/fem_solve.cc \
+	bin/mesh_info.cc
+
+# target source files from tests/ directory
+tests-cc := \
+	tests/skull.cc \
+	tests/sphere.cc \
+	tests/sphere2.cc \
+	tests/stacked_cubes.cc \
+	tests/hello.cc
+
+# -----------------------------------------------------------------------------
+# vim: ft=make
