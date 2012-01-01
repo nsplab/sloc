@@ -69,7 +69,7 @@
 #include <cstdlib>
 
 /* other functions */
-#include "misc_io.h"
+#include "io_dealii.h"
 
 /* namespaces */
 using namespace dealii;
@@ -297,8 +297,8 @@ void BEM_ForwardProblem::configure()
     solver_control.set_tolerance(1.0e-10);
 
     // read the boundary mesh for our domain
-    read_ucd_mesh("doublespheresurf.ucd", tria);
-    write_triangulation("sphere.inp", tria);
+    sloc::read_ucd_mesh("doublespheresurf.ucd", tria);
+    sloc::write_triangulation("sphere.inp", tria);
 
     // initialize vectors
     dh.distribute_dofs(fe);
@@ -414,7 +414,7 @@ void BEM_ForwardProblem::compute_exterior_solution()
     deallog << "BEM_ForwardProblem::compute_exterior_solution() " << timer.wall_time() << std::endl;
 
     Triangulation<3> external_tria;
-    read_ucd_mesh("doublesphere.ucd", external_tria);
+    sloc::read_ucd_mesh("doublesphere.ucd", external_tria);
 
     FE_Q<3>         external_fe(1);
     DoFHandler<3>   external_dh(external_tria);
