@@ -128,6 +128,8 @@ void sloc::stl_read(const std::string& filename, STL_File& mesh)
         // parse attribute byte count (2 bytes, unsigned integer)
         attr = read_binary_type<uint16_t>(file);
     }
+
+    file.close();
 }
 
 // EOF
