@@ -1,6 +1,7 @@
 #include "point_cloud.h"
 
 using namespace std;
+using namespace sloc;
 
 PointCloud::PointCloud(double tol)
 {

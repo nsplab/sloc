@@ -13,9 +13,12 @@
 
 namespace sloc
 {
-
 // ----------------------------------------------------------------------------
+
+
+//
 // Output
+//
 
 void write_points(const char *filename, const std::vector<dealii::Point<3> >& points);
 void write_vector(const char *filename, const dealii::Vector<double>& vec);
@@ -23,8 +26,9 @@ void write_matrix(const char *filename, const dealii::FullMatrix<double>& mat);
 void write_triangulation(const char *filename, const dealii::Triangulation<2,3>& tria);
 
 
-// ----------------------------------------------------------------------------
+//
 // Input
+//
 
 template <int dim, int spacedim>
 void read_ucd_mesh(const char *filename, dealii::Triangulation<dim,spacedim>& tria)

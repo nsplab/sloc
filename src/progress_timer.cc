@@ -3,6 +3,7 @@
 #include <sstream>
 #include <cassert>
 using namespace std;
+using namespace sloc;
 
 const int width = 9;
 
@@ -50,7 +51,8 @@ ProgressTimer& ProgressTimer::update(int cur)
     return *this;
 }
 
-std::ostream& operator<<(std::ostream& os, const ProgressTimer& T)
+std::ostream&
+sloc::operator<<(std::ostream& os, const ProgressTimer& T)
 {
     os << setw(width) << right << T.current << " "
        << setw(width) << right << T.num_per_sec << " "

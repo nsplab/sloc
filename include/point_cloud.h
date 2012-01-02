@@ -3,6 +3,10 @@
 
 #include <vector>
 
+namespace sloc
+{
+// ----------------------------------------------------------------------------
+
 class PointCloud
 {
 public:
@@ -25,4 +29,6 @@ public:
 
 inline int PointCloud::n_points() const { return npts; }
 
+// ----------------------------------------------------------------------------
+}
 #endif

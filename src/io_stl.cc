@@ -5,6 +5,7 @@
 #include <cassert>
 
 using namespace std;
+using namespace sloc;
 
 STL_File::STL_File()
 {
@@ -85,7 +86,7 @@ T read_binary_type(std::ifstream& in)
     return *ptr;
 }
 
-void stl_read(const std::string& filename, STL_File& mesh)
+void sloc::stl_read(const std::string& filename, STL_File& mesh)
 {
     ifstream file;
     unsigned int i,j;

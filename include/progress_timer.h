@@ -5,6 +5,10 @@
 #include <iostream>
 #include <string>
 
+namespace sloc
+{
+// ----------------------------------------------------------------------------
+
 class ProgressTimer
 {
 public:
@@ -32,5 +36,7 @@ public:
 
 std::ostream& operator<<(std::ostream& os, const ProgressTimer& T);
 
+// ----------------------------------------------------------------------------
+}
 
 #endif

@@ -3,6 +3,10 @@
 
 #include <string>
 
+namespace sloc
+{
+// ----------------------------------------------------------------------------
+
 class STL_File
 {
 public:
@@ -29,4 +33,7 @@ inline int STL_File::n_facets() const { return nfacets; }
 
 void stl_read(const std::string& filename, STL_File& mesh);
 
+
+// ----------------------------------------------------------------------------
+}
 #endif
