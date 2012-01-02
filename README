@@ -1,8 +1,38 @@
 
 Installation Requirements
 -------------------------
+Requirements
+------------
 
-For building `bem_solve`, you'll need to install the deal.II finite
-element software library.
+The sloc project has a number of software dependencies.
+
+deal.II_ is a finite element differential equations analsys library.
+
+FLANN_ is a library for performing fast approximate nearest neighbor
+searches in high dimensional spaces.
+
+.. _deal.II: http://www.dealii.org/
+.. _FLANN: https://github.com/mariusmuja/flann
+
+Installation Procedure
+----------------------
+
+Installing deal.II was done as follows::
+    $ cd ~/dev/
+    $ svn co svn co http://www.dealii.org/svn/dealii/trunk/deal.II
+    $ cd deal.II
+    $ ./configure
+    $ make all
+
+Installing FLANN::
+    $ cd ~/dev/
+    $ git clone --depth=1 git://github.com/mariusmuja/flann.git
+    $ cd flann
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
+
+
 
 .. vim: ft=rst
