@@ -7,6 +7,23 @@
 #
 # -----------------------------------------------------------------------------
 
+# main source files
+common-cc := \
+	src/io_dealii.cc \
+	src/io_stl.cc \
+	src/io_ucd.cc \
+	src/mesh.cc \
+	src/point_cloud.cc \
+	src/progress_timer.cc
+
+common-h := \
+	include/io_dealii.h \
+	include/io_stl.h \
+	include/io_ucd.h \
+	include/mesh.h \
+	include/point_cloud.h \
+	include/progress_timer.h
+
 # target source files from bin/ directory
 bin-cc := \
 	bin/bem_solve.cc \
