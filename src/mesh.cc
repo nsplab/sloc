@@ -1,9 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
-#include <cstring>
+#include <ctime>
 #include "mesh.h"
 #include "io_ucd.h"
+#include "io_stl.h"
+#include "point_cloud.h"
+#include "progress_timer.h"
 
 using namespace std;
 using namespace sloc;
@@ -86,6 +89,17 @@ void Mesh::write_ucd(const char *filename)
     ucd_write(filename, *this);
 }
 
+void Mesh::read_ucd(const char *filename)
+{
+    cout << "Reading from " << filename << endl;
+    ucd_read(filename, *this);
+}
+
+void Mesh::read_stl(const char *filename)
+{
+    cout << "Reading from " << filename << endl;
+    stl_read(filename, *this);
+}
 
 // ----------------------------------------------------------------------------
 
@@ -150,6 +164,8 @@ void sloc::ucd_write(const char *filename, Mesh& mesh)
 
 void sloc::ucd_read(const char *filename, Mesh& mesh)
 {
+    cout << "sloc::ucd_read()\n";
+    cout << "  filename = " << filename << endl;
     UCD_File ucd;
     ucd.read(filename);
 
@@ -177,6 +193,90 @@ void sloc::ucd_read(const char *filename, Mesh& mesh)
     delete [] cell;
 
     ucd.clear();
+}
+
+void sloc::stl_read(const char *filename, Mesh& tmesh)
+{
+    //
+    // Given the data in the stl file, we need to create
+    // a mesh object with all duplicate points removed.
+    //
+
+    cout << "sloc::stl_read()\n";
+    cout << "  filename = " << filename << endl;
+
+    STL_File stl;
+    stl.read(filename);
+
+    // duplicate point elimination takes a while, so we need
+    // something to print out periodic progress reports to stdout.
+    time_t t0, t1;
+    ProgressTimer timer;
+
+    // loop indices
+    int e, n;
+
+    // our triangular mesh gets its cells from the STL facets.
+    int ncells = stl.n_facets();
+    int npts = ncells * 3;
+
+    cout << "  stl points = " << npts << endl;
+    cout << "  stl facets = " << ncells << endl;
+
+    long *ids = new long[npts];
+    double *pts = new double[npts * 3];
+
+    //
+    // to determine the list of unique points, we load them
+    // into a point cloud structure that can detect duplicates
+    // within a given tolerance.
+    //
+    PointCloud points;
+    points.set_tolerance(1e-8);
+
+    cout << "  Building point cloud...\n";
+    time(&t0);
+
+    cout << timer.header("facets");
+    timer.start(ncells);
+
+    for (e = 0; e < ncells; e++)
+    {
+        points.add(stl.va[3*e+0], stl.va[3*e+1], stl.va[3*e+2], &ids[3*e+0]);
+        points.add(stl.vb[3*e+0], stl.vb[3*e+1], stl.vb[3*e+2], &ids[3*e+1]);
+        points.add(stl.vc[3*e+0], stl.vc[3*e+1], stl.vc[3*e+2], &ids[3*e+2]);
+        if (e % 1000 == 0)
+            cout << timer.update(e);
+    }
+    cout << timer.update(ncells) << endl;
+
+    time(&t1);
+    cout << "  Elapsed time: " << ((t1 - t0) / 60.0) << " mins\n";
+
+    // now, we can query the point cloud for its count,
+    // and use that to initialize the mesh
+    tmesh.init_points(points.n_points(), 3);
+    tmesh.init_cells(ncells, 3);
+
+    cout << "  mesh points = " << tmesh.n_points() << endl;
+    cout << "  mesh cells  = " << tmesh.n_cells() << endl;
+
+    // load points from point cloud into mesh
+    for (n = 0; n < tmesh.n_points(); n++)
+    {
+        double pt[3];
+        points.get_point(n, pt);
+        tmesh.set_point(n, pt);
+    }
+
+    // load cells into mesh
+    for (e = 0; e < tmesh.n_cells(); e++)
+    {
+        tmesh.set_cell(e, &ids[3*e]);
+    }
+
+    delete [] pts;
+    delete [] ids;
 }
 
 // EOF

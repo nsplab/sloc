@@ -14,6 +14,7 @@ common-cc := \
 	src/io_ucd.cc \
 	src/mesh.cc \
 	src/point_cloud.cc \
+	src/tri2quad.cc \
 	src/progress_timer.cc
 
 common-h := \
@@ -22,6 +23,7 @@ common-h := \
 	include/io_ucd.h \
 	include/mesh.h \
 	include/point_cloud.h \
+	include/tri2quad.h \
 	include/progress_timer.h
 
 # target source files from bin/ directory

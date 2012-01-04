@@ -3,10 +3,8 @@
 using namespace std;
 using namespace sloc;
 
-PointCloud::PointCloud(double tol)
+PointCloud::PointCloud() : npts(0), epsilon(1e-8)
 {
-    epsilon = tol;
-    npts = 0;
 }
 
 PointCloud::~PointCloud()
@@ -20,6 +18,11 @@ void PointCloud::clear()
     vector<double*>::iterator it;
     for (it = points.begin(); it != points.end(); ++it)
         delete *it;
+}
+
+void PointCloud::set_tolerance(double tol)
+{
+    epsilon = tol;
 }
 
 void PointCloud::get_point(int n, double *point)

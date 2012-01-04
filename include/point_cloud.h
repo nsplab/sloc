@@ -10,15 +10,19 @@ namespace sloc
 class PointCloud
 {
 public:
-    PointCloud(double tol);
+    PointCloud();
     ~PointCloud();
+
     void clear();
 
     int n_points() const;
-    void get_point(int n, double *point);
+
+    void set_tolerance(double tol);
+
     void add(double x, double y, double z, long *id);
 
-public:
+    void get_point(int n, double *point);
+
     bool naive_search(double x, double y, double z, long *id);
 
 public:

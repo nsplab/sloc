@@ -31,6 +31,8 @@ public:
     void set_cell(int e, long *cell);
 
     void write_ucd(const char *filename);
+    void read_ucd(const char *filename);
+    void read_stl(const char *filename);
 
 
 private:
@@ -49,6 +51,7 @@ inline int Mesh::n_cell_nodes() const { return _ncellnodes; }
 
 void ucd_write(const char *filename, Mesh& mesh);
 void ucd_read(const char *filename, Mesh& mesh);
+void stl_read(const char *filename, Mesh& mesh);
 
 // ----------------------------------------------------------------------------
 }
