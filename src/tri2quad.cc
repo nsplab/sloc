@@ -91,8 +91,22 @@ void sloc::tri2quad(Mesh& tmesh, Mesh& qmesh)
     PointCloud points;
     points.set_tolerance(1e-8);
 
+    // add points (already presumed unique) from tmesh
+    // directly to the point cloud
+    // XXX: move this into the PointCloud class
+    for (n = 0; n < tmesh.n_points(); n++)
+    {
+        double *p = new double[3];
+        tmesh.get_point(n, p);
+        points.points.push_back(p);
+    }
+    points.npts = tmesh.n_points();
+
     // four new points per triangle cell
     ids = new long[4 * tmesh.n_cells()];
+
+    cout << "  tmesh points = " << tmesh.n_points() << endl;
+    cout << "  tmesh cells  = " << tmesh.n_cells() << endl;
 
     cout << "  Finding triangle centroids and edge midpoints...\n";
     time(&t0);
