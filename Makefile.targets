@@ -35,9 +35,11 @@ bin-cc := \
 # target source files from tests/ directory
 tests-cc := \
 	tests/skull.cc \
+	tests/artery.cc \
 	tests/sphere.cc \
 	tests/sphere2.cc \
 	tests/stacked_cubes.cc \
+	tests/cloud.cc \
 	tests/hello.cc
 
 # -----------------------------------------------------------------------------

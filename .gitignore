@@ -3,9 +3,10 @@ Makefile.dep
 bin/bem_solve
 bin/fem_solve
 bin/mesh_info
+tests/hello
 tests/skull
+tests/artery
 tests/sphere
 tests/sphere2
 tests/stacked_cubes
-tests/hello
 tmp
