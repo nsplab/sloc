@@ -1,3 +1,9 @@
+/*
+ * The following two links are a good reference for the UCD format:
+ *   http://people.sc.fsu.edu/~jburkardt/html/ucd_format.html
+ *   http://people.sc.fsu.edu/~jburkardt/data/ucd/ucd.html
+ */
+
 #include "io_ucd.h"
 #include <iostream>
 #include <cassert>
@@ -8,10 +14,10 @@ using namespace sloc;
 // ----------------------------------------------------------------------------
 
 UCD_Cell::UCD_Cell()
+    : cell_id(-1),
+      mat_id(-1),
+      cell_type(UCD_CELL_NONE)
 {
-    cell_id = -1;
-    mat_id = -1;
-    cell_type = NONE;
 }
 
 UCD_Cell::~UCD_Cell()
@@ -22,47 +28,46 @@ int UCD_Cell::num_vertices() const
 {
     switch (cell_type)
     {
-    case TRI:
+    case UCD_CELL_TRI:
         return 3;
-    case QUAD:
+    case UCD_CELL_QUAD:
         return 4;
     default:
         return 0;
     }
 }
 
-enum UCD_Cell_Type sloc::string2celltype(const string& cell_type)
+UCD_Cell_Type sloc::string2celltype(const string& cell_type)
 {
     if (cell_type == "tri")
-        return TRI;
+        return UCD_CELL_TRI;
     if (cell_type == "quad")
-        return QUAD;
-    return NONE;
+        return UCD_CELL_QUAD;
+    return UCD_CELL_NONE;
 }
 
-string sloc::celltype2string(enum UCD_Cell_Type cell_type)
+string sloc::celltype2string(UCD_Cell_Type cell_type)
 {
     switch (cell_type)
     {
-    case TRI:
+    case UCD_CELL_TRI:
         return "tri";
-    case QUAD:
+    case UCD_CELL_QUAD:
         return "quad";
     default:
         return "none";
     }
 }
 
-
 // ----------------------------------------------------------------------------
 
 UCD_File::UCD_File()
+    : num_nodes(0),
+      num_cells(0),
+      num_ndata(0),
+      num_cdata(0),
+      num_mdata(0)
 {
-    num_nodes = 0;
-    num_cells = 0;
-    num_ndata = 0;
-    num_cdata = 0;
-    num_mdata = 0;
 }
 
 UCD_File::~UCD_File()

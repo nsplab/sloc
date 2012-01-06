@@ -10,10 +10,15 @@ namespace sloc
 {
 // ----------------------------------------------------------------------------
 
-enum UCD_Cell_Type { NONE=0, TRI, QUAD };
+typedef enum UCD_Cell_Type
+{
+    UCD_CELL_NONE=0,
+    UCD_CELL_TRI,
+    UCD_CELL_QUAD
+} UCD_Cell_Type;
 
-enum UCD_Cell_Type string2celltype(const std::string& cell_type);
-std::string celltype2string(enum UCD_Cell_Type cell_type);
+UCD_Cell_Type string2celltype(const std::string& cell_type);
+std::string celltype2string(UCD_Cell_Type cell_type);
 
 class UCD_Cell
 {
@@ -24,7 +29,7 @@ public:
 public:
     long cell_id;
     long mat_id;
-    enum UCD_Cell_Type cell_type;
+    UCD_Cell_Type cell_type;
     std::vector<long> cell_verts;
 };
 
