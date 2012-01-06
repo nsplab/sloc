@@ -37,9 +37,13 @@ void sloc::tri2quad(long t[3], long u[4], long q[3*4])
     // 
     // 
     // Connectivity of three new quad elements is just:
+    //
     //     AEDG
     //     BFDE
     //     CGDF
+    //
+    // Note that these orderings preserve the counterclockwise
+    // orientation of the original cell.
     //
 
     long A,B,C,D,E,F,G;
