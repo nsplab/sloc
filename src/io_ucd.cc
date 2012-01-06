@@ -104,7 +104,6 @@ void UCD_File::write(const char *filename)
 {
     ofstream os;
     os.open(filename);
-    clear();
     _write_header(os);
     _write_points(os);
     _write_cells(os);
