@@ -3,7 +3,7 @@
 using namespace std;
 using namespace sloc;
 
-PointCloud::PointCloud() : npts(0), epsilon(1e-8)
+PointCloud::PointCloud() : epsilon(1e-8), npts(0)
 {
 }
 
