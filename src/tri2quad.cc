@@ -137,10 +137,10 @@ void sloc::tri2quad(Mesh& tmesh, Mesh& qmesh)
         midpoint(A, C, G);
 
         // add new points to point cloud
-        points.add(D[0], D[1], D[3], &ids[4*e+0]);
-        points.add(E[0], E[1], E[3], &ids[4*e+1]);
-        points.add(F[0], F[1], F[3], &ids[4*e+2]);
-        points.add(G[0], G[1], G[3], &ids[4*e+3]);
+        points.add(D[0], D[1], D[2], &ids[4*e+0]);
+        points.add(E[0], E[1], E[2], &ids[4*e+1]);
+        points.add(F[0], F[1], F[2], &ids[4*e+2]);
+        points.add(G[0], G[1], G[2], &ids[4*e+3]);
 
         // update timer
         if (e % 1000 == 0)
