@@ -20,10 +20,6 @@ libdeal2-h := $(shell echo $D/include/deal.II/*/*.h)
 # load target source files
 include ./Makefile.targets
 
-#cc-files    := $(shell echo src/*.cc)
-#o-files     := $(cc-files:src/%.cc=lib/%.$(OBJEXT))
-#go-files    := $(cc-files:src/%.cc=lib/%.g.$(OBJEXT))
-
 # stuff from src/
 common-o := $(common-cc:src/%.cc=lib/%.$(OBJEXT))
 common-go := $(common-cc:src/%.cc=lib/%.g.$(OBJEXT))
