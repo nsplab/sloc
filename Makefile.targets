@@ -17,6 +17,7 @@ common-cc := \
 	src/tri2quad.cc \
 	src/dipole_sources.cc \
 	src/material_data.cc \
+	src/bem_fwd_problem.cc \
 	src/progress_timer.cc
 
 common-h := \
@@ -28,6 +29,7 @@ common-h := \
 	include/tri2quad.h \
 	include/dipole_sources.h \
 	include/material_data.h \
+	include/bem_fwd_problem.h \
 	include/progress_timer.h
 
 # target source files from bin/ directory
