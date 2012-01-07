@@ -18,6 +18,7 @@ void PointCloud::clear()
     vector<double*>::iterator it;
     for (it = points.begin(); it != points.end(); ++it)
         delete *it;
+    points.clear();
 }
 
 void PointCloud::set_tolerance(double tol)
