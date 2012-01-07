@@ -16,6 +16,7 @@ common-cc := \
 	src/point_cloud.cc \
 	src/tri2quad.cc \
 	src/dipole_sources.cc \
+	src/material_data.cc \
 	src/progress_timer.cc
 
 common-h := \
@@ -26,6 +27,7 @@ common-h := \
 	include/point_cloud.h \
 	include/tri2quad.h \
 	include/dipole_sources.h \
+	include/material_data.h \
 	include/progress_timer.h
 
 # target source files from bin/ directory
@@ -42,6 +44,7 @@ tests-cc := \
 	tests/sphere2.cc \
 	tests/stacked_cubes.cc \
 	tests/dipoles.cc \
+	tests/materials.cc \
 	tests/cloud.cc \
 	tests/hello.cc
 
