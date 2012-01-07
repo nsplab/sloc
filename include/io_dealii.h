@@ -41,10 +41,8 @@ void read_ucd_mesh(const char *filename, dealii::Triangulation<dim,spacedim>& tr
     GridIn<dim,spacedim> grid_in;
     grid_in.attach_triangulation(tria);
 
-    ifstream input_file;
-    input_file.open(filename);
-    grid_in.read_ucd(input_file);
-    input_file.close();
+    ifstream infile(filename);
+    grid_in.read_ucd(infile);
 
     const bool debug = true;
     if (debug)
