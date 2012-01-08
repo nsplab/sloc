@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cassert>
 #include <ctime>
+#include <cstring>
 #include "mesh.h"
 #include "io_ucd.h"
 #include "io_stl.h"
