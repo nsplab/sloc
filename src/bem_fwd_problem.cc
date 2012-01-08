@@ -175,7 +175,7 @@ void BEM_ForwardProblem::assemble_system()
                     (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
 
                 // XXX: multiple dipole sources?
-                const Point<3> dipole_source_position(0,0,0); // XXX: get rid of this line
+                const Point<3> dipole_source_position = dipole_sources(0).location;
                 const Point<3> R = q_points[q] - dipole_source_position;
                 double R3 = std::pow(R.square(), 1.5);
 
@@ -228,7 +228,7 @@ void BEM_ForwardProblem::compute_general_solution()
             << timer.wall_time() << std::endl;
 
     Triangulation<3> g_tria;
-    sloc::read_ucd_mesh("doublesphere.ucd", g_tria); // XXX: get filename from parameter file
+    sloc::read_ucd_mesh("tmp/doublesphere.ucd", g_tria); // XXX: get filename from parameter file
 
     FE_Q<3>         g_fe(1);
     DoFHandler<3>   g_dh(g_tria);
@@ -289,7 +289,7 @@ void BEM_ForwardProblem::compute_general_solution()
                 (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
 
             // XXX: multiple dipole sources?
-            const Point<3> dipole_source_position(0,0,0); // XXX: get rid of this line
+            const Point<3> dipole_source_position = dipole_sources(0).location;
             const Point<3> R = q_points[q] - dipole_source_position;
             const double R3 = std::pow(R.square(), 1.5);
 
