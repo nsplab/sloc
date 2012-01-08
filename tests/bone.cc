@@ -48,7 +48,7 @@ struct QuadCell
 };
 
 
-double centroid(int npts, double *pts, double c[3])
+void centroid(int npts, double *pts, double c[3])
 {
     int i;
     c[0] = c[1] = c[2] = 0.0;
