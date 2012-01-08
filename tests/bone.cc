@@ -63,10 +63,13 @@ void centroid(int npts, double *pts, double c[3])
     c[2] /= npts;
 }
 
-double distance2(QuadCell& cell)
+double distance2(QuadCell& cell, const Point<3>& origin)
 {
     double c[3];
     centroid(4, cell.verts, c);
+    c[0] -= origin(0);
+    c[1] -= origin(1);
+    c[2] -= origin(2);
     return c[0]*c[0] + c[1]*c[1] + c[2]*c[2];
 }
 
@@ -121,12 +124,13 @@ int main(void)
     QuadCell quad;
     double R2;
     Point<3> cell_normal;
+    Point<3> origin(0,0,0);
     for (it = ucd._cells.begin(); it != ucd._cells.end(); ++it)
     {
         sloc::UCD_Cell *cell = *it;
         quad.reinit(ucd._nodes, cell->cell_verts);
 
-        R2 = distance2(quad);
+        R2 = distance2(quad, origin);
         cell_normal = orientation(quad);
 
         mat_id = 0;
