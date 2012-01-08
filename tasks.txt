@@ -1,4 +1,7 @@
 ---high------------------------------------------------------------------------
+- split boundaries of Bone2.quad.ucd into material ids 0 and 1
+- merge Bone2.quad.ucd and Artery2_1.quad.ucd into single file head.ucd
+- create head_vol.ucd
 - Reading dealii parameter files
 - Fix code for handling multiple layers
 - Run bem_solve with small UCD meshes

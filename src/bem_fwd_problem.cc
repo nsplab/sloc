@@ -64,7 +64,7 @@ BEM_ForwardProblem::~BEM_ForwardProblem()
 
 void BEM_ForwardProblem::run()
 {
-    deallog << "BEM_ForwardProblem::run() - T=" << timer.wall_time() << std::endl;
+    deallog << "BEM_ForwardProblem::run() T=" << timer.wall_time() << std::endl;
     configure();
     compute_area();
     assemble_system();
@@ -78,18 +78,26 @@ void BEM_ForwardProblem::run()
 
 void BEM_ForwardProblem::configure()
 {
-    deallog << "BEM_ForwardProblem::configure() - T=" << timer.wall_time() << std::endl;
+    deallog << "BEM_ForwardProblem::configure() T=" << timer.wall_time() << std::endl;
 
     // configure the dipole sources
     // XXX: get filename from parameter file
-    const double d = std::pow(1/3.0, 0.5);
-    dipole_sources.add_source(Point<3>(0.5, 0.5, 0.5), Point<3>(d,d,d));
+    const double px = 0;
+    const double py = 0;
+    const double pz = 1;
+    dipole_sources.add_source(Point<3>(0.0, 0.0, 0.0), Point<3>(px, py, pz));
 
     // configure the material data
+    // http://ijbem.k.hosei.ac.jp/volume1/number1/pdf/ijbem_a4-10.pdf
+    // http://www.ehow.com/about_6501091_conductivity-blood_.html
     // XXX: get filename from parameter file
-    material_data.set_layer(0, 0, 2000); // avg 0
-    material_data.set_layer(1, 2000, 10); // avg 1.5
-    material_data.set_layer(2, 10, 0); // avg 100
+    const double sigma_air = 0.0;
+    const double sigma_bone = 0.018;
+    const double sigma_brain = 0.25;
+    const double sigma_plasma = 0.667;
+    material_data.set_layer(0, sigma_bone, sigma_air);
+    material_data.set_layer(1, sigma_brain, sigma_bone);
+    material_data.set_layer(2, sigma_plasma, sigma_brain);
 
     // use Gauss-Legendre quadrature rule of order 4
     quadrature = QGauss<2>(4);
@@ -103,8 +111,8 @@ void BEM_ForwardProblem::configure()
 
     // read the boundary mesh for our domain
     // XXX: get filename from parameter file
-    sloc::read_ucd_mesh("tmp/doublespheresurf.ucd", tria);
-    //sloc::write_triangulation("sphere.inp", tria);
+    sloc::read_ucd_mesh("tmp/head.ucd", tria);
+    //sloc::write_triangulation("head_tria.inp", tria);
 
     // enumerate the basis functions, to figure out how many unknowns we've got
     dh.distribute_dofs(fe);
@@ -118,7 +126,7 @@ void BEM_ForwardProblem::configure()
 
 void BEM_ForwardProblem::assemble_system()
 {
-    deallog << "BEM_ForwardProblem::assemble_system() - T=" << timer.wall_time() << std::endl;
+    deallog << "BEM_ForwardProblem::assemble_system() T=" << timer.wall_time() << std::endl;
 
     FEValues<2,3> fe_v(mapping, fe, quadrature,
                        update_values |
@@ -202,14 +210,14 @@ void BEM_ForwardProblem::assemble_system()
 
 void BEM_ForwardProblem::solve_system()
 {
-    deallog << "BEM_ForwardProblem::solve_system() - T=" << timer.wall_time() << std::endl;
+    deallog << "BEM_ForwardProblem::solve_system() T=" << timer.wall_time() << std::endl;
     SolverGMRES<Vector<double> > solver(solver_control);
     solver.solve(system_matrix, phi, system_rhs, PreconditionIdentity());
 }
 
 void BEM_ForwardProblem::output_results()
 {
-    deallog << "BEM_ForwardProblem::output_results() - T=" << timer.wall_time() << std::endl;
+    deallog << "BEM_ForwardProblem::output_results() T=" << timer.wall_time() << std::endl;
 
     DataOut<2, DoFHandler<2,3> > data_out;
     data_out.attach_dof_handler(dh);
@@ -224,11 +232,11 @@ void BEM_ForwardProblem::output_results()
 
 void BEM_ForwardProblem::compute_general_solution()
 {
-    deallog << "BEM_ForwardProblem::compute_general_solution() - T="
+    deallog << "BEM_ForwardProblem::compute_general_solution() T="
             << timer.wall_time() << std::endl;
 
     Triangulation<3> g_tria;
-    sloc::read_ucd_mesh("tmp/doublesphere.ucd", g_tria); // XXX: get filename from parameter file
+    sloc::read_ucd_mesh("tmp/head_volume.ucd", g_tria); // XXX: get filename from parameter file
 
     FE_Q<3>         g_fe(1);
     DoFHandler<3>   g_dh(g_tria);
@@ -315,7 +323,7 @@ void BEM_ForwardProblem::compute_area()
     // just a test.
     // we calculate the area by integrating the scalar 1 over the entire surface.
     //
-    deallog << "BEM_ForwardProblem::compute_area() - T=" << timer.wall_time() << std::endl;
+    deallog << "BEM_ForwardProblem::compute_area() T=" << timer.wall_time() << std::endl;
 
     double area = 0;
     const double one = 1;
