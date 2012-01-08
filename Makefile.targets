@@ -47,7 +47,6 @@ tests-cc := \
 	tests/stacked_cubes.cc \
 	tests/dipoles.cc \
 	tests/materials.cc \
-	tests/cloud.cc \
 	tests/hello.cc
 
 # -----------------------------------------------------------------------------
