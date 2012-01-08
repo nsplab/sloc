@@ -1,6 +1,4 @@
 
-Installation Requirements
--------------------------
 Requirements
 ------------
 
@@ -11,8 +9,12 @@ deal.II_ is a finite element differential equations analsys library.
 FLANN_ is a library for performing fast approximate nearest neighbor
 searches in high dimensional spaces.
 
+CGAL_ is a computational geometry algorithms library.
+
 .. _deal.II: http://www.dealii.org/
 .. _FLANN: https://github.com/mariusmuja/flann
+.. _CGAL: http://www.cgal.org/
+
 
 Installation Procedure
 ----------------------
@@ -33,6 +35,14 @@ Installing FLANN::
     $ cmake ..
     $ make
 
+Installing CGAL::
+    $ cd ~/src/
+    $ tar xvfz CGAL-3.9.tar.gz
+    $ cd CGAL-3.9
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
 
 
 .. vim: ft=rst

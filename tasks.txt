@@ -1,12 +1,7 @@
 ---high------------------------------------------------------------------------
 - Reading dealii parameter files
-- Split out classes in bem_solve.cc
 - Fix code for handling multiple layers
-- Verify the UCD writer (open files in paraview or some other program)
-- Fix the point cloud class to use kd-trees with the FLANN library
-- Make bem_solve read data from UCD meshes (instead of the exodus meshes)
 - Run bem_solve with small UCD meshes
-- Add material id to .ucd files
 - Run stacked cubes problem from .ucd files
 - Run spherical shell problem from .ucd files (create them with CGAL?)
 - Validate the BEM equation (examine the solver residuals)
@@ -22,11 +17,16 @@
 - Library for mesh coarsening?
 - Provide installation instructions for all dependencies
 - BEM/FEM solvers with libMesh? (so we can use tetrahedra)
+- Fix the point cloud class to use kd-trees with the FLANN library
 
 ---done------------------------------------------------------------------------
-- STL reader written
-- Mesh class written
-- UCD writer written (not validated yet)
-- Convert STL files to UCD
-- Convert triangular mesh to quadrilateral mesh (done? check a small mesh first)
+- Split out classes in bem_solve.cc
+- Figure out how to change material ids in .ucd files
+- Make bem_solve read data from UCD meshes (instead of the exodus meshes)
+- Verify the UCD writer (open files in paraview or some other program)
 - Make source file dependencies explicit in the makefile (instead of using *.{cc,h} glob patterns)
+- Convert triangular mesh to quadrilateral mesh
+- Convert STL files to UCD
+- UCD writer written
+- Mesh class written
+- STL reader written
