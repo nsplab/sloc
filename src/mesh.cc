@@ -60,13 +60,13 @@ void Mesh::clear_cells()
     _cells = 0;
 }
 
-void Mesh::get_point(int n, double *point)
+void Mesh::get_point(int n, double *point) const
 {
     for (int i = 0; i < _ndim; i++)
         point[i] = _pts[_ndim * n + i];
 }
 
-void Mesh::get_cell(int e, long *cell)
+void Mesh::get_cell(int e, long *cell) const
 {
     for (int i = 0; i < _ncellnodes; i++)
         cell[i] = _cells[_ncellnodes * e + i];

@@ -24,8 +24,8 @@ public:
     void init_cells(int ncells, int ncellnodes);
     void clear_cells();
 
-    void get_point(int n, double *point);
-    void get_cell(int e, long *cell);
+    void get_point(int n, double *point) const;
+    void get_cell(int e, long *cell) const;
 
     void set_point(int n, double *point);
     void set_cell(int e, long *cell);
