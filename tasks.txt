@@ -1,13 +1,10 @@
 ---high------------------------------------------------------------------------
 - split boundaries of Bone2.quad.ucd into material ids 0 and 1
-- merge Bone2.quad.ucd and Artery2_1.quad.ucd into single file head.ucd
-- create head_vol.ucd for computing the general solution
-- add material data array to sloc::Mesh
-- Reading dealii parameter files
 - Fix code for handling multiple layers
 - Run bem_solve with small UCD meshes
 - Run stacked cubes problem from .ucd files
 - Run spherical shell problem from .ucd files (create them with CGAL?)
+- Implement octree
 - Validate the BEM equation (examine the solver residuals)
 - Write up derivation of charge dipole equation
 - Lay down framework for solving the inverse problem
@@ -24,6 +21,9 @@
 - Fix the point cloud class to use kd-trees with the FLANN library
 
 ---done------------------------------------------------------------------------
+- Reading dealii parameter files
+- merge Bone2.quad.ucd and Artery2_1.quad.ucd into single file head.ucd
+- add material data array to sloc::Mesh
 - Split out classes in bem_solve.cc
 - Figure out how to change material ids in .ucd files
 - Make bem_solve read data from UCD meshes (instead of the exodus meshes)
