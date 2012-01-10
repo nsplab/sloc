@@ -28,7 +28,7 @@ public:
     int num_vertices() const;
 public:
     long cell_id;
-    long mat_id;
+    int mat_id;
     UCD_Cell_Type cell_type;
     std::vector<long> cell_verts;
 };

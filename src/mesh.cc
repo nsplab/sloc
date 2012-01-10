@@ -20,6 +20,7 @@ Mesh::Mesh()
     _ncellnodes = 0;
     _pts = 0;
     _cells = 0;
+    _mat = 0;
 }
 
 Mesh::~Mesh()
@@ -42,6 +43,8 @@ void Mesh::init_cells(int ncells, int ncellnodes)
     _ncells = ncells;
     _ncellnodes = ncellnodes;
     _cells = new long[_ncells * _ncellnodes];
+    _mat = new int[_ncells];
+    memset(_mat, 0, _ncells * sizeof(int)); // XXX: get rid of this line
 }
 
 void Mesh::clear_points()
@@ -55,9 +58,11 @@ void Mesh::clear_points()
 void Mesh::clear_cells()
 {
     if (_cells != 0) delete [] _cells;
+    if (_mat != 0) delete [] _mat;
     _ncells = 0;
     _ncellnodes = 0;
     _cells = 0;
+    _mat = 0;
 }
 
 void Mesh::get_point(int n, double *point) const
@@ -72,6 +77,11 @@ void Mesh::get_cell(int e, long *cell) const
         cell[i] = _cells[_ncellnodes * e + i];
 }
 
+void Mesh::get_mat(int e, int& mat) const
+{
+    mat = _mat[e];
+}
+
 void Mesh::set_point(int n, double *point)
 {
     for (int i = 0; i < _ndim; i++)
@@ -82,6 +92,11 @@ void Mesh::set_cell(int e, long *cell)
 {
     for (int i = 0; i < _ncellnodes; i++)
         _cells[_ncellnodes * e + i] = cell[i];
+}
+
+void Mesh::set_mat(int e, int mat)
+{
+    _mat[e] = mat;
 }
 
 void Mesh::write_ucd(const char *filename)
@@ -140,16 +155,14 @@ void sloc::ucd_write(const char *filename, Mesh& mesh)
 
     // Write out elements
     long *cell = new long[mesh.n_cell_nodes()];
+    int mat_id;
     for (e = 0; e < mesh.n_cells(); e++)
     {
         mesh.get_cell(e, cell);
-
-        // TODO: get the material id's from mesh object.
-        // for now, just assume it's always 1.
-        long material_id = 1;
+        mesh.get_mat(e, mat_id);
 
         file << e
-             << " " << material_id
+             << " " << mat_id
              << " " << celltype;
 
         for (i = 0; i < mesh.n_cell_nodes(); i++)
@@ -167,6 +180,7 @@ void sloc::ucd_read(const char *filename, Mesh& mesh)
 {
     cout << "sloc::ucd_read()\n";
     cout << "  filename = " << filename << endl;
+
     UCD_File ucd;
     ucd.read(filename);
 
@@ -187,6 +201,7 @@ void sloc::ucd_read(const char *filename, Mesh& mesh)
     for (int e = 0; e < mesh.n_cells(); e++)
     {
         UCD_Cell *c = ucd._cells[e];
+        mesh.set_mat(e, c->mat_id);
         for (int i = 0; i < mesh.n_cell_nodes(); i++)
             cell[i] = c->cell_verts[i];
         mesh.set_cell(e, cell);

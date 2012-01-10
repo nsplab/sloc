@@ -26,9 +26,11 @@ public:
 
     void get_point(int n, double *point) const;
     void get_cell(int e, long *cell) const;
+    void get_mat(int e, int& mat) const;
 
     void set_point(int n, double *point);
     void set_cell(int e, long *cell);
+    void set_mat(int e, int mat);
 
     void write_ucd(const char *filename);
     void read_ucd(const char *filename);
@@ -42,6 +44,7 @@ private:
     int _ncellnodes;
     double *_pts;
     long *_cells;
+    int *_mat;
 };
 
 inline int Mesh::n_dim() const { return _ndim; }
