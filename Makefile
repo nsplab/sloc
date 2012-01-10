@@ -114,7 +114,7 @@ clean-data:
 
 .PHONY: run all clean clean-data clean-lib
 
-lib/Makefile.dep: $(files-cc) $(files-h) Makefile
+lib/Makefile.dep: $(files-cc) $(files-h) Makefile Makefile.targets
 	@echo "============================ Remaking $@"
 	$D/common/scripts/make_dependencies $(INCLUDE) -Blib $(files-cc) > $@ || (rm -f $@; false)
 	if test -s $@; then : else rm -f $@ ; fi
