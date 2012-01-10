@@ -10,7 +10,7 @@
 using namespace dealii;
 using namespace std;
 
-int main(void)
+int main(int argc, char *argv[])
 {
     string sep = "----------------------------------------------------";
 
@@ -20,7 +20,19 @@ int main(void)
 
     try
     {
-        sloc::BEM_ForwardProblem fwd_problem;
+        string infile = "input.prm";
+        if (argc > 1)
+            infile = argv[1];
+
+        // read parameters from file
+        dealii::ParameterHandler parameter_handler;
+        sloc::BEM_ForwardProblem::Parameters parameters;
+        parameters.declare_parameters(parameter_handler);
+        parameter_handler.read_input(infile);
+        parameters.get_parameters(parameter_handler);
+
+        // initialize forward problem and run it
+        sloc::BEM_ForwardProblem fwd_problem(parameters);
         fwd_problem.run();
     }
     catch (std::exception &exc)

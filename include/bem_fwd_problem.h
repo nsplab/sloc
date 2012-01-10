@@ -24,7 +24,8 @@
 // for mapping reference element to arbitrary cell
 #include <deal.II/fe/mapping_q.h>
 
-// various utility functions
+// various utility classes and functions
+#include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/utilities.h>
 #include <deal.II/base/timer.h>
 
@@ -40,7 +41,21 @@ class BEM_ForwardProblem
 {
 public:
 
-    BEM_ForwardProblem();
+    class Parameters
+    {
+    public:
+        static void declare_parameters(dealii::ParameterHandler& prm);
+        void get_parameters(dealii::ParameterHandler& prm);
+    public:
+        std::string dipole_sources;
+        std::string material_data;
+        std::string surface_mesh;
+        std::string volume_mesh;
+    };
+
+public:
+
+    BEM_ForwardProblem(const Parameters& parameters);
     ~BEM_ForwardProblem();
 
     void run();
@@ -57,10 +72,14 @@ private:
 
 private:
 
+    // this parameters object encapsulates our access to any parameter
+    // we might need during the configuration step
+    const Parameters& parameters;
+
     // XXX: what is this sigma0 everyone keeps talking about
     static const double sigma0 = 1.0;
 
-    // location and components of current dipole source
+    // location and components of the current dipole sources
     DipoleSources dipole_sources;
     
     // conductivity values across interface surfaces (sigma_int, sigma_ext)

@@ -50,10 +50,30 @@ using namespace sloc;
 
 // ----------------------------------------------------------------------------
 
-BEM_ForwardProblem::BEM_ForwardProblem()
-    : fe(1),                // fe degree 1
-      dh(tria),             // attach triangulation to our dof_handler
-      mapping(1, true)      // mapping degree 1 (also, use same mapping on interior cells)
+void BEM_ForwardProblem::Parameters::declare_parameters(ParameterHandler& prm)
+{
+    prm.declare_entry("dipole_sources", "", Patterns::Anything(), "Current dipole sources");
+    prm.declare_entry("material_data", "", Patterns::Anything(), "Material data");
+    prm.declare_entry("surface_mesh", "", Patterns::Anything(), "Surface mesh");
+    prm.declare_entry("volume_mesh", "", Patterns::Anything(), "Volume mesh");
+
+}
+
+void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
+{
+    dipole_sources = prm.get("dipole_sources");
+    material_data = prm.get("material_data");
+    surface_mesh = prm.get("surface_mesh");
+    volume_mesh = prm.get("volume_mesh");
+}
+
+// ----------------------------------------------------------------------------
+
+BEM_ForwardProblem::BEM_ForwardProblem(const Parameters& parameters)
+    : parameters(parameters),   // parameters class
+      fe(1),                    // fe degree 1
+      dh(tria),                 // attach triangulation to our dof_handler
+      mapping(1, true)          // mapping degree 1 (also, use same mapping on interior cells)
 {
     timer.start();
 }
