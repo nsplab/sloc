@@ -111,7 +111,7 @@ void union_merge(sloc::Mesh& out, const sloc::Mesh& a, const sloc::Mesh& b)
 
 int main(void)
 {
-    string bone_file = "tmp/Bone2.quad.ucd";
+    string bone_file = "tmp/Bone2_1.quad.ucd";
     string artery_file = "tmp/Artery2_1.quad.ucd";
     string merged_file = "tmp/head.ucd";
 
