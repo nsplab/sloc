@@ -1,6 +1,7 @@
 #include "tri2quad.h"
 #include "point_cloud.h"
 #include "progress_timer.h"
+#include "mesh.h"
 
 using namespace std;
 using namespace sloc;

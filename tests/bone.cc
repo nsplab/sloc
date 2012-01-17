@@ -73,6 +73,16 @@ double distance2(QuadCell& cell, const Point<3>& origin)
     return c[0]*c[0] + c[1]*c[1] + c[2]*c[2];
 }
 
+Point<3> adjusted_position(QuadCell& cell, const Point<3>& origin)
+{
+  double c[3];
+  centroid(4, cell.verts, c);
+  c[0] -= origin(0);
+  c[1] -= origin(1);
+  c[2] -= origin(2);
+  return Point<3>(c[0], c[1], c[2]);
+}
+
 Point<3> cross(Point<3> A, Point<3> B)
 {
     //
@@ -89,6 +99,12 @@ Point<3> cross(Point<3> A, Point<3> B)
 
     return Point<3>(C[0], C[1], C[2]);
 }
+
+double dot(Point<3> A, Point<3> B)
+{
+  double product = A(0)*B(0) + A(1)*B(1) + A(2)*B(2);
+  return product;
+}        
 
 Point<3> orientation(QuadCell& cell)
 {
@@ -124,23 +140,71 @@ int main(void)
     QuadCell quad;
     double R2;
     Point<3> cell_normal;
-    Point<3> origin(0,0,0);
+    Point<3> cell_position;
+    Point<3> origin(3.33,-127.27,-118.17);
+    int ones = 0;
+    int zeros = 0;
+    double product;
     for (it = ucd._cells.begin(); it != ucd._cells.end(); ++it)
     {
         sloc::UCD_Cell *cell = *it;
         quad.reinit(ucd._nodes, cell->cell_verts);
 
         R2 = distance2(quad, origin);
+        
         cell_normal = orientation(quad);
+        cell_position = adjusted_position(quad, origin);
 
-        mat_id = 0;
+        // Take the dot product of two vectors. Positive = outward alignment.
+        product = dot(cell_normal, cell_position);
+        
+        if (product > 0)
+        {
+          mat_id = 0;
+          zeros++;
+        }
+        else
+        {
+          mat_id = 1;
+          ones++;
+        }
 
+        double y = cell_position(1);
+        double z = cell_position(2);
+
+        // Fix some cells on the bottom part of the skull.
+        if (z < -62.8 && mat_id == 1)
+        {
+            mat_id = 0;
+            ones--;
+            zeros++;
+        }
+
+        // Fix some cells on the bottom-front within a cylinder.
+        if ((y+82.6) * (y+82.6) + (z+62.8)*(z+62.8) < 47.5*47.5 && mat_id == 1)
+        {
+            mat_id = 0;
+            ones--;
+            zeros++;
+        }
+        
+        /*
+        if (R2 < 70*70)
+        {
+            mat_id = 1;
+        }
+        else
+        {
+            mat_id = 0;
+        }
+        */
         cell->mat_id = mat_id;
+        
     }
 
     cout << "Writing " << outfile << endl;
     ucd.write(outfile.c_str());
-
+    cout <<"zeros: " << zeros << ", ones: " << ones << endl;
     return 0;
 }
 
