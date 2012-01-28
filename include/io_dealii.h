@@ -36,7 +36,7 @@ void read_ucd_mesh(const char *filename, dealii::Triangulation<dim,spacedim>& tr
     using namespace std;
     using namespace dealii;
 
-    deallog << "read_ucd_mesh()" << endl;
+    deallog << "read_ucd_mesh() filename=" << filename << endl;
 
     GridIn<dim,spacedim> grid_in;
     grid_in.attach_triangulation(tria);
