@@ -47,6 +47,7 @@ public:
         static void declare_parameters(dealii::ParameterHandler& prm);
         void get_parameters(dealii::ParameterHandler& prm);
     public:
+        bool verbose;
         std::string dipole_sources;
         std::string material_data;
         std::string surface_mesh;
@@ -75,9 +76,6 @@ private:
     // this parameters object encapsulates our access to any parameter
     // we might need during the configuration step
     const Parameters& parameters;
-
-    // XXX: what is this sigma0 everyone keeps talking about
-    static const double sigma0 = 1.0;
 
     // location and components of the current dipole sources
     DipoleSources dipole_sources;

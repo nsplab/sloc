@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <deal.II/base/parameter_handler.h>
 #include "bem_fwd_problem.h"
 
 using namespace dealii;
@@ -29,6 +30,7 @@ int main(int argc, char *argv[])
         sloc::BEM_ForwardProblem::Parameters parameters;
         parameters.declare_parameters(parameter_handler);
         parameter_handler.read_input(infile);
+        parameter_handler.print_parameters(std::cout, dealii::ParameterHandler::ShortText);
         parameters.get_parameters(parameter_handler);
 
         // initialize forward problem and run it

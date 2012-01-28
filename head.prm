@@ -1,0 +1,6 @@
+# head.prm 
+set verbose = true
+set dipole_sources = ./data/head.dipole
+set material_data = ./data/head.sigma
+set surface_mesh = ./data/head.ucd
+set volume_mesh = ./data/head.vol.ucd

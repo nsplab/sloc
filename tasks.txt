@@ -1,5 +1,6 @@
 ---high------------------------------------------------------------------------
 - split boundaries of Bone2.quad.ucd into material ids 0 and 1
+- Allow comments in text input files (material, dipole, ...)
 - Fix code for handling multiple layers
 - Run bem_solve with small UCD meshes
 - Run stacked cubes problem from .ucd files

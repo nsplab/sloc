@@ -10,6 +10,8 @@ tests/sphere
 tests/sphere2
 tests/stacked_cubes
 tests/cloud
+tests/bone
+tests/head
 tests/dipoles
 tests/materials
 tmp

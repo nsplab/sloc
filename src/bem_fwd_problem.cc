@@ -52,15 +52,16 @@ using namespace sloc;
 
 void BEM_ForwardProblem::Parameters::declare_parameters(ParameterHandler& prm)
 {
-    prm.declare_entry("dipole_sources", "", Patterns::Anything(), "Current dipole sources");
-    prm.declare_entry("material_data", "", Patterns::Anything(), "Material data");
-    prm.declare_entry("surface_mesh", "", Patterns::Anything(), "Surface mesh");
-    prm.declare_entry("volume_mesh", "", Patterns::Anything(), "Volume mesh");
-
+    prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity");
+    prm.declare_entry("dipole_sources", "", Patterns::Anything(), "Filename for current dipole sources data");
+    prm.declare_entry("material_data", "", Patterns::Anything(), "Filename for material data");
+    prm.declare_entry("surface_mesh", "", Patterns::Anything(), "Filename for surface mesh");
+    prm.declare_entry("volume_mesh", "", Patterns::Anything(), "Filename for volume mesh");
 }
 
 void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
 {
+    verbose = prm.get_bool("verbose");
     dipole_sources = prm.get("dipole_sources");
     material_data = prm.get("material_data");
     surface_mesh = prm.get("surface_mesh");
@@ -90,7 +91,7 @@ void BEM_ForwardProblem::run()
     assemble_system();
     solve_system();
     output_results();
-    compute_general_solution();
+    //compute_general_solution();
     deallog << "last timer = " << timer.wall_time() << std::endl;
 }
 
@@ -101,23 +102,24 @@ void BEM_ForwardProblem::configure()
     deallog << "BEM_ForwardProblem::configure() T=" << timer.wall_time() << std::endl;
 
     // configure the dipole sources
-    // XXX: get filename from parameter file
-    const double px = 0;
-    const double py = 0;
-    const double pz = 1;
-    dipole_sources.add_source(Point<3>(0.0, 0.0, 0.0), Point<3>(px, py, pz));
+    Assert(!parameters.dipole_sources.empty(), ExcEmptyObject());
+    dipole_sources.read(parameters.dipole_sources.c_str());
 
     // configure the material data
     // http://ijbem.k.hosei.ac.jp/volume1/number1/pdf/ijbem_a4-10.pdf
     // http://www.ehow.com/about_6501091_conductivity-blood_.html
-    // XXX: get filename from parameter file
-    const double sigma_air = 0.0;
-    const double sigma_bone = 0.018;
-    const double sigma_brain = 0.25;
-    const double sigma_plasma = 0.667;
-    material_data.set_layer(0, sigma_bone, sigma_air);
-    material_data.set_layer(1, sigma_brain, sigma_bone);
-    material_data.set_layer(2, sigma_plasma, sigma_brain);
+    //
+    //  sigma_air = 0.0;
+    //  sigma_bone = 0.018;
+    //  sigma_brain = 0.25;
+    //  sigma_plasma = 0.667;
+    //
+    // Layer 0 -> (sigma_bone, sigma_air)
+    // Layer 1 -> (sigma_brain, sigma_bone)
+    // Layer 2 -> (sigma_plasma, sigma_brain)
+    //
+    Assert(!parameters.material_data.empty(), ExcEmptyObject());
+    material_data.read(parameters.material_data.c_str());
 
     // use Gauss-Legendre quadrature rule of order 4
     quadrature = QGauss<2>(4);
@@ -130,9 +132,8 @@ void BEM_ForwardProblem::configure()
     solver_control.set_tolerance(1.0e-10);
 
     // read the boundary mesh for our domain
-    // XXX: get filename from parameter file
-    sloc::read_ucd_mesh("tmp/head.ucd", tria);
-    //sloc::write_triangulation("head_tria.inp", tria);
+    Assert(!parameters.surface_mesh.empty(), ExcEmptyObject());
+    sloc::read_ucd_mesh(parameters.surface_mesh.c_str(), tria);
 
     // enumerate the basis functions, to figure out how many unknowns we've got
     dh.distribute_dofs(fe);
@@ -197,19 +198,36 @@ void BEM_ForwardProblem::assemble_system()
         {
             local_matrix_row_i = 0;
 
-            for (q = 0; q < n_q_points; ++q)
+            /*
+            std::cout << i << " "
+                << cell->vertex_index(0) << " "
+                << cell->vertex_index(1) << " "
+                << cell->vertex_index(2) << " "
+                << cell->vertex_index(3) << " "
+                << std::endl;
+            // */
+
+            for (j = 0; j < fe.dofs_per_cell; ++j)
             {
-                const double K =
-                    (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
 
-                // XXX: multiple dipole sources?
-                const Point<3> dipole_source_position = dipole_sources(0).location;
-                const Point<3> R = q_points[q] - dipole_source_position;
-                double R3 = std::pow(R.square(), 1.5);
+                if (i == cell->vertex_index(j)) continue;
 
-                for (j = 0; j < fe.dofs_per_cell; ++j)
+                const Point<3> node_position = cell->vertex(j);
+                std::cout << j << " " << node_position << std::endl;
+
+                for (q = 0; q < n_q_points; ++q)
+                {
+                    const double K =
+                        (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
+
+                    const Point<3> R = q_points[q] - node_position;
+
+                    double R3 = std::pow(R.square(), 1.5);
+
                     local_matrix_row_i(j) +=
                         K * (R / R3) * normals[q] * fe_v.shape_value(j,q) * fe_v.JxW(q);
+                }
+
             }
 
             for (j = 0; j < fe.dofs_per_cell; ++j)
@@ -224,8 +242,11 @@ void BEM_ForwardProblem::assemble_system()
         system_matrix(i,i) += 1.0;
     }
 
-    //sloc::write_matrix("system_matrix.dat", system_matrix);
-    //sloc::write_vector("system_rhs.dat", system_rhs);
+    if (true)
+    {
+        sloc::write_matrix("system_matrix.dat", system_matrix);
+        sloc::write_vector("system_rhs.dat", system_rhs);
+    }
 }
 
 void BEM_ForwardProblem::solve_system()
