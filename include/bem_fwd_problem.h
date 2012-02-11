@@ -47,6 +47,7 @@ public:
         static void declare_parameters(dealii::ParameterHandler& prm);
         void get_parameters(dealii::ParameterHandler& prm);
     public:
+        bool debug;
         bool verbose;
         std::string dipole_sources;
         std::string material_data;

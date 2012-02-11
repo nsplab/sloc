@@ -52,7 +52,8 @@ using namespace sloc;
 
 void BEM_ForwardProblem::Parameters::declare_parameters(ParameterHandler& prm)
 {
-    prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity");
+    prm.declare_entry("debug", "false", Patterns::Bool(), "Output debug information");
+    prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity level");
     prm.declare_entry("dipole_sources", "", Patterns::Anything(), "Filename for current dipole sources data");
     prm.declare_entry("material_data", "", Patterns::Anything(), "Filename for material data");
     prm.declare_entry("surface_mesh", "", Patterns::Anything(), "Filename for surface mesh");
@@ -61,6 +62,7 @@ void BEM_ForwardProblem::Parameters::declare_parameters(ParameterHandler& prm)
 
 void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
 {
+    debug = prm.get_bool("debug");
     verbose = prm.get_bool("verbose");
     dipole_sources = prm.get("dipole_sources");
     material_data = prm.get("material_data");
@@ -181,7 +183,7 @@ void BEM_ForwardProblem::assemble_system()
         cell = dh.begin_active(),
         endc = dh.end();
 
-    if (true)
+    if (parameters.debug)
     {
         cout << "dh.n_dofs = " << dh.n_dofs() << endl;
         cout << "fe.dofs_per_cell = " << fe.dofs_per_cell << endl;
@@ -206,7 +208,7 @@ void BEM_ForwardProblem::assemble_system()
         const double K =
             (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
 
-        if (true)
+        if (parameters.debug)
         {
             cout << "------------\n";
 
@@ -223,14 +225,14 @@ void BEM_ForwardProblem::assemble_system()
                      << cell->vertex(j)
                      << endl;
 
-            if (true)
+            if (parameters.debug && true)
             {
                 cout << "JxW q_points\n";
                 for (q = 0; q < n_q_points; ++q)
                     cout << fe_v.JxW(q) << ", " << q_points[q] << endl;
             }
 
-            if (true)
+            if (parameters.debug && true)
             {
                 cout << "shape_values\n";
                 for (q = 0; q < n_q_points; ++q)
@@ -241,14 +243,14 @@ void BEM_ForwardProblem::assemble_system()
                 }
             }
 
-            if (true)
+            if (parameters.debug && true)
             {
                 cout << "normals\n";
                 for (q = 0; q < n_q_points; ++q)
                     cout << normals[q] << endl;
             }
 
-            if (true)
+            if (parameters.debug && true)
             {
                 cout << "(R / R3)\n";
                 for (q = 0; q < n_q_points; ++q)
@@ -305,7 +307,7 @@ void BEM_ForwardProblem::assemble_system()
         system_matrix(i,i) += 1.0;
     }
 
-    if (true)
+    if (parameters.debug)
     {
         sloc::write_matrix("system_matrix.dat", system_matrix);
         sloc::write_vector("system_rhs.dat", system_rhs);
