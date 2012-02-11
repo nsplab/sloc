@@ -1,5 +1,6 @@
 # hex.prm
 
+set debug = true
 set verbose = true
 set dipole_sources = ./data/hex.dipole
 set material_data = ./data/hex.sigma

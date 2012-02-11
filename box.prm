@@ -1,0 +1,9 @@
+# box.prm
+
+set debug = true
+set verbose = true
+set dipole_sources = ./data/box.dipole
+set material_data = ./data/box.sigma
+set surface_mesh = ./data/box.surf.ucd
+set volume_mesh = ./data/box.ucd
+

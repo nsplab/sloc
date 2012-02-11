@@ -170,6 +170,8 @@ void BEM_ForwardProblem::assemble_system()
     DoFTools::map_dofs_to_support_points<2,3>(mapping, dh, support_points);
     //sloc::write_points("support_points.dat", support_points);
 
+    const bool debug = parameters.debug;
+
     // loop indices
     unsigned int i, j, q;
 
@@ -183,7 +185,7 @@ void BEM_ForwardProblem::assemble_system()
         cell = dh.begin_active(),
         endc = dh.end();
 
-    if (parameters.debug)
+    if (debug)
     {
         cout << "dh.n_dofs = " << dh.n_dofs() << endl;
         cout << "fe.dofs_per_cell = " << fe.dofs_per_cell << endl;
@@ -208,7 +210,7 @@ void BEM_ForwardProblem::assemble_system()
         const double K =
             (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
 
-        if (parameters.debug)
+        if (debug)
         {
             cout << "------------\n";
 
@@ -225,14 +227,14 @@ void BEM_ForwardProblem::assemble_system()
                      << cell->vertex(j)
                      << endl;
 
-            if (parameters.debug && true)
+            if (debug && true)
             {
                 cout << "JxW q_points\n";
                 for (q = 0; q < n_q_points; ++q)
                     cout << fe_v.JxW(q) << ", " << q_points[q] << endl;
             }
 
-            if (parameters.debug && true)
+            if (debug && true)
             {
                 cout << "shape_values\n";
                 for (q = 0; q < n_q_points; ++q)
@@ -243,14 +245,14 @@ void BEM_ForwardProblem::assemble_system()
                 }
             }
 
-            if (parameters.debug && true)
+            if (debug && true)
             {
                 cout << "normals\n";
                 for (q = 0; q < n_q_points; ++q)
                     cout << normals[q] << endl;
             }
 
-            if (parameters.debug && true)
+            if (debug && true)
             {
                 cout << "(R / R3)\n";
                 for (q = 0; q < n_q_points; ++q)
@@ -265,8 +267,9 @@ void BEM_ForwardProblem::assemble_system()
                     cout << endl;
                 }
             }
-
         }
+
+        if (debug) cout << "(R / R3) * normals\n";
 
         for (i = 0; i < n_dofs; ++i)
         {
@@ -290,9 +293,9 @@ void BEM_ForwardProblem::assemble_system()
 
                     local_matrix_row_i(j) += term;
 
-                    cout << std::setprecision(9) << term << " + ";
+                    if (debug) cout << term << " + ";
                 }
-                cout << "0 = " <<  local_matrix_row_i(j) << endl;
+                if (debug) cout << "0 = " <<  local_matrix_row_i(j) << endl;
             }
 
             for (j = 0; j < fe.dofs_per_cell; ++j)
@@ -307,7 +310,7 @@ void BEM_ForwardProblem::assemble_system()
         system_matrix(i,i) += 1.0;
     }
 
-    if (parameters.debug)
+    if (debug)
     {
         sloc::write_matrix("system_matrix.dat", system_matrix);
         sloc::write_vector("system_rhs.dat", system_rhs);

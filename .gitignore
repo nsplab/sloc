@@ -1,4 +1,5 @@
 *~
+tmp
 Makefile.dep
 bin/bem_solve
 bin/fem_solve
@@ -14,4 +15,9 @@ tests/bone
 tests/head
 tests/dipoles
 tests/materials
-tmp
+system_matrix.dat
+system_rhs.dat
+phi.vtk
+g_phi.vtk
+data/spheres.surf.ucd
+data/spheres.ucd
