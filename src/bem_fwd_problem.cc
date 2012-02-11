@@ -147,6 +147,8 @@ void BEM_ForwardProblem::configure()
 
 void BEM_ForwardProblem::assemble_system()
 {
+    using namespace std;
+
     deallog << "BEM_ForwardProblem::assemble_system() T=" << timer.wall_time() << std::endl;
 
     FEValues<2,3> fe_v(mapping, fe, quadrature,
@@ -179,6 +181,13 @@ void BEM_ForwardProblem::assemble_system()
         cell = dh.begin_active(),
         endc = dh.end();
 
+    if (true)
+    {
+        cout << "dh.n_dofs = " << dh.n_dofs() << endl;
+        cout << "fe.dofs_per_cell = " << fe.dofs_per_cell << endl;
+        cout << "fe_v.n_quadrature_points = " << fe_v.n_quadrature_points << endl;
+    }
+
     for (; cell != endc; ++cell)
     {
         // XXX: set up data dump for a single cell (for debugging)
@@ -194,40 +203,94 @@ void BEM_ForwardProblem::assemble_system()
         const double sigma_ext = material_data.get_sigma_ext(mat_id);
         const double sigma_avg = (sigma_int + sigma_ext) / 2;
 
+        const double K =
+            (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
+
+        if (true)
+        {
+            cout << "------------\n";
+
+            cout << "K = " << K << endl;
+            cout << "cell " 
+                 << cell->vertex_index(0) << " "
+                 << cell->vertex_index(1) << " "
+                 << cell->vertex_index(2) << " "
+                 << cell->vertex_index(3) << " "
+                 << endl;
+
+            for (j = 0; j < fe.dofs_per_cell; ++j)
+                cout << "node " << cell->vertex_index(j) << " -> "
+                     << cell->vertex(j)
+                     << endl;
+
+            if (true)
+            {
+                cout << "JxW q_points\n";
+                for (q = 0; q < n_q_points; ++q)
+                    cout << fe_v.JxW(q) << ", " << q_points[q] << endl;
+            }
+
+            if (true)
+            {
+                cout << "shape_values\n";
+                for (q = 0; q < n_q_points; ++q)
+                {
+                    for (j = 0; j < fe.dofs_per_cell; ++j)
+                        cout << fe_v.shape_value(j,q) << " ";
+                    cout << endl;
+                }
+            }
+
+            if (true)
+            {
+                cout << "normals\n";
+                for (q = 0; q < n_q_points; ++q)
+                    cout << normals[q] << endl;
+            }
+
+            if (true)
+            {
+                cout << "(R / R3)\n";
+                for (q = 0; q < n_q_points; ++q)
+                {
+                    for (j = 0; j < fe.dofs_per_cell; ++j)
+                    {
+                        const Point<3> node_position = cell->vertex(j);
+                        const Point<3> R = q_points[q] - node_position;
+                        const double R3 = std::pow(R.square(), 1.5);
+                        cout << (R / R3) << ", ";
+                    }
+                    cout << endl;
+                }
+            }
+
+        }
+
         for (i = 0; i < n_dofs; ++i)
         {
             local_matrix_row_i = 0;
 
-            /*
-            std::cout << i << " "
-                << cell->vertex_index(0) << " "
-                << cell->vertex_index(1) << " "
-                << cell->vertex_index(2) << " "
-                << cell->vertex_index(3) << " "
-                << std::endl;
-            // */
-
             for (j = 0; j < fe.dofs_per_cell; ++j)
             {
 
-                if (i == cell->vertex_index(j)) continue;
+                //if (i == cell->vertex_index(j)) continue;
 
                 const Point<3> node_position = cell->vertex(j);
-                std::cout << j << " " << node_position << std::endl;
 
                 for (q = 0; q < n_q_points; ++q)
                 {
-                    const double K =
-                        (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
-
                     const Point<3> R = q_points[q] - node_position;
 
                     double R3 = std::pow(R.square(), 1.5);
 
-                    local_matrix_row_i(j) +=
+                    double term = 
                         K * (R / R3) * normals[q] * fe_v.shape_value(j,q) * fe_v.JxW(q);
-                }
 
+                    local_matrix_row_i(j) += term;
+
+                    cout << std::setprecision(9) << term << " + ";
+                }
+                cout << "0 = " <<  local_matrix_row_i(j) << endl;
             }
 
             for (j = 0; j < fe.dofs_per_cell; ++j)
