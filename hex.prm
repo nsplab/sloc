@@ -1,0 +1,7 @@
+# hex.prm
+
+set verbose = true
+set dipole_sources = ./data/hex.dipole
+set material_data = ./data/hex.sigma
+set surface_mesh = ./data/hex.surf.ucd
+set volume_mesh = ./data/hex.ucd

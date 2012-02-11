@@ -2,7 +2,7 @@
 # main target
 target = bem_solve
 
-run-parameters = 
+run-parameters = hex.prm
 debug-mode = on
 clean-up-files = *dat
 
