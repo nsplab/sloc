@@ -275,27 +275,34 @@ void BEM_ForwardProblem::assemble_system()
         {
             local_matrix_row_i = 0;
 
-            for (j = 0; j < fe.dofs_per_cell; ++j)
+            DoFHandler<2,3>::active_cell_iterator cell2 = dh.begin_active();
+            for (; cell2 != endc; ++cell2)
             {
-
-                //if (i == cell->vertex_index(j)) continue;
-
-                const Point<3> node_position = cell->vertex(j);
-
-                for (q = 0; q < n_q_points; ++q)
+                for (j = 0; j < fe.dofs_per_cell; ++j)
                 {
-                    const Point<3> R = q_points[q] - node_position;
+                    if (i != cell2->vertex_index(j))
+                        continue;
 
-                    double R3 = std::pow(R.square(), 1.5);
+                    const Point<3> node_position = cell2->vertex(j);
 
-                    double term = 
-                        K * (R / R3) * normals[q] * fe_v.shape_value(j,q) * fe_v.JxW(q);
+                    if (debug) cout << "i=" << i << " j=" << j << "  ";
 
-                    local_matrix_row_i(j) += term;
+                    for (q = 0; q < n_q_points; ++q)
+                    {
+                        const Point<3> R = q_points[q] - node_position;
 
-                    if (debug) cout << term << " + ";
+                        double R3 = std::pow(R.square(), 1.5);
+
+                        double term = 
+                            K * (R / R3) * normals[q] * fe_v.shape_value(j,q) * fe_v.JxW(q);
+
+                        local_matrix_row_i(j) += term;
+
+                        if (debug) cout << term << " + ";
+                    }
+
+                    if (debug) cout << "0 = " <<  local_matrix_row_i(j) << endl;
                 }
-                if (debug) cout << "0 = " <<  local_matrix_row_i(j) << endl;
             }
 
             for (j = 0; j < fe.dofs_per_cell; ++j)
