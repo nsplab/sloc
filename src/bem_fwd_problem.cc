@@ -43,6 +43,7 @@
 
 /* other includes */
 #include "io_dealii.h"
+#include "progress_timer.h"
 
 using namespace dealii;
 using namespace sloc;
@@ -200,10 +201,11 @@ void BEM_ForwardProblem::assemble_system()
         cout << "fe_v.n_quadrature_points = " << fe_v.n_quadrature_points << endl;
     }
 
-    for (; cell != endc; ++cell)
+    ProgressTimer ptimer;
+    cout << ptimer.header("cells");
+    ptimer.start(tria.n_active_cells());
+    for (unsigned int e = 0; cell != endc; ++cell, ++e)
     {
-        // XXX: set up data dump for a single cell (for debugging)
-
         fe_v.reinit(cell);
         cell->get_dof_indices(local_dof_indices);
 
@@ -318,7 +320,10 @@ void BEM_ForwardProblem::assemble_system()
                 system_matrix(i, local_dof_indices[j]) += -local_matrix_row_i(j);
             }
         }
+
+        cout << ptimer.update(e);
     }
+    cout << ptimer.update(tria.n_active_cells()) << endl;
 
     for (i = 0; i < n_dofs; ++i)
     {
