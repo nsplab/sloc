@@ -53,6 +53,8 @@ public:
         std::string material_data;
         std::string surface_mesh;
         std::string volume_mesh;
+        std::string surface_phi;
+        std::string volume_phi;
     };
 
 public:

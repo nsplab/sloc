@@ -36,11 +36,10 @@
 #include <deal.II/base/table.h>
 
 /* standard includes */
-//#include <cmath>
+#include <string>
 #include <iostream>
 #include <fstream>
-#include <string>
-//#include <cstdlib>
+#include <sstream>
 
 /* other includes */
 #include "io_dealii.h"
@@ -58,6 +57,8 @@ void BEM_ForwardProblem::Parameters::declare_parameters(ParameterHandler& prm)
     prm.declare_entry("material_data", "", Patterns::Anything(), "Filename for material data");
     prm.declare_entry("surface_mesh", "", Patterns::Anything(), "Filename for surface mesh");
     prm.declare_entry("volume_mesh", "", Patterns::Anything(), "Filename for volume mesh");
+    prm.declare_entry("surface_phi", "phi", Patterns::Anything(), "Filename prefix for vtk output file (surface solution)");
+    prm.declare_entry("volume_phi", "phi_vol", Patterns::Anything(), "Filename prefix for vtk output file (volume solution)");
 }
 
 void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
@@ -68,6 +69,8 @@ void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
     material_data = prm.get("material_data");
     surface_mesh = prm.get("surface_mesh");
     volume_mesh = prm.get("volume_mesh");
+    surface_phi = prm.get("surface_phi");
+    volume_phi = prm.get("volume_phi");
 }
 
 // ----------------------------------------------------------------------------
@@ -136,6 +139,11 @@ void BEM_ForwardProblem::configure()
     // read the boundary mesh for our domain
     Assert(!parameters.surface_mesh.empty(), ExcEmptyObject());
     sloc::read_ucd_mesh(parameters.surface_mesh.c_str(), tria);
+
+    // check whether our other parameters are set
+    Assert(!parameters.volume_mesh.empty(), ExcEmptyObject());
+    Assert(!parameters.surface_phi.empty(), ExcEmptyObject());
+    Assert(!parameters.volume_phi.empty(), ExcEmptyObject());
 
     // enumerate the basis functions, to figure out how many unknowns we've got
     dh.distribute_dofs(fe);
@@ -340,8 +348,11 @@ void BEM_ForwardProblem::output_results()
     data_out.add_data_vector(phi, "phi");
     data_out.build_patches(mapping, mapping.get_degree());
 
-    std::ofstream outfile("phi.vtk");
-    data_out.write_vtk(outfile);
+    std::stringstream ss;
+    ss << parameters.surface_phi << ".vtk";
+    std::string outfile = ss.str();
+    std::ofstream os(outfile.c_str());
+    data_out.write_vtk(os);
 }
 
 // ----------------------------------------------------------------------------
@@ -352,7 +363,7 @@ void BEM_ForwardProblem::compute_general_solution()
             << timer.wall_time() << std::endl;
 
     Triangulation<3> g_tria;
-    sloc::read_ucd_mesh("tmp/head_volume.ucd", g_tria); // XXX: get filename from parameter file
+    sloc::read_ucd_mesh(parameters.volume_mesh.c_str(), g_tria);
 
     FE_Q<3>         g_fe(1);
     DoFHandler<3>   g_dh(g_tria);
@@ -429,8 +440,11 @@ void BEM_ForwardProblem::compute_general_solution()
     data_out.add_data_vector(g_phi, "g_phi");
     data_out.build_patches();
 
-    std::ofstream outfile("g_phi.vtk");
-    data_out.write_vtk(outfile);
+    std::stringstream ss;
+    ss << parameters.volume_phi << ".vtk";
+    std::string outfile = ss.str();
+    std::ofstream os(outfile.c_str());
+    data_out.write_vtk(os);
 }
 
 void BEM_ForwardProblem::compute_area()
