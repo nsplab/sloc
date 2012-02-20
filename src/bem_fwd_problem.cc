@@ -52,26 +52,28 @@ using namespace sloc;
 
 void BEM_ForwardProblem::Parameters::declare_parameters(ParameterHandler& prm)
 {
-    prm.declare_entry("debug", "false", Patterns::Bool(), "Output debug information");
-    prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity level");
     prm.declare_entry("dipole_sources", "", Patterns::Anything(), "Filename for current dipole sources data");
     prm.declare_entry("material_data", "", Patterns::Anything(), "Filename for material data");
     prm.declare_entry("surface_mesh", "", Patterns::Anything(), "Filename for surface mesh");
     prm.declare_entry("volume_mesh", "", Patterns::Anything(), "Filename for volume mesh");
     prm.declare_entry("surface_phi", "phi", Patterns::Anything(), "Filename prefix for vtk output file (surface solution)");
     prm.declare_entry("volume_phi", "phi_vol", Patterns::Anything(), "Filename prefix for vtk output file (volume solution)");
+    prm.declare_entry("debug_logfile", "debug.log", Patterns::Anything(), "Filename for debugging logfile");
+    prm.declare_entry("debug", "false", Patterns::Bool(), "Output debug information");
+    prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity level");
 }
 
 void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
 {
-    debug = prm.get_bool("debug");
-    verbose = prm.get_bool("verbose");
     dipole_sources = prm.get("dipole_sources");
     material_data = prm.get("material_data");
     surface_mesh = prm.get("surface_mesh");
     volume_mesh = prm.get("volume_mesh");
     surface_phi = prm.get("surface_phi");
     volume_phi = prm.get("volume_phi");
+    debug_logfile = prm.get("debug_logfile");
+    debug = prm.get_bool("debug");
+    verbose = prm.get_bool("verbose");
 }
 
 // ----------------------------------------------------------------------------
@@ -146,6 +148,10 @@ void BEM_ForwardProblem::configure()
     Assert(!parameters.surface_phi.empty(), ExcEmptyObject());
     Assert(!parameters.volume_phi.empty(), ExcEmptyObject());
 
+    // open logging stream
+    if (!parameters.debug_logfile.empty())
+        log.open(parameters.debug_logfile.c_str());
+
     // enumerate the basis functions, to figure out how many unknowns we've got
     dh.distribute_dofs(fe);
 
@@ -194,11 +200,12 @@ void BEM_ForwardProblem::assemble_system()
         cell = dh.begin_active(),
         endc = dh.end();
 
+
     if (debug)
     {
-        cout << "dh.n_dofs = " << dh.n_dofs() << endl;
-        cout << "fe.dofs_per_cell = " << fe.dofs_per_cell << endl;
-        cout << "fe_v.n_quadrature_points = " << fe_v.n_quadrature_points << endl;
+        log << "dh.n_dofs = " << dh.n_dofs() << endl;
+        log << "fe.dofs_per_cell = " << fe.dofs_per_cell << endl;
+        log << "fe_v.n_quadrature_points = " << fe_v.n_quadrature_points << endl;
     }
 
     ProgressTimer ptimer;
@@ -222,49 +229,54 @@ void BEM_ForwardProblem::assemble_system()
 
         if (debug)
         {
-            cout << "------------\n";
+            log << "------------\n";
 
-            cout << "K = " << K << endl;
-            cout << "cell " 
-                 << cell->vertex_index(0) << " "
-                 << cell->vertex_index(1) << " "
-                 << cell->vertex_index(2) << " "
-                 << cell->vertex_index(3) << " "
-                 << endl;
+            log << "K = " << K << endl;
+            log << "cell "
+                << cell->vertex_index(0) << " "
+                << cell->vertex_index(1) << " "
+                << cell->vertex_index(2) << " "
+                << cell->vertex_index(3) << " "
+                << endl;
+
+            log << "local_dof_indices ";
+            for (j = 0; j < fe.dofs_per_cell; ++j)
+                log << local_dof_indices[j] << " ";
+            log << endl;
 
             for (j = 0; j < fe.dofs_per_cell; ++j)
-                cout << "node " << cell->vertex_index(j) << " -> "
-                     << cell->vertex(j)
-                     << endl;
+                log << "node " << cell->vertex_index(j) << " -> "
+                    << cell->vertex(j)
+                    << endl;
 
             if (debug && true)
             {
-                cout << "JxW q_points\n";
+                log << "JxW q_points\n";
                 for (q = 0; q < n_q_points; ++q)
-                    cout << fe_v.JxW(q) << ", " << q_points[q] << endl;
+                    log << fe_v.JxW(q) << ", " << q_points[q] << endl;
             }
 
             if (debug && true)
             {
-                cout << "shape_values\n";
+                log << "shape_values\n";
                 for (q = 0; q < n_q_points; ++q)
                 {
                     for (j = 0; j < fe.dofs_per_cell; ++j)
-                        cout << fe_v.shape_value(j,q) << " ";
-                    cout << endl;
+                        log << fe_v.shape_value(j,q) << " ";
+                    log << endl;
                 }
             }
 
             if (debug && true)
             {
-                cout << "normals\n";
+                log << "normals\n";
                 for (q = 0; q < n_q_points; ++q)
-                    cout << normals[q] << endl;
+                    log << normals[q] << endl;
             }
 
             if (debug && true)
             {
-                cout << "(R / R3)\n";
+                log << "(R / R3)\n";
                 for (q = 0; q < n_q_points; ++q)
                 {
                     for (j = 0; j < fe.dofs_per_cell; ++j)
@@ -272,14 +284,14 @@ void BEM_ForwardProblem::assemble_system()
                         const Point<3> node_position = cell->vertex(j);
                         const Point<3> R = q_points[q] - node_position;
                         const double R3 = std::pow(R.square(), 1.5);
-                        cout << (R / R3) << ", ";
+                        log << (R / R3) << ", ";
                     }
-                    cout << endl;
+                    log << endl;
                 }
             }
         }
 
-        if (debug) cout << "(R / R3) * normals\n";
+        if (debug) log << "(R / R3) * normals\n";
 
         for (i = 0; i < n_dofs; ++i)
         {

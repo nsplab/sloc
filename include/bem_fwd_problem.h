@@ -30,6 +30,7 @@
 #include <deal.II/base/timer.h>
 
 /* other includes */
+#include <fstream>
 #include "dipole_sources.h"
 #include "material_data.h"
 
@@ -47,14 +48,15 @@ public:
         static void declare_parameters(dealii::ParameterHandler& prm);
         void get_parameters(dealii::ParameterHandler& prm);
     public:
-        bool debug;
-        bool verbose;
         std::string dipole_sources;
         std::string material_data;
         std::string surface_mesh;
         std::string volume_mesh;
         std::string surface_phi;
         std::string volume_phi;
+        std::string debug_logfile;
+        bool debug;
+        bool verbose;
     };
 
 public:
@@ -113,6 +115,9 @@ private:
 
     // for measuring wallclock time
     dealii::Timer timer;
+
+    // log stream
+    std::ofstream log;
 };
 
 // ----------------------------------------------------------------------------
