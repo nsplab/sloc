@@ -188,7 +188,7 @@ void BEM_ForwardProblem::assemble_system()
     const bool debug = parameters.debug;
 
     // loop indices
-    unsigned int i, j, q;
+    unsigned int i, j, q, e;
 
     // contribution from current dipole sources
     for (i = 0; i < n_dofs; ++i)
@@ -208,10 +208,17 @@ void BEM_ForwardProblem::assemble_system()
         log << "fe_v.n_quadrature_points = " << fe_v.n_quadrature_points << endl;
     }
 
+
+    // build index of dof vertex positions
+    std::vector<Point<3> > dof_locations(n_dofs);
+    for (cell = dh.begin_active(); cell != dh.end(); ++cell)
+        for (j = 0; j < fe.dofs_per_cell; ++j)
+            dof_locations[cell->vertex_index(j)] = cell->vertex(j);
+
     ProgressTimer ptimer;
     cout << ptimer.header("cells");
     ptimer.start(tria.n_active_cells());
-    for (unsigned int e = 0; cell != endc; ++cell, ++e)
+    for (e = 0, cell = dh.begin_active(); cell != endc; ++cell, ++e)
     {
         fe_v.reinit(cell);
         cell->get_dof_indices(local_dof_indices);
@@ -297,34 +304,27 @@ void BEM_ForwardProblem::assemble_system()
         {
             local_matrix_row_i = 0;
 
-            DoFHandler<2,3>::active_cell_iterator cell2 = dh.begin_active();
-            for (; cell2 != endc; ++cell2)
+            const Point<3> node_position = dof_locations[i];
+
+            if (debug) log << "i=" << i << " ";
+
+            for (j = 0; j < fe.dofs_per_cell; ++j)
             {
-                for (j = 0; j < fe.dofs_per_cell; ++j)
+                for (q = 0; q < n_q_points; ++q)
                 {
-                    if (i != cell2->vertex_index(j))
-                        continue;
+                    const Point<3> R = q_points[q] - node_position;
 
-                    const Point<3> node_position = cell2->vertex(j);
+                    const double R3 = std::pow(R.square(), 1.5);
 
-                    if (debug) cout << "i=" << i << " j=" << j << "  ";
+                    const double term =
+                        K * (R / R3) * normals[q] * fe_v.shape_value(j,q) * fe_v.JxW(q);
 
-                    for (q = 0; q < n_q_points; ++q)
-                    {
-                        const Point<3> R = q_points[q] - node_position;
+                    local_matrix_row_i(j) += term;
 
-                        double R3 = std::pow(R.square(), 1.5);
-
-                        double term = 
-                            K * (R / R3) * normals[q] * fe_v.shape_value(j,q) * fe_v.JxW(q);
-
-                        local_matrix_row_i(j) += term;
-
-                        if (debug) cout << term << " + ";
-                    }
-
-                    if (debug) cout << "0 = " <<  local_matrix_row_i(j) << endl;
+                    if (debug) log << term << " + ";
                 }
+
+                if (debug) log << "0 = " <<  local_matrix_row_i(j) << endl;
             }
 
             for (j = 0; j < fe.dofs_per_cell; ++j)
