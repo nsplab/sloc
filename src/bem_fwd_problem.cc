@@ -209,11 +209,14 @@ void BEM_ForwardProblem::assemble_system()
     }
 
 
-    // build index of dof vertex positions
+    // build index of dof vertex positions, using the dofs ordering (not vertex ordering!)
     std::vector<Point<3> > dof_locations(n_dofs);
     for (cell = dh.begin_active(); cell != dh.end(); ++cell)
+    {
+        cell->get_dof_indices(local_dof_indices);
         for (j = 0; j < fe.dofs_per_cell; ++j)
-            dof_locations[cell->vertex_index(j)] = cell->vertex(j);
+            dof_locations[local_dof_indices[j]] = cell->vertex(j);
+    }
 
     ProgressTimer ptimer;
     cout << ptimer.header("cells");
