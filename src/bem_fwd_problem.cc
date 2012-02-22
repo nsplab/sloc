@@ -180,9 +180,9 @@ void BEM_ForwardProblem::assemble_system()
     std::vector<unsigned int> local_dof_indices(fe.dofs_per_cell);
     dealii::Vector<double> local_matrix_row_i(fe.dofs_per_cell);
 
-    typedef dealii::Point<3> Point3D;
-    std::vector<Point3D> support_points(n_dofs);
-    DoFTools::map_dofs_to_support_points<2,3>(mapping, dh, support_points);
+    //typedef dealii::Point<3> Point3D;
+    //std::vector<Point3D> support_points(n_dofs);
+    //DoFTools::map_dofs_to_support_points<2,3>(mapping, dh, support_points);
     //sloc::write_points("support_points.dat", support_points);
 
     const bool debug = parameters.debug;
@@ -196,10 +196,8 @@ void BEM_ForwardProblem::assemble_system()
         system_rhs(i) = 2 * dipole_sources.primary_contribution(support_points[i]);
     }
 
-    DoFHandler<2,3>::active_cell_iterator
-        cell = dh.begin_active(),
-        endc = dh.end();
-
+    DoFHandler<2,3>::active_cell_iterator cell, endc;
+    endc = dh.end();
 
     if (debug)
     {
@@ -208,10 +206,10 @@ void BEM_ForwardProblem::assemble_system()
         log << "fe_v.n_quadrature_points = " << fe_v.n_quadrature_points << endl;
     }
 
-
     // build index of dof vertex positions, using the dofs ordering (not vertex ordering!)
-    std::vector<Point<3> > dof_locations(n_dofs);
-    for (cell = dh.begin_active(); cell != dh.end(); ++cell)
+    typedef dealii::Point<3> Point3D;
+    std::vector<Point3D> dof_locations(n_dofs);
+    for (cell = dh.begin_active(); cell != endc; ++cell)
     {
         cell->get_dof_indices(local_dof_indices);
         for (j = 0; j < fe.dofs_per_cell; ++j)
@@ -284,21 +282,6 @@ void BEM_ForwardProblem::assemble_system()
                     log << normals[q] << endl;
             }
 
-            if (debug && true)
-            {
-                log << "(R / R3)\n";
-                for (q = 0; q < n_q_points; ++q)
-                {
-                    for (j = 0; j < fe.dofs_per_cell; ++j)
-                    {
-                        const Point<3> node_position = cell->vertex(j);
-                        const Point<3> R = q_points[q] - node_position;
-                        const double R3 = std::pow(R.square(), 1.5);
-                        log << (R / R3) << ", ";
-                    }
-                    log << endl;
-                }
-            }
         }
 
         if (debug) log << "(R / R3) * normals\n";
