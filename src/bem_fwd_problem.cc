@@ -376,27 +376,40 @@ void BEM_ForwardProblem::compute_general_solution()
 
     g_phi.reinit(g_dh.n_dofs());
 
-    FEValues<2,3> fe_v(mapping, fe, quadrature,
-                       update_values |
-                       update_cell_normal_vectors |
-                       update_quadrature_points |
-                       update_JxW_values);
+    FEValues<2,3> fe_values(mapping, fe, quadrature,
+                            update_values |
+                            update_cell_normal_vectors |
+                            update_quadrature_points |
+                            update_JxW_values);
 
-    const unsigned int n_q_points = fe_v.n_quadrature_points;
-
-    std::vector<unsigned int> local_dof_indices(fe.dofs_per_cell);
+    const unsigned int n_q_points = fe_values.n_quadrature_points;
     std::vector<double> local_phi(n_q_points);
-
-    typedef dealii::Point<3> Point3D;
-    std::vector<Point3D> g_support_points(g_dh.n_dofs());
-    DoFTools::map_dofs_to_support_points<3>(StaticMappingQ1<3>::mapping, g_dh, g_support_points);
 
     unsigned int i, q;
 
+    typedef dealii::Point<3> Point3D;
+
+    //
+    // build index of dof vertex positions
+    //
+    std::vector<Point3D> g_dof_locations(g_dh.n_dofs());
+    std::vector<unsigned int> g_local_dof_indices(g_fe.dofs_per_cell);
+    DoFHandler<3>::active_cell_iterator g_cell;
+    for (g_cell = g_dh.begin_active(); g_cell != g_dh.end(); ++g_cell)
+    {
+        g_cell->get_dof_indices(g_local_dof_indices);
+        for (j = 0; j < g_fe.dofs_per_cell; ++j)
+            g_dof_locations[g_local_dof_indices[j]] = g_cell->vertex(j);
+    }
+
+    //
     // contribution from primary term
+    //
+    //std::vector<Point3D> g_support_points(g_dh.n_dofs());
+    //DoFTools::map_dofs_to_support_points<3>(StaticMappingQ1<3>::mapping, g_dh, g_support_points);
     for (i = 0; i < g_dh.n_dofs(); ++i)
     {
-        g_phi(i) = 2 * dipole_sources.primary_contribution(g_support_points[i]);
+        g_phi(i) = 2 * dipole_sources.primary_contribution(g_dof_locations[i]);
     }
 
     //
@@ -405,35 +418,45 @@ void BEM_ForwardProblem::compute_general_solution()
     DoFHandler<2,3>::active_cell_iterator
         cell = dh.begin_active(),
         endc = dh.end();
-
     for (; cell != endc; ++cell)
     {
-        fe_v.reinit(cell);
+        fe_values.reinit(cell);
+        fe_values.get_function_values(phi, local_phi);
 
-        cell->get_dof_indices(local_dof_indices);
-        fe_v.get_function_values(phi, local_phi);
-
-        const std::vector<Point3D>& q_points = fe_v.get_quadrature_points();
-        const std::vector<Point3D>& normals = fe_v.get_cell_normal_vectors();
+        const std::vector<Point3D>& q_points = fe_values.get_quadrature_points();
+        const std::vector<Point3D>& normals = fe_values.get_cell_normal_vectors();
 
         const unsigned int mat_id = cell->material_id();
         const double sigma_int = material_data.get_sigma_int(mat_id);
         const double sigma_ext = material_data.get_sigma_ext(mat_id);
-        const double sigma_avg = (sigma_int + sigma_ext) / 2;
 
-        for (q = 0; q < n_q_points; ++q)
+        for (i = 0; i < g_dh.n_dofs(); ++i)
         {
+            const Point<3> node_position = g_dof_locations[i];
+
+            //
+            // FIXME: Using simga_avg here won't work. The sigma_avg term came about because
+            // we were evaluating the field phi on locations at the surface, where the
+            // discontinuities in the sigma term occurred...which is not true any more
+            // now that we're looping over the nodes in the volume mesh. We need a way
+            // to get sigma at each of the node_locations for that volume.
+            //
+            // The value of sigma is a function of node_position (perhaps it needs to be
+            // stored as nodal data, i.e. as a field defined over our volume mesh, where
+            // the value on the interface nodes is the average of the sigma values across
+            // the interface). The value we need is simply sigma(i).
+            //
+            const double sigma = (sigma_int + sigma_ext) / 2;
+
             const double K =
-                (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
+                (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma);
 
-            // XXX: multiple dipole sources?
-            const Point<3> dipole_source_position = dipole_sources(0).location;
-            const Point<3> R = q_points[q] - dipole_source_position;
-            const double R3 = std::pow(R.square(), 1.5);
-
-            for (i = 0; i < g_dh.n_dofs(); ++i)
+            for (q = 0; q < n_q_points; ++q)
             {
-                g_phi(i) += K * (local_phi[q] * (R / R3) * normals[q]) * fe_v.JxW(q);
+                const Point<3> R = q_points[q] - node_position;
+                const double R3 = std::pow(R.square(), 1.5);
+
+                g_phi(i) += K * (local_phi[q] * (R / R3) * normals[q]) * fe_values.JxW(q);
             }
         }
     }
