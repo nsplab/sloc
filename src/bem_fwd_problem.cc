@@ -190,12 +190,6 @@ void BEM_ForwardProblem::assemble_system()
     // loop indices
     unsigned int i, j, q, e;
 
-    // contribution from current dipole sources
-    for (i = 0; i < n_dofs; ++i)
-    {
-        system_rhs(i) = 2 * dipole_sources.primary_contribution(support_points[i]);
-    }
-
     DoFHandler<2,3>::active_cell_iterator cell, endc;
     endc = dh.end();
 
@@ -216,6 +210,13 @@ void BEM_ForwardProblem::assemble_system()
             dof_locations[local_dof_indices[j]] = cell->vertex(j);
     }
 
+    // contribution from current dipole sources
+    for (i = 0; i < n_dofs; ++i)
+    {
+        system_rhs(i) = 2 * dipole_sources.primary_contribution(dof_locations[i]);
+    }
+
+    // contribution from surface integral terms
     ProgressTimer ptimer;
     cout << ptimer.header("cells");
     ptimer.start(tria.n_active_cells());
@@ -385,7 +386,7 @@ void BEM_ForwardProblem::compute_general_solution()
     const unsigned int n_q_points = fe_values.n_quadrature_points;
     std::vector<double> local_phi(n_q_points);
 
-    unsigned int i, q;
+    unsigned int i, j, q;
 
     typedef dealii::Point<3> Point3D;
 
