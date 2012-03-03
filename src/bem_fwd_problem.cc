@@ -352,6 +352,9 @@ void BEM_ForwardProblem::output_results()
     data_out.add_data_vector(phi, "phi");
     data_out.build_patches(mapping, mapping.get_degree());
 
+    if (parameters.debug)
+        sloc::write_vector("phi.dat", phi);
+
     std::stringstream ss;
     ss << parameters.surface_phi << ".vtk";
     std::string outfile = ss.str();
