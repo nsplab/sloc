@@ -205,12 +205,23 @@ int main(void)
 
         if (debug)
         {
+            i = n % nx;
+            j = (n/nx) % ny;
+            k = n / (ny * nx);
+            x = i * delta + (delta/2);
+            y = j * delta + (delta/2);
+            z = k * delta + (delta/2);
             cout << "cost(" << n << ") = " << costs(n) << endl
                 << "\tp = " << p(0) << " " << p(1) << " " << p(2) << endl
                 << "\tr = " << x << " " << y << " " << z << endl
                 ;
         }
 
+    }
+
+    if (debug)
+    {
+        sloc::write_vector("costs.dat", costs);
     }
 
     //
@@ -223,8 +234,6 @@ int main(void)
     x = i * delta + (delta/2);
     y = j * delta + (delta/2);
     z = k * delta + (delta/2);
-
-    sloc::write_vector("costs.dat", costs);
 
     const string sep = "---------------------------------------------";
 
