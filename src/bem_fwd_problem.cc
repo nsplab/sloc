@@ -201,6 +201,9 @@ void BEM_ForwardProblem::assemble_system()
         log << "fe_v.n_quadrature_points = " << fe_v.n_quadrature_points << endl;
     }
 
+    // zero out the system_matrix, so we can call this method repeatedly
+    system_matrix.reset_values();
+
     // build index of dof vertex positions, using the dofs ordering (not vertex ordering!)
     typedef dealii::Point<3> Point3D;
     std::vector<Point3D> dof_locations(n_dofs);
