@@ -31,7 +31,7 @@ void write_triangulation(const char *filename, const dealii::Triangulation<2,3>&
 //
 
 template <int dim, int spacedim>
-void read_ucd_mesh(const char *filename, dealii::Triangulation<dim,spacedim>& tria)
+void read_ucd_mesh(const char *filename, dealii::Triangulation<dim,spacedim>& tria, bool debug=false)
 {
     using namespace std;
     using namespace dealii;
@@ -44,7 +44,6 @@ void read_ucd_mesh(const char *filename, dealii::Triangulation<dim,spacedim>& tr
     ifstream infile(filename);
     grid_in.read_ucd(infile);
 
-    const bool debug = true;
     if (debug)
     {
         cout << "  Number of active cells: " << tria.n_active_cells() << endl;
