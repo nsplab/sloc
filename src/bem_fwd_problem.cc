@@ -186,6 +186,7 @@ void BEM_ForwardProblem::assemble_system()
     //sloc::write_points("support_points.dat", support_points);
 
     const bool debug = parameters.debug;
+    const bool verbose = parameters.verbose;
 
     // loop indices
     unsigned int i, j, q, e;
@@ -218,8 +219,11 @@ void BEM_ForwardProblem::assemble_system()
 
     // contribution from surface integral terms
     ProgressTimer ptimer;
-    cout << ptimer.header("cells");
-    ptimer.start(tria.n_active_cells());
+    if (verbose)
+    {
+        cout << ptimer.header("cells");
+        ptimer.start(tria.n_active_cells());
+    }
     for (e = 0, cell = dh.begin_active(); cell != endc; ++cell, ++e)
     {
         fe_v.reinit(cell);
@@ -320,9 +324,9 @@ void BEM_ForwardProblem::assemble_system()
             }
         }
 
-        cout << ptimer.update(e);
+        if (verbose) cout << ptimer.update(e);
     }
-    cout << ptimer.update(tria.n_active_cells()) << endl;
+    if (verbose) cout << ptimer.update(tria.n_active_cells()) << endl;
 
     for (i = 0; i < n_dofs; ++i)
     {
