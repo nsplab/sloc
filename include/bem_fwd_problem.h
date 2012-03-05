@@ -66,7 +66,7 @@ public:
 
     void run();
 
-private:
+protected:
 
     void configure();
     void assemble_system();
@@ -76,7 +76,7 @@ private:
     void compute_general_solution();
     void compute_area();
 
-private:
+protected:
 
     // this parameters object encapsulates our access to any parameter
     // we might need during the configuration step

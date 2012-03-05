@@ -186,6 +186,7 @@ void BEM_ForwardProblem::assemble_system()
     //sloc::write_points("support_points.dat", support_points);
 
     const bool debug = parameters.debug;
+    const bool verbose = parameters.verbose;
 
     // loop indices
     unsigned int i, j, q, e;
@@ -199,6 +200,9 @@ void BEM_ForwardProblem::assemble_system()
         log << "fe.dofs_per_cell = " << fe.dofs_per_cell << endl;
         log << "fe_v.n_quadrature_points = " << fe_v.n_quadrature_points << endl;
     }
+
+    // zero out the system_matrix, so we can call this method repeatedly
+    system_matrix.reset_values();
 
     // build index of dof vertex positions, using the dofs ordering (not vertex ordering!)
     typedef dealii::Point<3> Point3D;
@@ -218,8 +222,11 @@ void BEM_ForwardProblem::assemble_system()
 
     // contribution from surface integral terms
     ProgressTimer ptimer;
-    cout << ptimer.header("cells");
-    ptimer.start(tria.n_active_cells());
+    if (verbose)
+    {
+        cout << ptimer.header("cells");
+        ptimer.start(tria.n_active_cells());
+    }
     for (e = 0, cell = dh.begin_active(); cell != endc; ++cell, ++e)
     {
         fe_v.reinit(cell);
@@ -320,9 +327,9 @@ void BEM_ForwardProblem::assemble_system()
             }
         }
 
-        cout << ptimer.update(e);
+        if (verbose) cout << ptimer.update(e);
     }
-    cout << ptimer.update(tria.n_active_cells()) << endl;
+    if (verbose) cout << ptimer.update(tria.n_active_cells()) << endl;
 
     for (i = 0; i < n_dofs; ++i)
     {
