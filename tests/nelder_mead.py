@@ -144,7 +144,6 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6, verbose=False):
                 if i == j:
                     yy[i,i] = Y[i]
                 elif i < j:
-                    x = (P[i] + P[j])/2
                     yy[i,j] = F((P[i] + P[j]) / 2)
                 else:
                     yy[i,j] = yy[j,i]
@@ -159,7 +158,7 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6, verbose=False):
         for i in xrange(n):
             for j in xrange(n):
                 if i == j:
-                    B[i,i] = 2*(Y[i+1] + Y[0] - 2*yy[0,i+1])
+                    B[i,i] = 2*(Y[i+1] - Y[0] - 2*yy[0,i+1])
                 else:
                     B[i,j] = 2*(yy[i+1,j+1] + Y[0] - yy[0,i+1] - yy[0,j+1])
         #print "B =\n%s" % B
