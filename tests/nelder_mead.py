@@ -16,6 +16,7 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6, verbose=False):
         alpha   reflection coefficient (alpha > 0)
         beta    contraction coefficient (0 < beta < 1)
         gamma   expansion coefficient (gamma > 1)
+        tol     convergence criterion
 
     Outputs:
         x_min   point at which F achieves a minimum
