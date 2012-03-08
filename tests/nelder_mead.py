@@ -13,12 +13,12 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6):
     Inputs:
         F       function we want to minimize
         P       list of n+1 points defining a simplex
-        alpha   reflection coefficient
-        beta    contraction coefficient
-        gamma   expansion coefficient
+        alpha   reflection coefficient (alpha > 0)
+        beta    contraction coefficient (0 < beta < 1)
+        gamma   expansion coefficient (gamma > 1)
 
     Outputs:
-        x_min   point at which F achieves a minima
+        x_min   point at which F achieves a minimum
         y_min   value of F(x_min)
     """
 
@@ -127,6 +127,50 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6):
                     return
         return
 
+    def fitquadric():
+        from numpy import dot
+        from numpy.linalg import inv
+
+        yy = zeros((n+1,n+1), dtype=float)
+        for i in xrange(n+1):
+            for j in xrange(n+1):
+                if i == j:
+                    yy[i,i] = Y[i]
+                elif i < j:
+                    x = (P[i] + P[j])/2
+                    yy[i,j] = F((P[i] + P[j]) / 2)
+                else:
+                    yy[i,j] = yy[j,i]
+        #print "yy =\n%s" % yy
+
+        a = zeros((n,1), dtype=float)
+        for i in xrange(n):
+            a[i,0] = 2*yy[0,i+1] - (Y[i+1] + 3*Y[0])/2
+        #print "a =\n%s" % a
+
+        B = zeros((n,n), dtype=float)
+        for i in xrange(n):
+            for j in xrange(n):
+                if i == j:
+                    B[i,i] = 2*(Y[i+1] + Y[0] - 2*yy[0,i+1])
+                else:
+                    B[i,j] = 2*(yy[i+1,j+1] + Y[0] - yy[0,i+1] - yy[0,j+1])
+        #print "B =\n%s" % B
+
+        Q = zeros((n,n), dtype=float)
+        for i in xrange(n):
+            for j in xrange(n):
+                Q[i,j] = P[i+1,j] - P[0,j]
+        #print "Q =\n%s" % Q
+
+        Binv = inv(B)
+        #print "B^(-1) =\n%s" % Binv
+
+        xi_min = -dot(Binv, a)
+        x_min = P[0] + dot(Q, xi_min).reshape((n,))
+        y_min = Y[0] + float(dot(a.T, xi_min))
+        return x_min, y_min
+
     def show():
         for i in xrange(n+1):
             print P[i], Y[i]
@@ -141,7 +185,8 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6):
         show()
         print "-" * 30
 
-    # TODO: fit a quadric surface thru vertices and return that surface's minima
+    x_min, y_min = fitquadric()
+    print "quadric fit minimum ->", x_min, y_min
 
     h,l = argmaxmin()
     return P[l], Y[l]
@@ -219,7 +264,7 @@ if __name__ == '__main__':
     x_min, y_min = test_powell_quartic()
     #x_min, y_min = test_powell_helical_valley()
     print "used %d function evaluations" % evals[0]
-    print "minima ->", x_min, y_min
+    print "minimum ->", x_min, y_min
 
 
 # EOF
