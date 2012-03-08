@@ -8,7 +8,7 @@ FCOST = 0
 evals = [0]
 
 
-def simplex_search(F, P, alpha, beta, gamma, tol=1e-6):
+def simplex_search(F, P, alpha, beta, gamma, tol=1e-6, verbose=False):
     """
     Inputs:
         F       function we want to minimize
@@ -52,23 +52,27 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6):
     def reflection(alpha, P_bar, P_h):
         P_star = (1 + alpha) * P_bar - alpha * P_h
         y_star = F(P_star)
-        print "reflection:", P_star, y_star
+        if verbose:
+            print "reflection:", P_star, y_star
         return (P_star, y_star)
 
     def expansion(gamma, P_star, P_bar):
         P_star2 = gamma * P_star + (1 - gamma) * P_bar
         y_star2 = F(P_star2)
-        print "expansion:", P_star2, y_star2
+        if verbose:
+            print "expansion:", P_star2, y_star2
         return (P_star2, y_star2)
 
     def contraction(beta, P_h, P_bar):
         P_star2 = beta * P_h + (1 - beta) * P_bar
         y_star2 = F(P_star2)
-        print "contraction:", P_star2, y_star2
+        if verbose:
+            print "contraction:", P_star2, y_star2
         return (P_star2, y_star2)
 
     def shrink_simplex(k):
-        print "shrinking towards", k, P[k]
+        if verbose:
+            print "shrinking towards", k, P[k]
         for i in xrange(n+1):
             if i != k:
                 P[i] = (P[i] + P[k])/2
@@ -86,43 +90,45 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6):
     count = [0]
     def step():
         count[0] += 1
-        print "starting iteration", count[0]
+        if verbose:
+            print "starting iteration", count[0]
 
         h,l = argmaxmin()
-        print "max:", h, P[h], Y[h]
-        print "min:", l, P[l], Y[l]
+        if verbose:
+            print "max:", h, P[h], Y[h]
+            print "min:", l, P[l], Y[l]
 
         P_bar = centroid(h)
-        print "centroid:", P_bar
+        if verbose: print "centroid:", P_bar
 
         P_star, y_star = reflection(alpha, P_bar, P[h])
 
         if y_star < Y[l]:
             P_star2, y_star2 = expansion(gamma, P_star, P_bar)
             if y_star2 < Y[l]:
-                print "P_h <- P_star2 (using expansion)"
+                if verbose: print "P_h <- P_star2 (using expansion)"
                 P[h],Y[h] = P_star2, y_star2
                 return
             else:
-                print "P_h <- P_star (using reflection)"
+                if verbose: print "P_h <- P_star (using reflection)"
                 P[h],Y[h] = P_star, y_star
                 return
         else:
             # y_star >= Y[l]
             if not all(y_star > Y[i] for i in xrange(n+1) if i != h):
-                print "P_h <- P_star (using reflection)"
+                if verbose: print "P_h <- P_star (using reflection)"
                 P[h],Y[h] = P_star, y_star
                 return
             else:
                 if not (y_star > Y[h]):
-                    print "P_h <- P_star (swapping with reflection)"
+                    if verbose: print "P_h <- P_star (swapping with reflection)"
                     P[h],Y[h] = P_star, y_star
                 P_star2, y_star2 = contraction(beta, P[h], P_bar)
                 if y_star2 > Y[h]:
                     shrink_simplex(l)
                     return
                 else:
-                    print "P_h <- P_star2 (using contraction)"
+                    if verbose: print "P_h <- P_star2 (using contraction)"
                     P[h],Y[h] = P_star2, y_star2
                     return
         return
@@ -177,16 +183,19 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6):
         print "evals", evals[0]
         print "std", y_std()
 
-    show()
-    print "-" * 30
+    if verbose:
+        show()
+        print "-" * 30
     while y_std() > tol:
         sleep(FCOST)
         step()
-        show()
-        print "-" * 30
+        if verbose:
+            show()
+            print "-" * 30
 
-    x_min, y_min = fitquadric()
-    print "quadric fit minimum ->", x_min, y_min
+    if verbose:
+        x_min, y_min = fitquadric()
+        print "quadric fit minimum ->", x_min, y_min
 
     h,l = argmaxmin()
     return P[l], Y[l]
@@ -241,21 +250,21 @@ def test_rosenbrock():
     alpha, beta, gamma = 1, 0.5, 2
 
     # run the simplex search
-    return simplex_search(rosenbrock, P, alpha, beta, gamma, tol=1e-12)
+    return simplex_search(rosenbrock, P, alpha, beta, gamma, tol=1e-12, verbose=True)
 
 def test_powell_quartic():
     evals[0] = 0
     x,y,z,w = 3, -1, 0, 1
     P = wedge([x,y,z,w], 1.5)
     alpha, beta, gamma = 1, 0.5, 2
-    return simplex_search(powell_quartic, P, alpha, beta, gamma, tol=1e-12)
+    return simplex_search(powell_quartic, P, alpha, beta, gamma, tol=1e-12, verbose=True)
 
 def test_powell_helical_valley():
     evals[0] = 0
     x,y,z = -1, 0, 0
     P = wedge([x,y,z], 0.8)
     alpha, beta, gamma = 1, 0.5, 2
-    return simplex_search(powell_helical_valley, P, alpha, beta, gamma, tol=1e-12)
+    return simplex_search(powell_helical_valley, P, alpha, beta, gamma, tol=1e-12, verbose=True)
 
 
 if __name__ == '__main__':
