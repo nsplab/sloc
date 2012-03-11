@@ -2,6 +2,7 @@
 
 set debug = true
 set verbose = true
+set write_dofs = true
 set dipole_sources = ./data/hex.dipole
 set material_data = ./data/hex.sigma
 set surface_mesh = ./data/hex.surf.ucd

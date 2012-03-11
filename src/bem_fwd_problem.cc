@@ -61,6 +61,7 @@ void BEM_ForwardProblem::Parameters::declare_parameters(ParameterHandler& prm)
     prm.declare_entry("debug_logfile", "debug.log", Patterns::Anything(), "Filename for debugging logfile");
     prm.declare_entry("debug", "false", Patterns::Bool(), "Output debug information");
     prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity level");
+    prm.declare_entry("write_dofs", "false", Patterns::Bool(), "Whether to write the solution phi at the dof positions");
 }
 
 void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
@@ -74,6 +75,7 @@ void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
     debug_logfile = prm.get("debug_logfile");
     debug = prm.get_bool("debug");
     verbose = prm.get_bool("verbose");
+    write_dofs = prm.get_bool("write_dofs");
 }
 
 // ----------------------------------------------------------------------------
@@ -151,6 +153,12 @@ void BEM_ForwardProblem::configure()
     // open logging stream
     if (!parameters.debug_logfile.empty())
         log.open(parameters.debug_logfile.c_str());
+
+    // write out dofs if we're in debug mode
+    write_dofs = parameters.write_dofs;
+    if (parameters.debug)
+        write_dofs = true;
+
 
     // enumerate the basis functions, to figure out how many unknowns we've got
     dh.distribute_dofs(fe);
@@ -359,7 +367,7 @@ void BEM_ForwardProblem::output_results()
     data_out.add_data_vector(phi, "phi");
     data_out.build_patches(mapping, mapping.get_degree());
 
-    if (parameters.debug)
+    if (parameters.write_dofs)
         sloc::write_vector("phi.dat", phi);
 
     std::stringstream ss;

@@ -57,6 +57,7 @@ public:
         std::string debug_logfile;
         bool debug;
         bool verbose;
+        bool write_dofs;
     };
 
 public:
@@ -118,6 +119,7 @@ protected:
 
     // log stream
     std::ofstream log;
+    bool write_dofs;
 };
 
 // ----------------------------------------------------------------------------

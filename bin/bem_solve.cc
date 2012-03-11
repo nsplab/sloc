@@ -15,10 +15,6 @@ int main(int argc, char *argv[])
 {
     string sep = "----------------------------------------------------";
 
-    deallog.depth_console(3);
-
-    deallog << "main()" << std::endl;
-
     try
     {
         string infile = "input.prm";
@@ -30,8 +26,19 @@ int main(int argc, char *argv[])
         sloc::BEM_ForwardProblem::Parameters parameters;
         parameters.declare_parameters(parameter_handler);
         parameter_handler.read_input(infile);
-        parameter_handler.print_parameters(std::cout, dealii::ParameterHandler::ShortText);
         parameters.get_parameters(parameter_handler);
+
+        // logging settings
+        if (parameters.debug)
+        {
+            deallog.depth_console(3);
+            deallog << "main()" << std::endl;
+            parameter_handler.print_parameters(std::cout, dealii::ParameterHandler::ShortText);
+        }
+        else
+        {
+            deallog.depth_console(0);
+        }
 
         // initialize forward problem and run it
         sloc::BEM_ForwardProblem fwd_problem(parameters);
