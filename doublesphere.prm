@@ -1,5 +1,6 @@
 # doublesphere.prm
 
+set debug = true
 # Enable verbosity level
 set verbose = true
 

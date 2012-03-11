@@ -1,5 +1,6 @@
 # spheres.prm
 
+set debug = true
 # Enable verbosity level
 set verbose = true
 
@@ -11,6 +12,6 @@ set material_data = ./data/spheres.sigma
 
 # Meshes
 set surface_mesh = ./data/spheres.surf.ucd
-set volume_mesh  = ./data/spheres.ucd
+set volume_mesh  = ./data/sphere.ucd
 
 

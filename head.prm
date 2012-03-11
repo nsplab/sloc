@@ -1,4 +1,5 @@
 # head.prm 
+set debug = false
 set verbose = true
 set dipole_sources = ./data/head.dipole
 set material_data = ./data/head.sigma
