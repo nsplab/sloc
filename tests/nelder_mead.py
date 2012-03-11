@@ -193,10 +193,6 @@ def simplex_search(F, P, alpha, beta, gamma, tol=1e-6, verbose=False):
             show()
             print "-" * 30
 
-    if verbose:
-        x_min, y_min = fitquadric()
-        print "quadric fit minimum ->", x_min, y_min
-
     h,l = argmaxmin()
     return P[l], Y[l]
 
