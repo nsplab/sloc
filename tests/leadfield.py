@@ -42,10 +42,10 @@ def cost_function(x):
     evals[0] += 1
 
     L = lead_field_matrix(mesh, x, electrodes)
-
-    p = numpy.dot(numpy.linalg.pinv(L), phi+error)
+    phi_measured = phi + error
+    p = numpy.dot(numpy.linalg.pinv(L), phi_measured)
     phi_hat = numpy.dot(L, p)
-    cost = numpy.dot(phi-phi_hat, phi-phi_hat)**0.5
+    cost = numpy.dot(phi_measured-phi_hat, phi_measured-phi_hat)**0.5
     cost_file.write('{0} {1} {2} {3}\n'.format(x[0], x[1], x[2], cost))
     return cost
 
@@ -54,12 +54,12 @@ def dipole_fit(x):
     p = numpy.dot(numpy.linalg.pinv(L), phi+error)
     return p
 
-def minimize_position():
-    evals[0] = 0
-    x, y, z = 0.5, 0.5, 0.5
+def minimize_position(verbose=True, tol=1e-8):
+    #evals[0] = 0
+    x, y, z = 0.45, 0.45, 0.45
     P = nelder_mead.wedge([x, y, z], 0.01)
     alpha, beta, gamma = 1, 0.5, 1.5
-    x_min, y_min = nelder_mead.simplex_search(cost_function, P, alpha, beta, gamma, tol=1e-12, verbose=True)
+    x_min, y_min = nelder_mead.simplex_search(cost_function, P, alpha, beta, gamma, tol=tol, verbose=verbose)
     return x_min, y_min
 
 
@@ -68,11 +68,11 @@ evals = [0]
 
 # Set up actual result.
 real_position = [.5, .5, .5]
-dipole_orientation = [5, 7, 10]
+dipole_orientation = [50, 70, 100]
 real_potential(mesh, real_position, dipole_orientation)
 
 # Pick m electrode points.
-m = 4
+m = 8
 electrodes = [int(i) for i in numpy.linspace(0, len(open('real_phi.dat').readlines())-1, m)]
 
 phi = numpy.array([float(open('real_phi.dat').readlines()[x]) for x in electrodes])
@@ -80,16 +80,19 @@ phi = numpy.array([float(open('real_phi.dat').readlines()[x]) for x in electrode
 cost_file = open('cost.dat', 'w')
 
 # Introduce error.
-SNR = numpy.linspace(50,100,1)
+SNR = numpy.logspace(1, 4, 5)
 sigma = (numpy.dot(phi,phi) / SNR)**0.5
-n = 1
+n = 3
 position_error = numpy.zeros((n,len(sigma)))
+print phi
 for i in range(n):
     for j, s in enumerate(sigma):
         error = numpy.random.normal(0, s, len(phi))
-        x_min, y_min = minimize_position()
+        print error, 'std:', s
+        x_min, y_min = minimize_position(verbose=True, tol=1e-5)
         position_error[i,j] = (numpy.dot(x_min - real_position, 
-                                        x_min - real_position)/len(phi))**0.5
+                                        x_min - real_position))**0.5
+        print 'Cost at actual position:', cost_function(real_position)
 
 cost_file.close()
 """
@@ -105,13 +108,11 @@ for i in range(n):
 """
 
 
-#print 'Starting simplex search:'
-#x_min, y_min = minimize_position()
 print 'used {0} function evaluations'.format(evals[0])
 print 'minimum ->', x_min, y_min
 
 errorbar(SNR, numpy.mean(position_error, axis=0),
-         yerr=numpy.std(position_error, axis=0))
+         yerr=numpy.std(position_error, axis=0), log=True)
 
 xlabel('SNR')
 ylabel('RMS position error')
