@@ -30,6 +30,7 @@ common-h := \
 	include/dipole_sources.h \
 	include/material_data.h \
 	include/bem_fwd_problem.h \
+	include/nelder_mead.h \
 	include/progress_timer.h
 
 # target source files from bin/ directory
@@ -50,6 +51,7 @@ tests-cc := \
 	tests/materials.cc \
 	tests/bone.cc \
 	tests/head.cc \
+	tests/simplex.cc \
 	tests/hello.cc
 
 # -----------------------------------------------------------------------------
