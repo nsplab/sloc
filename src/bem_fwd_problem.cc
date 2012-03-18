@@ -232,7 +232,7 @@ void BEM_ForwardProblem::assemble_system()
     ProgressTimer ptimer;
     if (verbose)
     {
-        cout << ptimer.header("cells");
+        cerr << ptimer.header("cells");
         ptimer.start(tria.n_active_cells());
     }
     for (e = 0, cell = dh.begin_active(); cell != endc; ++cell, ++e)
@@ -335,9 +335,9 @@ void BEM_ForwardProblem::assemble_system()
             }
         }
 
-        if (verbose) cout << ptimer.update(e);
+        if (verbose) cerr << ptimer.update(e);
     }
-    if (verbose) cout << ptimer.update(tria.n_active_cells()) << endl;
+    if (verbose) cerr << ptimer.update(tria.n_active_cells()) << endl;
 
     for (i = 0; i < n_dofs; ++i)
     {
