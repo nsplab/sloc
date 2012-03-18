@@ -50,6 +50,7 @@ public:
     public:
         std::string dipole_sources;
         std::string material_data;
+        std::string electrodes;
         std::string surface_mesh;
         std::string volume_mesh;
         std::string surface_phi;
@@ -120,6 +121,9 @@ protected:
     // log stream
     std::ofstream log;
     bool write_dofs;
+
+    bool verbose;
+    bool debug;
 };
 
 // ----------------------------------------------------------------------------

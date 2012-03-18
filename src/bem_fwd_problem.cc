@@ -54,13 +54,24 @@ void BEM_ForwardProblem::Parameters::declare_parameters(ParameterHandler& prm)
 {
     prm.declare_entry("dipole_sources", "", Patterns::Anything(), "Filename for current dipole sources data");
     prm.declare_entry("material_data", "", Patterns::Anything(), "Filename for material data");
+
     prm.declare_entry("surface_mesh", "", Patterns::Anything(), "Filename for surface mesh");
     prm.declare_entry("volume_mesh", "", Patterns::Anything(), "Filename for volume mesh");
+
     prm.declare_entry("surface_phi", "phi", Patterns::Anything(), "Filename prefix for vtk output file (surface solution)");
     prm.declare_entry("volume_phi", "phi_vol", Patterns::Anything(), "Filename prefix for vtk output file (volume solution)");
-    prm.declare_entry("debug_logfile", "debug.log", Patterns::Anything(), "Filename for debugging logfile");
-    prm.declare_entry("debug", "false", Patterns::Bool(), "Output debug information");
+
+    {
+        prm.declare_entry("electrodes", "", Patterns::Anything(), "Filename for electrodes");
+        //prm.declare_entry("num_electrodes", "0", Patterns::Integer(), "Number of electrodes");
+        //prm.declare_entry("electrode_indices", "", Patterns::Anything(), "Filename for electrode indices");
+        //prm.declare_entry("electrode_locations", "", Patterns::Anything(), "Filename for electrode locations");
+        //prm.declare_entry("electrode_potentials", "", Patterns::Anything(), "Filename for electrode potentials");
+    }
+
     prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity level");
+    prm.declare_entry("debug", "false", Patterns::Bool(), "Output debug information");
+    prm.declare_entry("debug_logfile", "debug.log", Patterns::Anything(), "Filename for debugging logfile");
     prm.declare_entry("write_dofs", "false", Patterns::Bool(), "Whether to write the solution phi at the dof positions");
 }
 
@@ -68,13 +79,17 @@ void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
 {
     dipole_sources = prm.get("dipole_sources");
     material_data = prm.get("material_data");
+    electrodes = prm.get("electrodes");
+
     surface_mesh = prm.get("surface_mesh");
     volume_mesh = prm.get("volume_mesh");
+
     surface_phi = prm.get("surface_phi");
     volume_phi = prm.get("volume_phi");
-    debug_logfile = prm.get("debug_logfile");
-    debug = prm.get_bool("debug");
+
     verbose = prm.get_bool("verbose");
+    debug = prm.get_bool("debug");
+    debug_logfile = prm.get("debug_logfile");
     write_dofs = prm.get_bool("write_dofs");
 }
 
@@ -84,7 +99,10 @@ BEM_ForwardProblem::BEM_ForwardProblem(const Parameters& parameters)
     : parameters(parameters),   // parameters class
       fe(1),                    // fe degree 1
       dh(tria),                 // attach triangulation to our dof_handler
-      mapping(1, true)          // mapping degree 1 (also, use same mapping on interior cells)
+      mapping(1, true),         // mapping degree 1 (also, use same mapping on interior cells)
+      verbose(true),            // print progress by default
+      debug(false)              // don't print out debug messages by default
+
 {
     timer.start();
 }
@@ -110,6 +128,10 @@ void BEM_ForwardProblem::run()
 void BEM_ForwardProblem::configure()
 {
     deallog << "BEM_ForwardProblem::configure() T=" << timer.wall_time() << std::endl;
+
+    // remember these two flags
+    debug = parameters.debug;
+    verbose = parameters.verbose;
 
     // configure the dipole sources
     Assert(!parameters.dipole_sources.empty(), ExcEmptyObject());
@@ -150,13 +172,17 @@ void BEM_ForwardProblem::configure()
     Assert(!parameters.surface_phi.empty(), ExcEmptyObject());
     Assert(!parameters.volume_phi.empty(), ExcEmptyObject());
 
-    // open logging stream
-    if (!parameters.debug_logfile.empty())
+    // open logging stream, but only in debug mode
+    if (debug)
+    {
+        Assert(!parameters.debug_logfile.empty(), ExcEmptyObject());
         log.open(parameters.debug_logfile.c_str());
+    }
 
     // write out dofs if we're in debug mode
-    write_dofs = parameters.write_dofs;
-    if (parameters.debug)
+    if (!debug)
+        write_dofs = parameters.write_dofs;
+    else
         write_dofs = true;
 
 
@@ -192,9 +218,6 @@ void BEM_ForwardProblem::assemble_system()
     //std::vector<Point3D> support_points(n_dofs);
     //DoFTools::map_dofs_to_support_points<2,3>(mapping, dh, support_points);
     //sloc::write_points("support_points.dat", support_points);
-
-    const bool debug = parameters.debug;
-    const bool verbose = parameters.verbose;
 
     // loop indices
     unsigned int i, j, q, e;
@@ -251,7 +274,7 @@ void BEM_ForwardProblem::assemble_system()
         const double K =
             (1.0 / (4 * numbers::PI)) * ((sigma_int - sigma_ext) / sigma_avg);
 
-        if (debug)
+        if (debug && false)
         {
             log << "------------\n";
 
@@ -300,7 +323,7 @@ void BEM_ForwardProblem::assemble_system()
 
         }
 
-        if (debug) log << "(R / R3) * normals\n";
+        //if (debug) log << "(R / R3) * normals\n";
 
         for (i = 0; i < n_dofs; ++i)
         {
@@ -308,7 +331,7 @@ void BEM_ForwardProblem::assemble_system()
 
             const Point<3> node_position = dof_locations[i];
 
-            if (debug) log << "i=" << i << " ";
+            //if (debug) log << "i=" << i << " ";
 
             for (j = 0; j < fe.dofs_per_cell; ++j)
             {
@@ -323,10 +346,10 @@ void BEM_ForwardProblem::assemble_system()
 
                     local_matrix_row_i(j) += term;
 
-                    if (debug) log << term << " + ";
+                    //if (debug) log << term << " + ";
                 }
 
-                if (debug) log << "0 = " <<  local_matrix_row_i(j) << endl;
+                //if (debug) log << "0 = " <<  local_matrix_row_i(j) << endl;
             }
 
             for (j = 0; j < fe.dofs_per_cell; ++j)
