@@ -432,7 +432,7 @@ private:
         if (debug)
         {
             std::cout << "centroid: ";
-            print_point(P_star);
+            print_point(P_bar);
             std::cout << std::endl;
         }
     }
