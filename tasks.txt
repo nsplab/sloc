@@ -1,4 +1,13 @@
 ---high------------------------------------------------------------------------
+- add electrodes to BEM_ForwardProblem class
+- change format of phi.dat to save (dof_index, dof_position, phi)
+- rename bem_solve.cc to bem_forward_solver.cc
+- rename inverse_solve.cc to bem_inverse_solver.cc
+- make a parameters file for bem_inverse_solver
+- read initial search position (and wedge size) from the inv_prob parameter file
+- read simplex search params (alpha, beta, gamma, sigma) from the inv_prob parameter file
+- read other simplex search params (max_iterations, verbose, debug, ...) from the inv_prob parameter file
+- do a scattershot search of initial search positions, before switching to the simplex search method
 - split boundaries of Bone2.quad.ucd into material ids 0 and 1
 - Allow comments in text input files (material, dipole, ...)
 - Fix code for handling multiple layers

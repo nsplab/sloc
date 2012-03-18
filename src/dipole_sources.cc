@@ -87,7 +87,7 @@ void DipoleSources::read(const char *filename)
 
             // read dipole components
             is >> px;
-            is >> py; 
+            is >> py;
             is >> pz;
 
             // make a new source

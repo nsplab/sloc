@@ -1,8 +1,8 @@
 # doublesphere.prm
 
-set debug = true
-# Enable verbosity level
+set debug = false
 set verbose = true
+set write_dofs = false
 
 # Dipole sources
 set dipole_sources = ./data/doublesphere.dipole
@@ -13,3 +13,6 @@ set material_data = ./data/doublesphere.sigma
 # Meshes
 set surface_mesh = ./data/doublesphere.surf.ucd
 set volume_mesh  = ./data/doublesphere.ucd
+
+# Electrodes
+set electrodes = ./electrodes.txt

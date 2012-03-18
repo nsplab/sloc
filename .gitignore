@@ -1,7 +1,8 @@
 *~
 tmp
 Makefile.dep
-bin/bem_solve
+bin/bem_forward_solver
+bin/bem_inverse_solver
 bin/fem_solve
 bin/mesh_info
 tests/hello
@@ -15,6 +16,8 @@ tests/bone
 tests/head
 tests/dipoles
 tests/materials
+tests/inv_hex
+tests/simplex
 system_matrix.dat
 system_rhs.dat
 phi.vtk

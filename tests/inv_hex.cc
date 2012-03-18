@@ -1,9 +1,9 @@
-/*
+/* 
  * (1) Read measurements Phi
  * (2) Read volume mesh.
- * (1) Calculate L.
- * (2) Calculate cost C.
- * (3) Minimize cost.
+ * (3) Calculate L.
+ * (4) Calculate cost C.
+ * (5) Minimize cost.
  *
  */
 #include <iostream>

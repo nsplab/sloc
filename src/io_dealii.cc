@@ -8,7 +8,7 @@ using namespace dealii;
 
 void sloc::write_points(const char *filename, const vector<dealii::Point<3> >& points)
 {
-    deallog << "write_points()" << endl;
+    deallog << "write_points() filename=" << filename << endl;
     ofstream out;
     out.open(filename);
     for (unsigned int i = 0; i < points.size(); ++i)
@@ -23,7 +23,7 @@ void sloc::write_points(const char *filename, const vector<dealii::Point<3> >& p
 
 void sloc::write_vector(const char *filename, const dealii::Vector<double>& vec)
 {
-    deallog << "write_vector()" << endl;
+    deallog << "write_vector() filename=" << filename << endl;
     ofstream out;
     out.open(filename);
     for (unsigned int i = 0; i < vec.size(); ++i)
@@ -33,7 +33,7 @@ void sloc::write_vector(const char *filename, const dealii::Vector<double>& vec)
 
 void sloc::write_matrix(const char *filename, const dealii::FullMatrix<double>& mat)
 {
-    deallog << "write_matrix()" << endl;
+    deallog << "write_matrix() filename=" << filename << endl;
     ofstream out;
     out.open(filename);
     for (unsigned int i = 0; i < mat.m(); ++i)
@@ -45,10 +45,9 @@ void sloc::write_matrix(const char *filename, const dealii::FullMatrix<double>& 
     out.close();
 }
 
-
 void sloc::write_triangulation(const char *filename, const dealii::Triangulation<2,3>& tria)
 {
-    deallog << "write_triangulation()" << endl;
+    deallog << "write_triangulation() filename=" << filename << endl;
     ofstream out;
     out.open(filename);
     GridOut grid_out;
