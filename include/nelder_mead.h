@@ -69,6 +69,7 @@ public:
         itercount = 0;
         evalcount = 0;
         time(&t_start);
+        t_tic = clock();
 
         if (verbose)
             std::cout << "starting simplex search" << std::endl;
@@ -287,11 +288,19 @@ private:
         return;
     }
 
-    double tic() const
+    double total_time() const
     {
         time_t t;
         time(&t);
         return (t - t_start);
+    }
+
+    double tic()
+    {
+        clock_t t = clock();
+        double dt = (double)(t - t_tic) / CLOCKS_PER_SEC;
+        t_tic = t;
+        return dt;
     }
 
     void print_current_simplex()
@@ -302,6 +311,7 @@ private:
             print_point_value(P[i], y[i]);
             std::cout << std::endl;
         }
+        std::cout << "time " << total_time() << std::endl;
         std::cout << "evals " << evalcount << std::endl;
         std::cout << "std " << std_value() << std::endl;
         print_sep();
@@ -562,7 +572,8 @@ private:
 
     int itercount;
     int evalcount;
-    time_t t_start, t_end;
+    time_t t_start;
+    clock_t t_tic;
 
 public:
 
