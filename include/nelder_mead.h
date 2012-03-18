@@ -141,8 +141,8 @@ private:
 
         if (debug)
         {
-            std::cout << "max: " << h << " "; print_point_value(P[h], y[h]); std::cout << std::endl;
             std::cout << "min: " << l << " "; print_point_value(P[l], y[l]); std::cout << std::endl;
+            std::cout << "max: " << h << " "; print_point_value(P[h], y[h]); std::cout << std::endl;
         }
 
         calc_face_centroid(h); // sets P_bar using all vertices but the apex P_h
