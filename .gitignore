@@ -22,5 +22,11 @@ system_matrix.dat
 system_rhs.dat
 phi.vtk
 g_phi.vtk
+phi.dat
+electrodes.txt
+electrode_indices.dat
 data/spheres.surf.ucd
 data/spheres.ucd
+data/doublesphere.surf.ucd
+data/doublesphere.ucd
+data/head.ucd
