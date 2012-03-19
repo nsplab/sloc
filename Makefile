@@ -4,7 +4,7 @@ target = bem_solve
 
 run-parameters = hex.prm
 debug-mode = on
-clean-up-files = *dat
+clean-up-files = *~
 
 # location of deal.II installation
 D = $(HOME)/dev/deal.II
