@@ -1,7 +1,7 @@
 *~
 tmp
 Makefile.dep
-bin/bem_forward_solver
+bin/bem_solve
 bin/bem_inverse_solver
 bin/fem_solve
 bin/mesh_info

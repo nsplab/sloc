@@ -36,7 +36,7 @@ common-h := \
 # target source files from bin/ directory
 bin-cc := \
 	bin/bem_solve.cc \
-	bin/inverse_solver.cc \
+	bin/bem_inverse_solver.cc \
 	bin/fem_solve.cc \
 	bin/mesh_info.cc
 

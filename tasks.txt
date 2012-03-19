@@ -1,8 +1,6 @@
 ---high------------------------------------------------------------------------
 - add electrodes to BEM_ForwardProblem class
 - change format of phi.dat to save (dof_index, dof_position, phi)
-- rename bem_solve.cc to bem_forward_solver.cc
-- rename inverse_solve.cc to bem_inverse_solver.cc
 - make a parameters file for bem_inverse_solver
 - read initial search position (and wedge size) from the inv_prob parameter file
 - read simplex search params (alpha, beta, gamma, sigma) from the inv_prob parameter file
