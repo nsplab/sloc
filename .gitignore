@@ -8,8 +8,7 @@ bin/mesh_info
 tests/hello
 tests/skull
 tests/artery
-tests/sphere
-tests/sphere2
+tests/doublesphere_mat
 tests/stacked_cubes
 tests/cloud
 tests/bone

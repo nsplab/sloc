@@ -45,8 +45,7 @@ tests-cc := \
 	tests/inv_hex.cc \
 	tests/skull.cc \
 	tests/artery.cc \
-	tests/sphere.cc \
-	tests/sphere2.cc \
+	tests/doublesphere_mat.cc \
 	tests/stacked_cubes.cc \
 	tests/dipoles.cc \
 	tests/materials.cc \
