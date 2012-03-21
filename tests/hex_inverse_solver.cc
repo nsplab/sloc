@@ -1,9 +1,10 @@
 /* 
- * (1) Read measurements Phi
- * (2) Read volume mesh.
- * (3) Calculate L.
- * (4) Calculate cost C.
- * (5) Minimize cost.
+ * Run inverse problem on hex.prm
+ *   (1) Read measurements from phi.dat
+ *   (2) Read volume mesh (use subdivided box instead)
+ *   (3) Calculate L.
+ *   (4) Calculate cost C.
+ *   (5) Minimize cost.
  *
  */
 #include <iostream>

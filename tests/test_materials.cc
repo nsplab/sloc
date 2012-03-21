@@ -1,4 +1,4 @@
-/* materials.cc
+/* test_materials.cc
  *
  * For testing the code in material_data.{h,cc}.
  *

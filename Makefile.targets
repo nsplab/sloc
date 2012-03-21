@@ -37,21 +37,20 @@ common-h := \
 bin-cc := \
 	bin/bem_solve.cc \
 	bin/bem_inverse_solver.cc \
-	bin/fem_solve.cc \
-	bin/mesh_info.cc
+	bin/fem_solve.cc
 
 # target source files from tests/ directory
 tests-cc := \
-	tests/inv_hex.cc \
-	tests/skull.cc \
-	tests/artery.cc \
-	tests/doublesphere_mat.cc \
+	tests/hex_inverse_solver.cc \
+	tests/bone_stl_to_ucd.cc \
+	tests/mat_for_bone.cc \
+	tests/mat_for_artery.cc \
+	tests/mat_for_doublesphere.cc \
+	tests/merge_bone_artery_ucd.cc \
 	tests/stacked_cubes.cc \
-	tests/dipoles.cc \
-	tests/materials.cc \
-	tests/bone.cc \
-	tests/head.cc \
-	tests/simplex.cc \
+	tests/test_simplex_search.cc \
+	tests/test_dipoles.cc \
+	tests/test_materials.cc \
 	tests/hello.cc
 
 # -----------------------------------------------------------------------------

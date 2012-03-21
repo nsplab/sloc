@@ -1,4 +1,4 @@
-/* skull.cc
+/* bone_artery_stl_to_ucd.cc
  *
  * Program to convert Bone2.stl and Artery2.stl into .ucd files
  * In the process, we also need to convert the corresponding
