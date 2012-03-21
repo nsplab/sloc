@@ -47,7 +47,6 @@ tests-cc := \
 	tests/mat_for_artery.cc \
 	tests/mat_for_doublesphere.cc \
 	tests/merge_bone_artery_ucd.cc \
-	tests/stacked_cubes.cc \
 	tests/test_simplex_search.cc \
 	tests/test_dipoles.cc \
 	tests/test_materials.cc \
