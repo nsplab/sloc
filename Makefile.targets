@@ -14,7 +14,7 @@ common-cc := \
 	src/io_ucd.cc \
 	src/mesh.cc \
 	src/point_cloud.cc \
-	src/tri2quad.cc \
+	src/geometry_utils.cc \
 	src/sphere_surface.cc \
 	src/dipole_sources.cc \
 	src/material_data.cc \
@@ -27,7 +27,7 @@ common-h := \
 	include/io_ucd.h \
 	include/mesh.h \
 	include/point_cloud.h \
-	include/tri2quad.h \
+	include/geometry_utils.h \
 	include/sphere_surface.h \
 	include/dipole_sources.h \
 	include/material_data.h \

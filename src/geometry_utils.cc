@@ -1,4 +1,4 @@
-#include "tri2quad.h"
+#include "geometry_utils.h"
 #include "point_cloud.h"
 #include "progress_timer.h"
 #include "mesh.h"
@@ -30,13 +30,13 @@ void sloc::tri2quad(long t[3], long u[4], long q[3*4])
     // We can also compute centroid D, and edge midpoints EFG.
     //
     //              C
-    // 
+    //
     //          G           F
     //                D
-    // 
+    //
     //     A          E              B
-    // 
-    // 
+    //
+    //
     // Connectivity of three new quad elements is just:
     //
     //     AEDG

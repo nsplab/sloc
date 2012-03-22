@@ -7,7 +7,7 @@
 #include <iostream>
 #include <ctime>
 #include "mesh.h"
-#include "tri2quad.h"
+#include "geometry_utils.h"
 
 using namespace std;
 using namespace sloc;
