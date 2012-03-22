@@ -15,6 +15,7 @@ common-cc := \
 	src/mesh.cc \
 	src/point_cloud.cc \
 	src/tri2quad.cc \
+	src/sphere_surface.cc \
 	src/dipole_sources.cc \
 	src/material_data.cc \
 	src/bem_fwd_problem.cc \
@@ -27,6 +28,7 @@ common-h := \
 	include/mesh.h \
 	include/point_cloud.h \
 	include/tri2quad.h \
+	include/sphere_surface.h \
 	include/dipole_sources.h \
 	include/material_data.h \
 	include/bem_fwd_problem.h \
@@ -48,6 +50,7 @@ tests-cc := \
 	tests/mat_for_doublesphere.cc \
 	tests/merge_bone_artery_ucd.cc \
 	tests/test_simplex_search.cc \
+	tests/test_sphere_surface.cc \
 	tests/test_dipoles.cc \
 	tests/test_materials.cc \
 	tests/hello.cc
