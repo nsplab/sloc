@@ -96,14 +96,14 @@ void STL_File::get_facet_vertex(int i, int j, float &x, float &y, float &z)
 
 void STL_File::read(const char *filename)
 {
-    cout << "Reading " << filename << endl;
-    stl_read(filename, *this);
+    //cout << "Reading " << filename << endl;
+    stl_read(*this, filename);
 }
 
 void STL_File::write(const char *filename)
 {
-    cout << "Writing " << filename << endl;
-    stl_write(filename, *this);
+    //cout << "Writing " << filename << endl;
+    stl_write(*this, filename);
 }
 
 // ----------------------------------------------------------------------------
@@ -117,7 +117,7 @@ T read_binary_type(std::ifstream& in)
     return *ptr;
 }
 
-void sloc::stl_read(const std::string& filename, STL_File& mesh)
+void sloc::stl_read(STL_File& mesh, const std::string& filename)
 {
     //
     // As described in http://en.wikipedia.org/wiki/STL_(file_format)
@@ -167,7 +167,7 @@ void sloc::stl_read(const std::string& filename, STL_File& mesh)
     file.close();
 }
 
-void sloc::stl_write(const std::string& filename, STL_File& mesh)
+void sloc::stl_write(STL_File& mesh, const std::string& filename)
 {
     ofstream file;
 

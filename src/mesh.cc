@@ -101,25 +101,25 @@ void Mesh::set_mat(int e, int mat)
 
 void Mesh::write_ucd(const char *filename)
 {
-    cout << "Writing to " << filename << endl;
-    ucd_write(filename, *this);
+    //cout << "Writing to " << filename << endl;
+    ucd_write(*this, filename);
 }
 
 void Mesh::read_ucd(const char *filename)
 {
-    cout << "Reading from " << filename << endl;
-    ucd_read(filename, *this);
+    //cout << "Reading from " << filename << endl;
+    ucd_read(*this, filename);
 }
 
 void Mesh::read_stl(const char *filename)
 {
-    cout << "Reading from " << filename << endl;
-    stl_read(filename, *this);
+    //cout << "Reading from " << filename << endl;
+    stl_read(*this, filename);
 }
 
 // ----------------------------------------------------------------------------
 
-void sloc::ucd_write(const char *filename, Mesh& mesh)
+void sloc::ucd_write(Mesh& mesh, const char *filename)
 {
     int e,n,i;
     ofstream file;
@@ -176,10 +176,12 @@ void sloc::ucd_write(const char *filename, Mesh& mesh)
     file.close();
 }
 
-void sloc::ucd_read(const char *filename, Mesh& mesh)
+void sloc::ucd_read(Mesh& mesh, const char *filename)
 {
-    cout << "sloc::ucd_read()\n";
-    cout << "  filename = " << filename << endl;
+    const bool verbose = false;
+
+    if (verbose)
+        cout << "sloc::ucd_read() filename=" << filename << endl;
 
     UCD_File ucd;
     ucd.read(filename);
@@ -211,15 +213,17 @@ void sloc::ucd_read(const char *filename, Mesh& mesh)
     ucd.clear();
 }
 
-void sloc::stl_read(const char *filename, Mesh& tmesh)
+void sloc::stl_read(Mesh& tmesh, const char *filename)
 {
     //
     // Given the data in the stl file, we need to create
     // a mesh object with all duplicate points removed.
     //
 
-    cout << "sloc::stl_read()\n";
-    cout << "  filename = " << filename << endl;
+    const bool verbose = false;
+
+    if (verbose)
+        cout << "sloc::stl_read() filename=" << filename << endl;
 
     STL_File stl;
     stl.read(filename);
@@ -236,8 +240,11 @@ void sloc::stl_read(const char *filename, Mesh& tmesh)
     int ncells = stl.n_facets();
     int npts = ncells * 3;
 
-    cout << "  stl points = " << npts << endl;
-    cout << "  stl facets = " << ncells << endl;
+    if (verbose)
+    {
+        cout << "  stl points = " << npts << endl;
+        cout << "  stl facets = " << ncells << endl;
+    }
 
     long *ids = new long[npts];
     double *pts = new double[npts * 3];
@@ -250,32 +257,42 @@ void sloc::stl_read(const char *filename, Mesh& tmesh)
     PointCloud points;
     points.set_tolerance(1e-8);
 
-    cout << "  Building point cloud...\n";
-    time(&t0);
+    if (verbose)
+    {
+        cout << "  Building point cloud...\n";
+        time(&t0);
 
-    cout << timer.header("facets");
-    timer.start(ncells);
+        cout << timer.header("facets");
+        timer.start(ncells);
+    }
 
     for (e = 0; e < ncells; e++)
     {
         points.add(stl.va[3*e+0], stl.va[3*e+1], stl.va[3*e+2], &ids[3*e+0]);
         points.add(stl.vb[3*e+0], stl.vb[3*e+1], stl.vb[3*e+2], &ids[3*e+1]);
         points.add(stl.vc[3*e+0], stl.vc[3*e+1], stl.vc[3*e+2], &ids[3*e+2]);
-        if (e % 1000 == 0)
+        if (verbose && (e % 1000 == 0))
             cout << timer.update(e);
     }
-    cout << timer.update(ncells) << endl;
 
-    time(&t1);
-    cout << "  Elapsed time: " << ((t1 - t0) / 60.0) << " mins\n";
+    if (verbose)
+    {
+        cout << timer.update(ncells) << endl;
+
+        time(&t1);
+        cout << "  Elapsed time: " << ((t1 - t0) / 60.0) << " mins\n";
+    }
 
     // now, we can query the point cloud for its count,
     // and use that to initialize the mesh
     tmesh.init_points(points.n_points(), 3);
     tmesh.init_cells(ncells, 3);
 
-    cout << "  mesh points = " << tmesh.n_points() << endl;
-    cout << "  mesh cells  = " << tmesh.n_cells() << endl;
+    if (verbose)
+    {
+        cout << "  mesh points = " << tmesh.n_points() << endl;
+        cout << "  mesh cells  = " << tmesh.n_cells() << endl;
+    }
 
     // load points from point cloud into mesh
     for (n = 0; n < tmesh.n_points(); n++)

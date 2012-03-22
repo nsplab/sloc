@@ -35,8 +35,8 @@ public:
 
 inline int STL_File::n_facets() const { return nfacets; }
 
-void stl_read(const std::string& filename, STL_File& mesh);
-void stl_write(const std::string& filename, STL_File& mesh);
+void stl_read(STL_File& mesh, const std::string& filename);
+void stl_write(STL_File& mesh, const std::string& filename);
 
 
 // ----------------------------------------------------------------------------
