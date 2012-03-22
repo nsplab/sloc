@@ -5,9 +5,9 @@ bin/bem_solve
 bin/bem_inverse_solver
 bin/fem_solve
 tests/hello
-tests/test_*
-tests/mat_for_*
-tests/merge_*
+tests/test_*[^cc]
+tests/mat_for_*[^cc]
+tests/merge_*[^cc]
 tests/bone_stl_to_ucd
 tests/hex_inverse_solver
 system_matrix.dat
