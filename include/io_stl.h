@@ -20,6 +20,9 @@ public:
     void set_normal(int i, float nx, float ny, float nz);
     void set_facet_vertex(int i, int j, float x, float y, float z);
 
+    void get_normal(int i, float &nx, float &ny, float &nz);
+    void get_facet_vertex(int i, int j, float &x, float &y, float &z);
+
     int n_facets() const;
 
 public:

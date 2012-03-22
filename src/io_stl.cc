@@ -63,7 +63,33 @@ void STL_File::set_facet_vertex(int i, int j, float x, float y, float z)
         vc[3*i + 1] = y;
         vc[3*i + 2] = z;
     } else {
-        // XXX: unreachable! emit error to log...
+        // unreachable!
+        assert(false);
+    }
+}
+
+void STL_File::get_normal(int i, float &nx, float &ny, float &nz)
+{
+    nx = normal[3*i + 0];
+    ny = normal[3*i + 1];
+    nz = normal[3*i + 2];
+}
+
+void STL_File::get_facet_vertex(int i, int j, float &x, float &y, float &z)
+{
+    if (j == 0) {
+        x = va[3*i + 0];
+        y = va[3*i + 1];
+        z = va[3*i + 2];
+    } else if (j == 1) {
+        x = vb[3*i + 0];
+        y = vb[3*i + 1];
+        z = vb[3*i + 2];
+    } else if (j == 2) {
+        x = vc[3*i + 0];
+        y = vc[3*i + 1];
+        z = vc[3*i + 2];
+    } else {
         assert(false);
     }
 }
