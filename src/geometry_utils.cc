@@ -61,7 +61,7 @@ void sloc::tri2quad(long t[3], long u[4], long q[3*4])
     q[4*2+0] = C; q[4*2+1] = G; q[4*2+2] = D; q[4*2+3] = F;
 }
 
-void sloc::tri2quad(Mesh& tmesh, Mesh& qmesh)
+void sloc::tri2quad(Mesh& tmesh, Mesh& qmesh, bool verbose)
 {
     //
     // Split every triangle cell in the first mesh
@@ -69,7 +69,8 @@ void sloc::tri2quad(Mesh& tmesh, Mesh& qmesh)
     // second mesh.
     //
 
-    cout << "Calling tri2quad()\n";
+    if (verbose)
+        cout << "Calling tri2quad()\n";
 
     time_t t0, t1;
     ProgressTimer timer;
@@ -110,14 +111,17 @@ void sloc::tri2quad(Mesh& tmesh, Mesh& qmesh)
     // four new points per triangle cell
     ids = new long[4 * tmesh.n_cells()];
 
-    cout << "  tmesh points = " << tmesh.n_points() << endl;
-    cout << "  tmesh cells  = " << tmesh.n_cells() << endl;
+    if (verbose)
+    {
+        cout << "  tmesh points = " << tmesh.n_points() << endl;
+        cout << "  tmesh cells  = " << tmesh.n_cells() << endl;
 
-    cout << "  Finding triangle centroids and edge midpoints...\n";
-    time(&t0);
+        cout << "  Finding triangle centroids and edge midpoints...\n";
+        time(&t0);
 
-    cout << timer.header("cells");
-    timer.start(tmesh.n_cells());
+        cout << timer.header("cells");
+        timer.start(tmesh.n_cells());
+    }
 
     // calculate new points
     for (e = 0; e < tmesh.n_cells(); e++)
@@ -148,13 +152,16 @@ void sloc::tri2quad(Mesh& tmesh, Mesh& qmesh)
         points.add(G[0], G[1], G[2], &ids[4*e+3]);
 
         // update timer
-        if (e % 1000 == 0)
+        if (verbose && (e % 1000 == 0))
             cout << timer.update(e);
     }
-    cout << timer.update(tmesh.n_cells()) << endl;
+    if (verbose)
+    {
+        cout << timer.update(tmesh.n_cells()) << endl;
 
-    time(&t1);
-    cout << "  Elapsed time: " << ((t1 - t0) / 60.0) << " mins\n";
+        time(&t1);
+        cout << "  Elapsed time: " << ((t1 - t0) / 60.0) << " mins\n";
+    }
 
     //
     // Now, we initialize the quadrilateral mesh
@@ -175,8 +182,11 @@ void sloc::tri2quad(Mesh& tmesh, Mesh& qmesh)
         qmesh.set_point(n, pt);
     }
 
-    cout << "  Splitting triangles into quadrilaterals...\n";
-    time(&t0);
+    if (verbose)
+    {
+        cout << "  Splitting triangles into quadrilaterals...\n";
+        time(&t0);
+    }
 
     // finally, split each triangle into three quads,
     // and load everything into our quad mesh
@@ -191,11 +201,14 @@ void sloc::tri2quad(Mesh& tmesh, Mesh& qmesh)
         qmesh.set_cell(3*e+2, &quad_cells[4*2]);
     }
 
-    time(&t1);
-    cout << "  Elapsed time: " << ((t1 - t0) / 60.0) << " mins\n";
+    if (verbose)
+    {
+        time(&t1);
+        cout << "  Elapsed time: " << ((t1 - t0) / 60.0) << " mins\n";
 
-    cout << "  qmesh points = " << qmesh.n_points() << endl;
-    cout << "  qmesh cells  = " << qmesh.n_cells() << endl;
+        cout << "  qmesh points = " << qmesh.n_points() << endl;
+        cout << "  qmesh cells  = " << qmesh.n_cells() << endl;
+    }
 
     delete [] ids;
 }
