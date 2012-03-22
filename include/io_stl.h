@@ -13,6 +13,7 @@ public:
     STL_File();
     ~STL_File();
     void read(const char *filename);
+    void write(const char *filename);
 
     void clear();
     void set_facets(int n);
@@ -32,6 +33,7 @@ public:
 inline int STL_File::n_facets() const { return nfacets; }
 
 void stl_read(const std::string& filename, STL_File& mesh);
+void stl_write(const std::string& filename, STL_File& mesh);
 
 
 // ----------------------------------------------------------------------------
