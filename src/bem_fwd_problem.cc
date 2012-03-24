@@ -34,6 +34,7 @@
 // various utilities
 #include <deal.II/base/utilities.h>
 #include <deal.II/base/table.h>
+#include <boost/algorithm/string/predicate.hpp>
 
 /* standard includes */
 #include <string>
@@ -52,45 +53,46 @@ using namespace sloc;
 
 void BEM_ForwardProblem::Parameters::declare_parameters(ParameterHandler& prm)
 {
-    prm.declare_entry("dipole_sources", "", Patterns::Anything(), "Filename for current dipole sources data");
-    prm.declare_entry("material_data", "", Patterns::Anything(), "Filename for material data");
-
     prm.declare_entry("surface_mesh", "", Patterns::Anything(), "Filename for surface mesh");
-    prm.declare_entry("volume_mesh", "", Patterns::Anything(), "Filename for volume mesh");
+    prm.declare_entry("material_data", "", Patterns::Anything(), "Filename for material data");
+    prm.declare_entry("dipole_sources", "", Patterns::Anything(), "Filename for current dipole sources data");
 
-    prm.declare_entry("surface_phi", "phi", Patterns::Anything(), "Filename prefix for vtk output file (surface solution)");
-    prm.declare_entry("volume_phi", "phi_vol", Patterns::Anything(), "Filename prefix for vtk output file (volume solution)");
-
-    {
-        prm.declare_entry("electrodes", "", Patterns::Anything(), "Filename for electrodes");
-        //prm.declare_entry("num_electrodes", "0", Patterns::Integer(), "Number of electrodes");
-        //prm.declare_entry("electrode_indices", "", Patterns::Anything(), "Filename for electrode indices");
-        //prm.declare_entry("electrode_locations", "", Patterns::Anything(), "Filename for electrode locations");
-        //prm.declare_entry("electrode_potentials", "", Patterns::Anything(), "Filename for electrode potentials");
-    }
+    prm.declare_entry("output_vtk", "", Patterns::Anything(), "XXX");
+    prm.declare_entry("output_phi", "", Patterns::Anything(), "XXX");
+    prm.declare_entry("output_mat", "", Patterns::Anything(), "XXX");
 
     prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity level");
     prm.declare_entry("debug", "false", Patterns::Bool(), "Output debug information");
-    prm.declare_entry("debug_logfile", "debug.log", Patterns::Anything(), "Filename for debugging logfile");
-    prm.declare_entry("write_dofs", "false", Patterns::Bool(), "Whether to write the solution phi at the dof positions");
+    prm.declare_entry("logfile", "debug.log", Patterns::Anything(), "Filename for debugging logfile");
 }
 
 void BEM_ForwardProblem::Parameters::get_parameters(ParameterHandler& prm)
 {
-    dipole_sources = prm.get("dipole_sources");
-    material_data = prm.get("material_data");
-    electrodes = prm.get("electrodes");
-
     surface_mesh = prm.get("surface_mesh");
-    volume_mesh = prm.get("volume_mesh");
+    material_data = prm.get("material_data");
+    dipole_sources = prm.get("dipole_sources");
 
-    surface_phi = prm.get("surface_phi");
-    volume_phi = prm.get("volume_phi");
+    output_vtk = prm.get("output_vtk");
+    output_phi = prm.get("output_phi");
+    output_mat = prm.get("output_mat");
 
     verbose = prm.get_bool("verbose");
     debug = prm.get_bool("debug");
-    debug_logfile = prm.get("debug_logfile");
-    write_dofs = prm.get_bool("write_dofs");
+    logfile = prm.get("logfile");
+}
+
+void BEM_ForwardProblem::Parameters::print() const
+{
+    using namespace std;
+    cout << "surface_mesh = " << surface_mesh << endl;
+    cout << "material_data = " << material_data << endl;
+    cout << "dipole_sources = " << dipole_sources << endl;
+    cout << "output_vtk = " << output_vtk << endl;
+    cout << "output_phi = " << output_phi << endl;
+    cout << "output_mat = " << output_mat << endl;
+    cout << "verbose = " << verbose << endl;
+    cout << "debug = " << debug << endl;
+    cout << "logfile = " << logfile << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -167,24 +169,9 @@ void BEM_ForwardProblem::configure()
     Assert(!parameters.surface_mesh.empty(), ExcEmptyObject());
     sloc::read_ucd_mesh(parameters.surface_mesh.c_str(), tria);
 
-    // check whether our other parameters are set
-    Assert(!parameters.volume_mesh.empty(), ExcEmptyObject());
-    Assert(!parameters.surface_phi.empty(), ExcEmptyObject());
-    Assert(!parameters.volume_phi.empty(), ExcEmptyObject());
-
     // open logging stream, but only in debug mode
-    if (debug)
-    {
-        Assert(!parameters.debug_logfile.empty(), ExcEmptyObject());
-        log.open(parameters.debug_logfile.c_str());
-    }
-
-    // write out dofs if we're in debug mode
-    if (!debug)
-        write_dofs = parameters.write_dofs;
-    else
-        write_dofs = true;
-
+    if (debug && !parameters.logfile.empty())
+        log.open(parameters.logfile.c_str());
 
     // enumerate the basis functions, to figure out how many unknowns we've got
     dh.distribute_dofs(fe);
@@ -225,7 +212,7 @@ void BEM_ForwardProblem::assemble_system()
     DoFHandler<2,3>::active_cell_iterator cell, endc;
     endc = dh.end();
 
-    if (debug)
+    if (debug && false)
     {
         log << "dh.n_dofs = " << dh.n_dofs() << endl;
         log << "fe.dofs_per_cell = " << fe.dofs_per_cell << endl;
@@ -369,8 +356,10 @@ void BEM_ForwardProblem::assemble_system()
 
     if (debug)
     {
-        sloc::write_matrix("system_matrix.dat", system_matrix);
         sloc::write_vector("system_rhs.dat", system_rhs);
+
+        if (n_dofs < 1000)
+            sloc::write_matrix("system_matrix.dat", system_matrix);
     }
 }
 
@@ -385,19 +374,51 @@ void BEM_ForwardProblem::output_results()
 {
     deallog << "BEM_ForwardProblem::output_results() T=" << timer.wall_time() << std::endl;
 
-    DataOut<2, DoFHandler<2,3> > data_out;
-    data_out.attach_dof_handler(dh);
-    data_out.add_data_vector(phi, "phi");
-    data_out.build_patches(mapping, mapping.get_degree());
+    if (!parameters.output_phi.empty())
+    {
+        sloc::write_vector(parameters.output_phi.c_str(), phi);
+    }
 
-    if (parameters.write_dofs)
-        sloc::write_vector("phi.dat", phi);
+    if (!parameters.output_mat.empty())
+    {
+        //* XXX: find a better way to map dof_indices to material_ids
+        unsigned int e,i,j;
+        std::vector<unsigned int> dof_materials(dh.n_dofs());
+        std::vector<unsigned int> local_dof_indices(fe.dofs_per_cell);
+        DoFHandler<2,3>::active_cell_iterator cell;
+        for (e = 0, cell = dh.begin_active(); cell != dh.end(); ++cell, ++e)
+        {
+            cell->get_dof_indices(local_dof_indices);
+            for (j = 0; j < fe.dofs_per_cell; j++)
+                dof_materials[local_dof_indices[j]] = cell->material_id();
+        }
 
-    std::stringstream ss;
-    ss << parameters.surface_phi << ".vtk";
-    std::string outfile = ss.str();
-    std::ofstream os(outfile.c_str());
-    data_out.write_vtk(os);
+        std::ofstream dofs(parameters.output_mat.c_str());
+        for (i = 0; i < dh.n_dofs(); i++)
+            dofs << i << " " << dof_materials[i] << std::endl;
+        dofs.close();
+        // */
+    }
+
+    if (!parameters.output_vtk.empty())
+    {
+        DataOut<2, DoFHandler<2,3> > data_out;
+        data_out.attach_dof_handler(dh);
+        data_out.add_data_vector(phi, "phi");
+        data_out.build_patches(mapping, mapping.get_degree());
+
+        // XXX: do we really need to append .vtk?
+        std::string outfile = parameters.output_vtk;
+        if (!boost::algorithm::ends_with(outfile, std::string(".vtk")))
+        {
+            std::stringstream ss;
+            ss << outfile << ".vtk";
+            outfile = ss.str();
+        }
+
+        std::ofstream os(outfile.c_str());
+        data_out.write_vtk(os);
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -407,6 +428,7 @@ void BEM_ForwardProblem::compute_general_solution()
     deallog << "BEM_ForwardProblem::compute_general_solution() T="
             << timer.wall_time() << std::endl;
 
+    /* XXX: re-enable this function when you can easily create volume meshes
     Triangulation<3> g_tria;
     sloc::read_ucd_mesh(parameters.volume_mesh.c_str(), g_tria);
 
@@ -513,6 +535,7 @@ void BEM_ForwardProblem::compute_general_solution()
     std::string outfile = ss.str();
     std::ofstream os(outfile.c_str());
     data_out.write_vtk(os);
+    // */
 }
 
 void BEM_ForwardProblem::compute_area()

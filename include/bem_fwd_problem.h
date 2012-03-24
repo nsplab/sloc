@@ -47,18 +47,17 @@ public:
     public:
         static void declare_parameters(dealii::ParameterHandler& prm);
         void get_parameters(dealii::ParameterHandler& prm);
+        void print() const;
     public:
-        std::string dipole_sources;
-        std::string material_data;
-        std::string electrodes;
         std::string surface_mesh;
-        std::string volume_mesh;
-        std::string surface_phi;
-        std::string volume_phi;
-        std::string debug_logfile;
+        std::string material_data;
+        std::string dipole_sources;
+        std::string output_vtk;
+        std::string output_phi;
+        std::string output_mat;
+        std::string logfile;
         bool debug;
         bool verbose;
-        bool write_dofs;
     };
 
 public:
@@ -118,12 +117,13 @@ protected:
     // for measuring wallclock time
     dealii::Timer timer;
 
-    // log stream
-    std::ofstream log;
-    bool write_dofs;
-
+    // output behavior flags
     bool verbose;
     bool debug;
+
+    // log stream for debug mode
+    std::ofstream log;
+
 };
 
 // ----------------------------------------------------------------------------
