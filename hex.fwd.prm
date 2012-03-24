@@ -1,10 +1,13 @@
 # hex.prm
 
-set debug = true
 set verbose = true
-set write_dofs = true
-set dipole_sources = ./data/hex.dipole
-set material_data = ./data/hex.sigma
+set debug = true
+
 set surface_mesh = ./data/hex.surf.ucd
-set volume_mesh = ./data/hex.ucd
-set electrodes = ./electrodes.txt
+set material_data = ./data/hex.sigma
+set dipole_sources = ./data/hex.dipole
+
+set output_vtk = hex.vtk
+set output_phi = hex_phi.dat
+set output_mat = hex_mat.dat
+
