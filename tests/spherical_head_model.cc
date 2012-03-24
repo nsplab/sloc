@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include "geometry_utils.h"
 #include "sphere_surface.h"
 #include "material_data.h"
@@ -107,8 +108,14 @@ void append_mesh(const Mesh& source, Mesh& target, int& points_offset, int& cell
     return;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
+    // determine the refinement level
+    int refinement = 0;
+    if (argc > 1)
+        refinement = atoi(argv[1]);
+    cout << "Using refinement level " << refinement << endl;
+
     // conductivities in units of S/m
     const double sigma_air = 3e-15;
     const double sigma_scalp = 0.275;
@@ -143,7 +150,6 @@ int main(void)
     Mesh layer1, layer2, layer3, layer4;
 
     // first, build the layers
-    int refinement = 0;
     make_layer(1, layer1, "layer1_brain_csf.stl", radius1, refinement);
     make_layer(2, layer2, "layer2_csf_skull.stl", radius2, refinement);
     make_layer(3, layer3, "layer3_skull_scalp.stl", radius3, refinement);
