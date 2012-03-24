@@ -1,0 +1,13 @@
+# doublesphere.prm
+
+set verbose = true
+set debug = false
+
+set output_vtk = doublesphere.vtk
+set output_phi = doublesphere_phi.dat
+set output_mat = doublesphere_mat.dat
+
+set surface_mesh = ./data/doublesphere.surf.ucd
+set material_data = ./data/doublesphere.sigma
+set dipole_sources = ./data/doublesphere.dipole
+
