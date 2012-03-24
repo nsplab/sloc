@@ -11,13 +11,16 @@
  *  - a sources.dipole file containing a list of inferred dipoles
  *
  */
+
 #include <iostream>
 #include <fstream>
 #include <deal.II/lac/full_matrix.h>
-#include "bem_fwd_problem.h"
-#include "dipole_sources.h"
+#include <deal.II/base/parameter_handler.h>
+
 #include "io_dealii.h"
+#include "dipole_sources.h"
 #include "nelder_mead.h"
+#include "bem_fwd_problem.h"
 
 // ----------------------------------------------------------------------------
 
@@ -73,27 +76,126 @@ public:
 class InverseProblem
 {
 public:
-
-    InverseProblem(const char *parameters_file)
+    class Parameters
     {
-        //
-        // Initialize parameters object for forward-problem
-        //
+    public:
+        static void declare_parameters(dealii::ParameterHandler& prm)
+        {
+            using namespace dealii;
 
+            prm.declare_entry("electrodes", "electrodes.dat", Patterns::Anything(), "Input file with electrode potential measurements");
+            prm.declare_entry("output_sources", "sources.dipole", Patterns::Anything(), "Final output of source localization");
+            prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity level of inverse solver");
+            prm.declare_entry("debug", "false", Patterns::Bool(), "Debugging information for inverse solver");
+
+            prm.enter_subsection("Forward Problem Parameters");
+            {
+                prm.declare_entry("surface_mesh", "", Patterns::Anything(), "Filename for surface mesh");
+                prm.declare_entry("material_data", "", Patterns::Anything(), "Filename for material data");
+                prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity level of forward solver");
+                prm.declare_entry("debug", "false", Patterns::Bool(), "Debugging information for forward solver");
+            }
+            prm.leave_subsection();
+
+            prm.enter_subsection("Simplex Search Parameters");
+            {
+                //prm.declare_entry("initial_search_point", Patterns::List(Patterns::Double(), 3, 3), "Initial search point for simplex search");
+                prm.declare_entry("initial_search_radius", "0.1", Patterns::Double(), "Initial search radius for simplex search");
+                prm.declare_entry("tolerance", "1e-8", Patterns::Double(), "Convergence criterion for simplex search");
+                prm.declare_entry("max_iterations", "1000", Patterns::Integer(), "Upper limit on number of iterations for simplex search");
+                prm.declare_entry("reflection_coefficient", "1.0", Patterns::Double(), "");
+                prm.declare_entry("contraction_coefficient", "0.5", Patterns::Double(), "");
+                prm.declare_entry("expansion_coefficient", "2.0", Patterns::Double(), "");
+                prm.declare_entry("reduction_coefficient", "0.5", Patterns::Double(), "");
+                prm.declare_entry("verbose", "true", Patterns::Bool(), "Verbosity level for simplex search");
+                prm.declare_entry("debug", "false", Patterns::Bool(), "Debugging information for simplex search");
+            }
+            prm.leave_subsection();
+        }
+
+        void get_parameters(dealii::ParameterHandler& prm)
+        {
+            electrodes = prm.get("electrodes");
+            output_sources = prm.get("output_sources");
+            verbose = prm.get_bool("verbose");
+            debug = prm.get_bool("debug");
+
+            prm.enter_subsection("Forward Problem Parameters");
+            {
+                surface_mesh = prm.get("surface_mesh");
+                material_data = prm.get("material_data");
+                fwd_verbose = prm.get_bool("verbose");
+                fwd_debug = prm.get_bool("debug");
+            }
+            prm.leave_subsection();
+
+            prm.enter_subsection("Simplex Search Parameters");
+            {
+                //initial_search_point = prm.getXXX("initial_search_point");
+                initial_search_radius = prm.get_double("initial_search_radius");
+                tolerance = prm.get_double("tolerance");
+                max_iterations = prm.get_integer("max_iterations");
+                alpha = prm.get_double("reflection_coefficient");
+                beta = prm.get_double("contraction_coefficient");
+                gamma = prm.get_double("expansion_coefficient");
+                sigma = prm.get_double("reduction_coefficient");
+                simplex_verbose = prm.get_bool("verbose");
+                simplex_debug = prm.get_bool("debug");
+            }
+            prm.leave_subsection();
+        }
+
+        void print() const
+        {
+            using namespace std;
+            cout << "electrodes = " << electrodes << endl;
+            cout << "output_sources = " << output_sources << endl;
+            cout << "surface_mesh = " << surface_mesh << endl;
+            cout << "material_data = " << material_data << endl;
+            cout << "initial_search_radius = " << initial_search_radius << endl;
+            cout << "alpha = " << alpha << endl;
+            cout << "beta = " << beta << endl;
+            cout << "gamma = " << gamma << endl;
+            cout << "sigma = " << sigma << endl;
+            cout << "max_iterations = " << max_iterations << endl;
+            cout << "verbose = " << verbose << endl;
+            cout << "fwd_verbose = " << fwd_verbose << endl;
+            cout << "simplex_verbose = " << simplex_verbose << endl;
+            cout << "debug = " << debug << endl;
+            cout << "fwd_debug = " << fwd_debug << endl;
+            cout << "simplex_debug = " << simplex_debug << endl;
+        }
+
+    public:
+        std::string electrodes;
+        std::string output_sources;
+        std::string surface_mesh;
+        std::string material_data;
+        double initial_search_radius;
+        double alpha, beta, gamma, sigma;
+        unsigned int max_iterations;
+        double tolerance;
+        bool verbose, fwd_verbose, simplex_verbose;
+        bool debug, fwd_debug, simplex_debug;
+    };
+
+public:
+
+    InverseProblem(Parameters &parameters) : parameters(parameters)
+    {
+        // disable dealii logging (fwd solver needs to be quiet)
         dealii::deallog.depth_console(0);
 
-        dealii::ParameterHandler parameter_handler;
-        parameters.declare_parameters(parameter_handler);
-
-        std::string filename = parameters_file;
-        parameter_handler.read_input(filename);
-        parameters.get_parameters(parameter_handler);
-
-        //
-        // Initialize electrodes
-        //
-
+        // a few sanity checks
         Assert(!parameters.electrodes.empty(), dealii::ExcEmptyObject());
+        Assert(!parameters.output_sources.empty(), dealii::ExcEmptyObject());
+        Assert(!parameters.surface_mesh.empty(), dealii::ExcEmptyObject());
+        Assert(!parameters.material_data.empty(), dealii::ExcEmptyObject());
+
+        //
+        // Initialize electrodes (XXX: refactor this section of code)
+        //
+
         std::ifstream is;
         is.open(parameters.electrodes.c_str());
 
@@ -126,13 +228,21 @@ public:
         dipole.reinit(3);
     }
 
-    double cost_for_single_source_at(double pt[3])
+    double cost_for_single_source_at(double pt[3], double dp[3])
     {
-        ForwardProblem forward_problem(parameters);
+        sloc::BEM_ForwardProblem::Parameters fwd_prm;
+        fwd_prm.surface_mesh = parameters.surface_mesh;
+        fwd_prm.material_data = parameters.material_data;
+        fwd_prm.dipole_sources = "data/dummy.dipole"; // XXX: move this out!
+        fwd_prm.verbose = parameters.fwd_verbose;
+        fwd_prm.debug = parameters.fwd_debug;
+        fwd_prm.logfile = "";
+
+        ForwardProblem forward_problem(fwd_prm);
         forward_problem.configure();
 
-        const int M = num_electrodes;
         int m;
+        const int M = num_electrodes;
 
         double x = pt[0];
         double y = pt[1];
@@ -158,6 +268,9 @@ public:
 
         // calculate: dipole = pinv(L) * phi_measured
         L_pinv.vmult(dipole, phi_measured);
+        dp[0] = dipole(0);
+        dp[1] = dipole(1);
+        dp[2] = dipole(2);
 
         // compute cost ||phi - L * dipole||
         double cost = 0.0;
@@ -173,19 +286,17 @@ public:
         return cost;
     }
 
-    double cost_for_sources_at(double *positions)
+    double cost_for_sources_at(double * /*positions*/)
     {
-        //
         // XXX: implement this method
-        //
         double cost = 0.0;
         return cost ;
     }
 
 
-private:
+public:
 
-    sloc::BEM_ForwardProblem::Parameters parameters;
+    const Parameters& parameters;
 
     unsigned int num_electrodes;
     std::vector<unsigned int> electrode_dof_index;
@@ -197,39 +308,71 @@ private:
 
 };
 
-/* global object! */
-InverseProblem *g_inverse_problem = 0;
+/* global objects! */
+static InverseProblem *g_inverse_problem = 0;
+static InverseProblem::Parameters *g_parameters = 0;
 
 // ----------------------------------------------------------------------------
 
-void init_inverse_problem(char *parameters_file)
+static void init_globals(char *parameters_file)
 {
-    g_inverse_problem = new InverseProblem(parameters_file);
+    g_parameters = new InverseProblem::Parameters;
+    dealii::ParameterHandler parameter_handler;
+    g_parameters->declare_parameters(parameter_handler);
+    parameter_handler.read_input(parameters_file);
+    g_parameters->get_parameters(parameter_handler);
+    g_inverse_problem = new InverseProblem(*g_parameters);
 }
 
-double cost_function(double pt[3])
+static void cleanup_globals()
 {
-    return g_inverse_problem->cost_for_single_source_at(pt);
+    if (g_parameters)
+    {
+        delete g_parameters;
+        g_parameters = 0;
+    }
+
+    if (g_inverse_problem)
+    {
+        delete g_inverse_problem;
+        g_inverse_problem = 0;
+    }
+}
+
+double cost_function(double x[3])
+{
+    double p[3];
+    return g_inverse_problem->cost_for_single_source_at(x,p);
 }
 
 void minimize_cost_function()
 {
-    const int dim = 3;
-    double initial_point[dim] = {0.5, 0.5, 0.5};
-    double neighborhood = 0.2;
+    const InverseProblem::Parameters& prm = g_inverse_problem->parameters;
 
+    const int dim = 3;
     sloc::NelderMead::SimplexSearch<dim> simplex_search;
     simplex_search.F = cost_function;
-    simplex_search.tol = 1e-8;
-    simplex_search.debug = true;
-    simplex_search.verbose = true;
+    simplex_search.tol = prm.tolerance;
+    simplex_search.max_iterations = prm.max_iterations;
+    simplex_search.alpha = prm.alpha;
+    simplex_search.beta = prm.beta;
+    simplex_search.gamma = prm.gamma;
+    simplex_search.sigma = prm.sigma;
+    simplex_search.debug = prm.simplex_debug;
+    simplex_search.verbose = prm.simplex_verbose;
 
+    double neighborhood = prm.initial_search_radius;
+    double initial_point[dim] = {0.0, 0.0, 0.0};
     double initial_simplex[4][dim];
     sloc::NelderMead::SimplexSearch<dim>::make_wedge(neighborhood, initial_point, initial_simplex);
 
     double final_cost;
     double final_point[dim];
     int ret = simplex_search.run(initial_simplex, final_point, final_cost);
+
+    // XXX: can we get final_dipole without evaluating cost function again?
+    double final_dipole[dim];
+    g_inverse_problem->cost_for_single_source_at(final_point, final_dipole);
 
     if (ret == 0)
     {
@@ -241,24 +384,28 @@ void minimize_cost_function()
                   << std::endl;
     }
 
-    // XXX: write out dipoles file
+    sloc::DipoleSources sources;
+    dealii::Point<3> loc(final_point[0], final_point[1], final_point[2]);
+    dealii::Point<3> dip(final_dipole[0], final_dipole[1], final_dipole[2]);
+    sources.add_source(loc, dip);
+    sources.write(prm.output_sources.c_str());
+
+    // done!
+    return;
 }
 
 // ----------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
 {
-    if (argc > 1)
-    {
-        init_inverse_problem(argv[1]);
+    if (argc > 1) {
+        init_globals(argv[1]);
         minimize_cost_function();
-    }
-    else
-    {
+        cleanup_globals();
+    } else {
         std::cout << "Usage: " << argv[0] << " input.prm" << std::endl;
         return -1;
     }
-
     return 0;
 }
 
