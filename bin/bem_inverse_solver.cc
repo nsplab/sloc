@@ -16,6 +16,9 @@
 #include <fstream>
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/base/parameter_handler.h>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "io_dealii.h"
 #include "dipole_sources.h"
@@ -99,7 +102,7 @@ public:
 
             prm.enter_subsection("Simplex Search Parameters");
             {
-                //prm.declare_entry("initial_search_point", Patterns::List(Patterns::Double(), 3, 3), "Initial search point for simplex search");
+                prm.declare_entry("initial_search_point", "0,0,0", Patterns::List(Patterns::Double(), 3, 3), "Initial search point for simplex search");
                 prm.declare_entry("initial_search_radius", "0.1", Patterns::Double(), "Initial search radius for simplex search");
                 prm.declare_entry("tolerance", "1e-8", Patterns::Double(), "Convergence criterion for simplex search");
                 prm.declare_entry("max_iterations", "1000", Patterns::Integer(), "Upper limit on number of iterations for simplex search");
@@ -131,7 +134,16 @@ public:
 
             prm.enter_subsection("Simplex Search Parameters");
             {
-                //initial_search_point = prm.getXXX("initial_search_point");
+                // convert string with comma separated values into a vector<double>
+                using namespace std;
+                using namespace boost::algorithm;
+                vector<string> coords;
+                std::string str = prm.get("initial_search_point");
+                split(coords, str, is_any_of(", "), token_compress_on);
+                for (vector<string>::iterator it = coords.begin(); it != coords.end(); ++it)
+                    initial_search_point.push_back(boost::lexical_cast<double>(*it));
+
+                // read the rest of the parameters
                 initial_search_radius = prm.get_double("initial_search_radius");
                 tolerance = prm.get_double("tolerance");
                 max_iterations = prm.get_integer("max_iterations");
@@ -152,6 +164,7 @@ public:
             cout << "output_sources = " << output_sources << endl;
             cout << "surface_mesh = " << surface_mesh << endl;
             cout << "material_data = " << material_data << endl;
+            cout << "initial_search_point = " << initial_search_point[0] << ", " << initial_search_point[1] << ", " << initial_search_point[2] << endl;
             cout << "initial_search_radius = " << initial_search_radius << endl;
             cout << "alpha = " << alpha << endl;
             cout << "beta = " << beta << endl;
@@ -171,6 +184,7 @@ public:
         std::string output_sources;
         std::string surface_mesh;
         std::string material_data;
+        std::vector<double> initial_search_point;
         double initial_search_radius;
         double alpha, beta, gamma, sigma;
         unsigned int max_iterations;
@@ -319,7 +333,7 @@ static void init_globals(char *parameters_file)
     g_parameters = new InverseProblem::Parameters;
     dealii::ParameterHandler parameter_handler;
     g_parameters->declare_parameters(parameter_handler);
-    parameter_handler.read_input(parameters_file);
+    if (!parameter_handler.read_input(parameters_file)) exit(1);
     g_parameters->get_parameters(parameter_handler);
     g_inverse_problem = new InverseProblem(*g_parameters);
 }
@@ -362,7 +376,11 @@ void minimize_cost_function()
     simplex_search.verbose = prm.simplex_verbose;
 
     double neighborhood = prm.initial_search_radius;
-    double initial_point[dim] = {0.0, 0.0, 0.0};
+    double initial_point[dim] = {
+        prm.initial_search_point[0],
+        prm.initial_search_point[1],
+        prm.initial_search_point[2]
+    };
     double initial_simplex[4][dim];
     sloc::NelderMead::SimplexSearch<dim>::make_wedge(neighborhood, initial_point, initial_simplex);
 
