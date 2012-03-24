@@ -106,7 +106,17 @@ public:
             std = std_value();
 
             if (verbose)
-                std::cout << "iteration " << itercount << " took " << tic() << " secs" << std::endl;
+            {
+                std::cout << "iteration " << itercount << " took " << tic() << " secs";
+                if (!debug)
+                {
+                    std::cout << " -- min ";
+                    print_point(P[l]);
+                    std::cout << " with cost " << y[l]
+                              << " and tol " << std;
+                }
+                std::cout << std::endl;
+            }
 
             if (debug)
                 print_current_simplex();
@@ -118,11 +128,20 @@ public:
             final_position[j] = P[l][j];
         final_value = y[l];
 
-        // might not have converged...
         if (itercount >= max_iterations)
         {
+            if (verbose)
+                std::cout << "simplex search might not have converged. "
+                          << "iteration limit " << max_iterations
+                          << " reached in " << total_time() << " secs"
+                          << std::endl;
             return 1;
         }
+
+        if (verbose)
+            std::cout << "simplex search converged in " << itercount
+                      << " steps in " << total_time() << " secs"
+                      << std::endl;
 
         // normal return value
         return 0;
