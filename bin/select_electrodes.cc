@@ -20,17 +20,16 @@
 
 using namespace std;
 using namespace boost::algorithm;
-using boost::shared_ptr;
 
 typedef unsigned int id;
 typedef map<id,id> map_layers_t;
 
 typedef set<id> set_t;
-typedef shared_ptr<set_t> shared_set_t;
+typedef boost::shared_ptr<set_t> shared_set_t;
 typedef map<id,shared_set_t> map_id_set_t;
 
 typedef vector<id> vector_t;
-typedef shared_ptr<vector_t> shared_vector_t;
+typedef boost::shared_ptr<vector_t> shared_vector_t;
 typedef map<id,shared_vector_t> map_id_vector_t;
 
 // ----------------------------------------------------------------------------
@@ -70,6 +69,11 @@ void process_args(int argc, char *argv[], string& meshfile, string& datfile, str
     if (argc == 1)
         usage(pgm);
 
+    meshfile = "";
+    datfile = "";
+    outfile = "";
+    layers.clear();
+
     while (argc > 1)
     {
         if (strncmp(argv[1], "-m", 3) == 0)
@@ -79,7 +83,7 @@ void process_args(int argc, char *argv[], string& meshfile, string& datfile, str
             if (argc > 1)
                 meshfile = argv[1];
             else
-                usage(pgm);
+                break;
         }
         else if (strncmp(argv[1], "-p", 3) == 0)
         {
@@ -88,7 +92,7 @@ void process_args(int argc, char *argv[], string& meshfile, string& datfile, str
             if (argc > 1)
                 datfile = argv[1];
             else
-                usage(pgm);
+                break;
         }
         else if (strncmp(argv[1], "-o", 3) == 0)
         {
@@ -97,7 +101,7 @@ void process_args(int argc, char *argv[], string& meshfile, string& datfile, str
             if (argc > 1)
                 outfile = argv[1];
             else
-                usage(pgm);
+                break;
         }
         else
         {
@@ -192,6 +196,7 @@ int main(int argc, char *argv[])
             exit(2);
         }
     }
+    in.close();
 
     // only cells are associated with materials, but we want an association
     // between nodes and material ids. so, we need to walk through each of the
@@ -200,24 +205,24 @@ int main(int argc, char *argv[])
     long cell[mesh.n_cell_nodes()];
     for (i = 0; i < mesh.n_cells(); i++)
     {
-        int m;
-        mesh.get_mat(i, m);
+        int cell_mat_id;
+        mesh.get_mat(i, cell_mat_id);
 
-        if (layers.count(m) > 0)
+        if (layers.count(cell_mat_id) > 0)
         {
-            if (nodes_by_mat.count(m) == 0)
-                nodes_by_mat[m] = shared_set_t(new set_t);
-
             mesh.get_cell(i, cell);
 
+            if (nodes_by_mat.count(cell_mat_id) == 0)
+                nodes_by_mat[cell_mat_id] = shared_set_t(new set_t);
+
             for (j = 0; j < mesh.n_cell_nodes(); j++)
-                nodes_by_mat[m]->insert(cell[j]);
+                nodes_by_mat[cell_mat_id]->insert(cell[j]);
         }
     }
 
-    // count the layers...
-    // (1) only add up the layers that are present in the mesh file
-    // (2) if num is larger than the number of actual nodes in the mesh
+    // add up the layer counts
+    // (1) only add counts whose layers that are present in the mesh file
+    // (2) if desired count is larger than the number of actual nodes in the mesh
     //     by that material id, then use the actual number as the cutoff value
     total_num = 0;
     for (map_layers_t::iterator it = layers.begin(); it != layers.end(); ++it)
@@ -248,8 +253,8 @@ int main(int argc, char *argv[])
     nodes_by_mat.clear();
 
     // shuffle each of the vectors of nodes and copy the first num elements
-    map_id_vector_t random_nodes;
     srand(time(NULL));
+    map_id_vector_t random_nodes;
     for (map_id_vector_t::iterator it = nodes.begin(); it != nodes.end(); ++it)
     {
         unsigned int mat = it->first;
@@ -264,8 +269,7 @@ int main(int argc, char *argv[])
         // copy the first num entries in shuffled vector
         cout << "Taking " << num << " random nodes from layer " << mat << endl;
         unsigned count = 0;
-        vector_t::iterator vit;
-        for (vit = it->second->begin(); vit != it->second->end(); ++vit)
+        for (vector_t::iterator vit = it->second->begin(); vit != it->second->end(); ++vit)
         {
             random_nodes[mat]->push_back(*vit);
             if (++count >= num) break;
