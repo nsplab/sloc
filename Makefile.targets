@@ -38,6 +38,7 @@ common-h := \
 # target source files from bin/ directory
 bin-cc := \
 	bin/bem_solve.cc \
+	bin/select_electrodes.cc \
 	bin/bem_inverse_solver.cc \
 	bin/fem_solve.cc
 
