@@ -4,6 +4,7 @@ Makefile.dep
 bin/bem_solve
 bin/bem_inverse_solver
 bin/fem_solve
+bin/select_electrodes
 tests/hello
 tests/test_*[^cc]
 tests/mat_for_*[^cc]
