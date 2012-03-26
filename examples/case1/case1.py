@@ -303,36 +303,28 @@ def generate_inv_params():
 
 # -----------------------------------------------------------------------------
 
-def prepare_fwd_problem():
+def prep_fwd_problem():
     generate_true_dipoles()
     generate_fwd_params()
 
 def run_fwd_problem(dry=False):
-    import os
-    if dry:
-        print("#!/bin/bash -x")
+    print("#!/bin/bash -x")
     for filename in every_fwd_prm():
         cmd = "{exe} {prm}".format(exe=FWD_EXE, prm=filename)
         print(cmd)
-        if not dry:
-            os.system(cmd)
     return
 
-def prepare_inv_problem():
+def prep_inv_problem():
     generate_noise()
     generate_electrode_indices()
     generate_electrodes()
     generate_inv_params()
 
-def run_inv_problem(dry=True):
-    import os
-    if dry:
-        print("#!/bin/bash -x")
+def run_inv_problem():
+    print("#!/bin/bash -x")
     for filename in every_inv_prm():
         cmd = "{exe} {prm}".format(exe=INV_EXE, prm=filename)
         print(cmd)
-        if not dry:
-            os.system(cmd)
     return
 
 # -----------------------------------------------------------------------------
@@ -341,24 +333,23 @@ def main():
     import sys
 
     if len(sys.argv) <= 2:
-        print("Usage: {0} {{prepare,run}} {{fwd,inv}}".format(sys.argv[0]))
+        print("Usage: {0} {{prep,run}} {{fwd,inv}}".format(sys.argv[0]))
         sys.exit(1)
 
     action, prob = sys.argv[1:3]
-    dry = True
-    if action == 'prepare':
+    if action == 'prep':
         if prob == 'fwd':
-            prepare_fwd_problem()
+            prep_fwd_problem()
         elif prob == 'inv':
-            prepare_inv_problem()
+            prep_inv_problem()
         else:
             print("Uknown problem {0!r}".format(prob))
             sys.exit(2)
     elif action == 'run':
         if prob == 'fwd':
-            run_fwd_problem(dry=dry)
+            run_fwd_problem()
         elif prob == 'inv':
-            run_inv_problem(dry=dry)
+            run_inv_problem()
         else:
             print("Uknown problem {0!r}".format(prob))
             sys.exit(2)
