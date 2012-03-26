@@ -110,7 +110,7 @@ def electrodes_dat(**kw):
     return 'out/electrodes_{lv}_{dp}_{ec}_{snr}_{tr}.dat'.format(**kw)
 
 def sources_dat(**kw):
-    return 'out/sources_{lv}_{dp}_{ec}_{snr}_{tr}.dat'.format(**kw)
+    return 'out/source_{lv}_{dp}_{ec}_{snr}_{tr}.dipole'.format(**kw)
 
 # -----------------------------------------------------------------------------
 
@@ -124,7 +124,7 @@ def every_combination():
     return
 
 def unpack(**kw):
-    return [kw[col] for col in ('lv','dp','ec','snr','tr')]
+    return tuple(kw[col] for col in ('lv','dp','ec','snr','tr'))
 
 def every_fwd_prm():
     for lv in levels:
