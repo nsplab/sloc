@@ -14,9 +14,9 @@ def read_dipoles(filename):
     with open(filename, 'r') as fp:
         n = int(fp.readline())
         for i in range(n):
-            dipoles.append(numpy.array([float(x) for x in fp.readline().split()]))
+            xp = numpy.array([float(comp) for comp in fp.readline().split()])
+            dipoles.append((xp[:3], xp[3:]))
     return dipoles
-
 
 class ErrorTable(object):
 
@@ -43,13 +43,17 @@ class ErrorTable(object):
         errors = dict()
         for kw in case1.every_combination():
             k = lv,dp,ec,snr,tr = case1.unpack(**kw)
-
-            # source localization
             self.sources[k] = read_dipoles(filename=case1.sources_dat(**kw))
             assert len(self.sources[k]) == 1
 
-            # position errors
-            errors[k] = dist(self.dipoles[dp][0], self.sources[k][0])
+            # original source
+            x_true, p_true = self.dipoles[dp][0]
+
+            # source localization result
+            x, p = self.sources[k][0]
+
+            # source localization errors in position
+            errors[k] = dist(x_true, x)
 
         # now, tabulate the position errors in a form that we can more easily plot
         for lv in case1.levels:
@@ -83,11 +87,10 @@ class ErrorTable(object):
                     err_std = numpy.std(position_error, axis=0)
                     pylab.errorbar(self.SNR, err, yerr=err_std, label=label)
 
-
         pylab.title('Spherical Head Model(radius 85 mm, brain radius 70 mm)')
         pylab.legend(loc='best')
         pylab.xlabel('SNR')
-        pylab.ylabel('RMS error in current-source position (mm)')
+        pylab.ylabel('Error in current-source position (mm)')
         pylab.show()
         return
 
