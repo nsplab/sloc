@@ -56,8 +56,9 @@ tests-cc := \
 	tests/test_sphere_surface.cc \
 	tests/test_dipoles.cc \
 	tests/test_materials.cc \
-	tests/mpi_hello.cc \
+	tests/mpi_primes.cc \
 	tests/mpi_hello2.cc \
+	tests/mpi_hello.cc \
 	tests/hello.cc
 
 # -----------------------------------------------------------------------------
