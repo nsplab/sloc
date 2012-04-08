@@ -33,7 +33,8 @@ common-h := \
 	include/material_data.h \
 	include/bem_fwd_problem.h \
 	include/nelder_mead.h \
-	include/progress_timer.h
+	include/progress_timer.h \
+	include/config.h
 
 # target source files from bin/ directory
 bin-cc := \
