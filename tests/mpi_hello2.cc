@@ -1,8 +1,8 @@
 #include "config.h"
-#if defined(USING_MPI)
-
-#include "mpi.h"
 #include <iostream>
+
+#if defined(USING_MPI)
+#include "mpi.h"
 
 int main(int argc, char *argv[])
 {
@@ -21,6 +21,14 @@ int main(int argc, char *argv[])
 
     MPI::Finalize();
     return 0;
+}
+
+#else
+
+int main(void)
+{
+    std::cerr << "MPI not available" << std::endl;
+    return 1;
 }
 
 #endif // USING_MPI
