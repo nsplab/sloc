@@ -49,9 +49,11 @@ targets := $(targets-cc:.cc=$(EXEEXT))
 ifeq ($(debug-mode),on)
   flags     = $(CXXFLAGS.g) -Iinclude
   libraries = $(common-go) $(lib-deal2.g)
+  objext    = g.$(OBJEXT)
 else
   flags     = $(CXXFLAGS.o) -Iinclude
   libraries = $(common-o) $(lib-deal2.o)
+  objext    = $(OBJEXT)
 endif
 
 # by default, build only the main target
@@ -80,7 +82,7 @@ lib/%.$(OBJEXT): src/%.cc
 # -----------------------------------------------------------------------------
 
 # generic rule for targets in bin/
-bin/%: lib/%.g.$(OBJEXT) $(libraries) Makefile
+bin/%: lib/%.$(objext) $(libraries) Makefile
 	@echo "============================ Linking $@"
 	$(CXX) -o $@ $< $(libraries) $(LIBS) $(LDFLAGS)
 
@@ -89,10 +91,15 @@ lib/%.g.$(OBJEXT): bin/%.cc
 	@echo "==============debug========= $(<F)  ->  $@"
 	$(CXX) $(flags) -c $< -o $@
 
+# rule for optimized object files originating from bin/
+lib/%.$(OBJEXT): bin/%.cc
+	@echo "==========optimized========= $(<F)  ->  $@"
+	$(CXX) $(flags) -c $< -o $@
+
 # -----------------------------------------------------------------------------
 
 # generic rule for targets in tests/
-tests/%: lib/%.g.$(OBJEXT) $(libraries) Makefile
+tests/%: lib/%.$(objext) $(libraries) Makefile
 	@echo "============================ Linking $@"
 	$(CXX) -o $@ $< $(libraries) $(LIBS) $(LDFLAGS)
 
@@ -100,6 +107,12 @@ tests/%: lib/%.g.$(OBJEXT) $(libraries) Makefile
 lib/%.g.$(OBJEXT): tests/%.cc
 	@echo "==============debug========= $(<F)  ->  $@"
 	$(CXX) $(flags) -c $< -o $@
+
+# rule for optimized object files originating from tests/
+lib/%.$(OBJEXT): tests/%.cc
+	@echo "==========optimized========= $(<F)  ->  $@"
+	$(CXX) $(flags) -c $< -o $@
+
 
 # -----------------------------------------------------------------------------
 
