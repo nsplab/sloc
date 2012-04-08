@@ -1,4 +1,7 @@
 *~
+.*.swp
+*.o
+*.g.o
 /tmp
 /lib/Makefile.dep
 /debug.log
@@ -10,6 +13,8 @@
 /*_phi.dat
 /*_electrodes.dat
 /*_sources.dipole
+/*.sigma
+/*.surf.ucd
 /*.fwd.log
 /*.inv.log
 
