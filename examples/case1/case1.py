@@ -148,7 +148,7 @@ def random_dipole(radius, strength):
     # generate random dipole location
     # 's' is a random scale on the radial direction
     # 'u' is a randomly chosen unit vector
-    s = 2 * random(3) - 1
+    s = 2 * random(1) - 1
     u = 2 * random(3) - 1
     u /= numpy.sqrt(sum(u*u))
     x,y,z = (radius * s) * u
