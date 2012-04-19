@@ -41,6 +41,7 @@ bin-cc := \
 	bin/bem_solve.cc \
 	bin/select_electrodes.cc \
 	bin/bem_inverse_solver.cc \
+	bin/mpi_jobarray.cc \
 	bin/fem_solve.cc
 
 # target source files from tests/ directory
