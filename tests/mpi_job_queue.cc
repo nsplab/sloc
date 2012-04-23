@@ -35,7 +35,7 @@ int randint(int a, int b)
 #define READY_FOR_JOB   1
 #define NEW_JOB         2
 #define JOB_UPDATE      3
-#define ALL_DONE        4
+#define NO_MORE_JOBS    4
 
 void send_int(int msg, int dest, int tag)
 {
@@ -97,7 +97,7 @@ void run_job(int id)
     int n_iterations = randint(10, 50);
     for (int i = 0; i < n_iterations; i++)
     {
-        sleep(randint(1,2));
+        sleep(randint(1,3));
 
         send_int(id, master, JOB_UPDATE);
 
@@ -132,6 +132,7 @@ void run_worker()
     int msg, tag;
     MPI::Status status;
 
+    // seed random number generator
     srand(time(NULL) + rank);
 
     while (true)
@@ -147,9 +148,8 @@ void run_worker()
             int id = msg;
             run_job(id);
         }
-        else if (tag == ALL_DONE)
+        else if (tag == NO_MORE_JOBS)
         {
-            cout << rank << ": Done" << endl;
             break;
         }
     }
@@ -161,8 +161,9 @@ void run_controller()
 {
     using namespace std;
 
-    int nprocs = MPI::COMM_WORLD.Get_size();
     int rank = MPI::COMM_WORLD.Get_rank();
+    int nprocs = MPI::COMM_WORLD.Get_size();
+    const int num_workers = nprocs-1;
 
     assert(rank == 0);
     cout << rank << ": Starting controller" << endl;
@@ -171,22 +172,33 @@ void run_controller()
     int msg, src, tag;
 
     // build the jobs
+    const int num_jobs = 10;
     typedef std::vector<int> JobCollection;
     JobCollection jobs;
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < num_jobs; i++)
         jobs.push_back(i);
+
+    // count the idle workers (once all jobs are done)
+    int finished = 0;
 
     // dispatch the jobs
     while (true)
     {
+        if (finished == num_workers)
+        {
+            cout << rank << ": All jobs finished!" << endl;
+            break;
+        }
+
         receive_int(msg, src, tag);
 
         if (tag == READY_FOR_JOB)
         {
             if (jobs.empty())
             {
-                for (int j = 0; j < nprocs; j++)
-                    send_int(0, j, ALL_DONE);
+                cout << src << ": Done" << endl;
+                send_int(0, src, NO_MORE_JOBS);
+                finished++;
                 continue;
             }
 
@@ -207,11 +219,6 @@ void run_controller()
                  << ", p = [" << data.dipole[0] << ", " << data.dipole[1] << ", " << data.dipole[2] << "]"
                  << ", T = " << data.duration << " secs"
                  << endl;
-        }
-        else if (tag == ALL_DONE)
-        {
-            cout << rank << ": No more jobs!" << endl;
-            break;
         }
     }
 }
