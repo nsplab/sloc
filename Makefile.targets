@@ -15,6 +15,7 @@ common-cc := \
 	src/mesh.cc \
 	src/point_cloud.cc \
 	src/geometry_utils.cc \
+	src/random_utils.cc \
 	src/sphere_surface.cc \
 	src/dipole_sources.cc \
 	src/material_data.cc \
@@ -28,6 +29,7 @@ common-h := \
 	include/mesh.h \
 	include/point_cloud.h \
 	include/geometry_utils.h \
+	include/random_utils.h \
 	include/sphere_surface.h \
 	include/dipole_sources.h \
 	include/material_data.h \
@@ -57,6 +59,7 @@ tests-cc := \
 	tests/test_sphere_surface.cc \
 	tests/test_dipoles.cc \
 	tests/test_materials.cc \
+	tests/test_random.cc \
 	tests/mpi_job_queue.cc \
 	tests/mpi_primes.cc \
 	tests/mpi_hello2.cc \
