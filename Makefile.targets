@@ -42,6 +42,7 @@ common-h := \
 bin-cc := \
 	bin/bem_solve.cc \
 	bin/select_electrodes.cc \
+	bin/measure_electrodes.cc \
 	bin/bem_inverse_solver.cc \
 	bin/mpi_jobarray.cc \
 	bin/fem_solve.cc
