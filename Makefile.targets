@@ -61,6 +61,7 @@ tests-cc := \
 	tests/test_dipoles.cc \
 	tests/test_materials.cc \
 	tests/test_random.cc \
+	tests/test_ptree.cc \
 	tests/mpi_job_queue.cc \
 	tests/mpi_primes.cc \
 	tests/mpi_hello2.cc \

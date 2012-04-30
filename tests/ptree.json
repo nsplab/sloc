@@ -1,0 +1,29 @@
+{
+    "description": "For testing property tree json parser",
+    "models": {
+        "model1": {
+            "mesh": "/path/to/model1.surf.ucd",
+            "material": "/path/to/model1.sigma",
+            "electrodes": {
+                "ec1": "/path/to/model1_ec1.ec",
+                "ec2": "/path/to/model1_ec2.ec"
+            }
+        },
+        "model2": {
+            "mesh": "/path/to/model2.surf.ucd",
+            "material": "/path/to/model2.sigma",
+            "electrodes": {
+                "ec1": "/path/to/model2_ec1.ec",
+                "ec2": "/path/to/model2_ec2.ec",
+                "ec3": "/path/to/model2_ec3.ec"
+            }
+        },
+        "model3": {
+            "mesh": "/path/to/model3.surf.ucd",
+            "material": "/path/to/model3.sigma",
+            "electrodes": {
+                "ec1": "/path/to/model3_ec1.ec"
+            }
+        }
+    }
+}
