@@ -5,7 +5,15 @@ Plot source localization errors vs SNR
 
 import case1
 import numpy
+
+import matplotlib
+if True:
+    # switch to the Agg backend (we only want to save images)
+    matplotlib.use('Agg')
+
+# now that we've switched backends, let's import pylab
 import pylab
+
 
 dist = lambda x,y: sum((x-y)**2)**0.5
 
@@ -69,13 +77,13 @@ class ErrorTable(object):
 
         return
 
-    def plot_position_error_vs_snr(self, levels, dipoles, electrodes):
+    def plot_position_error_vs_snr(self, levels, dipoles, electrodes, show=True):
 
         pylab.clf()
         ax = pylab.subplot(111)
         ax.set_xscale('log')
         ax.set_yscale('log')
-        pylab.xlim([0.8 * self.SNR[0], 1.25 * self.SNR[-1]])
+        ax.set_xlim([0.8 * self.SNR[0], 1.25 * self.SNR[-1]])
 
         for lv in levels:
             for dp in dipoles:
@@ -87,33 +95,40 @@ class ErrorTable(object):
                     err_std = numpy.std(position_error, axis=0)
                     pylab.errorbar(self.SNR, err, yerr=err_std, label=label)
 
-        pylab.title('Spherical Head Model(radius 85 mm, brain radius 70 mm)')
+        pylab.title('Spherical Head Model (radius 85 mm, brain radius 70 mm)')
         pylab.legend(loc='best')
         pylab.xlabel('SNR')
         pylab.ylabel('Error in current-source position (mm)')
-        pylab.show()
+
+        filename = 'position_error_vs_snr.png'
+        print "Writing '{0}'".format(filename)
+        pylab.savefig(filename)
+
+        if show:
+            pylab.show()
+
         return
 
 
 def main():
 
-    levels = ['lv0']
-    #levels = ['lv1']
+    #levels = ['lv0']
+    levels = ['lv1']
     #levels = ['lv0', 'lv1']
 
-    #electrodes = ['ec1']
+    electrodes = ['ec1']
     #electrodes = ['ec2']
-    electrodes = ['ec1','ec2']
+    #electrodes = ['ec1','ec2']
 
     #dipoles = ['dp1']
-    dipoles = ['dp2']
+    #dipoles = ['dp2']
     #dipoles = ['dp3']
     #dipoles = ['dp2','dp3']
-    #dipoles = ['dp1','dp2', 'dp3']
+    dipoles = ['dp1','dp2', 'dp3']
 
     error_table = ErrorTable()
     error_table.load_data()
-    error_table.plot_position_error_vs_snr(levels, dipoles, electrodes)
+    error_table.plot_position_error_vs_snr(levels, dipoles, electrodes, show=False)
 
 if __name__ == '__main__':
     main()
