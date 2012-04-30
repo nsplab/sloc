@@ -1,6 +1,6 @@
 /*
- * Given a mesh and a potentials data file, randomly select electrodes from the
- * desired layers and write out an electrodes file we can use in bem_inverse_solve.
+ * Given a mesh, randomly select electrodes from the desired layers, and write out
+ * the electrode indices to a file.
  */
 
 #include "mesh.h"
@@ -37,7 +37,7 @@ typedef map<id,shared_vector_t> map_id_vector_t;
 bool split_layer_num(std::string str, unsigned int &layer, unsigned int &num)
 {
     vector<string> pair;
-    split(pair, str, is_any_of("/:"), token_compress_on);
+    boost::algorithm::split(pair, str, is_any_of("/:"), token_compress_on);
 
     if (pair.size() != 2)
         return false;
@@ -57,12 +57,12 @@ bool split_layer_num(std::string str, unsigned int &layer, unsigned int &num)
 void usage(const char *pgm)
 {
     cerr << "Usage: " << pgm
-         << " -m meshfile -p datfile -o outfile layer1/count1 layer2/count2 ..."
+         << " -m meshfile -o outfile layer1/count1 layer2/count2 ..."
          << endl;
     exit(1);
 }
 
-void process_args(int argc, char *argv[], string& meshfile, string& datfile, string& outfile, map_layers_t& layers)
+void process_args(int argc, char *argv[], string& meshfile, string& outfile, map_layers_t& layers)
 {
     char *pgm = argv[0];
 
@@ -70,7 +70,6 @@ void process_args(int argc, char *argv[], string& meshfile, string& datfile, str
         usage(pgm);
 
     meshfile = "";
-    datfile = "";
     outfile = "";
     layers.clear();
 
@@ -82,15 +81,6 @@ void process_args(int argc, char *argv[], string& meshfile, string& datfile, str
             argc--; argv++;
             if (argc > 1)
                 meshfile = argv[1];
-            else
-                break;
-        }
-        else if (strncmp(argv[1], "-p", 3) == 0)
-        {
-            // read the next argument (expecting datfile)
-            argc--; argv++;
-            if (argc > 1)
-                datfile = argv[1];
             else
                 break;
         }
@@ -134,12 +124,6 @@ void process_args(int argc, char *argv[], string& meshfile, string& datfile, str
         usage(pgm);
     }
 
-    if (datfile.empty())
-    {
-        cerr << "Mssing data file!" << endl;
-        usage(pgm);
-    }
-
     if (outfile.empty())
     {
         cerr << "Missing output file!" << endl;
@@ -162,41 +146,14 @@ int main(int argc, char *argv[])
     unsigned int total_num;
 
     // process cli args
-    string meshfile, datfile, outfile;
+    string meshfile, outfile;
     map_layers_t layers;
-    process_args(argc, argv, meshfile, datfile, outfile, layers);
+    process_args(argc, argv, meshfile, outfile, layers);
 
     // read the mesh
     sloc::Mesh mesh;
     cout << "Reading mesh '" << meshfile << "'" << endl;
     mesh.read_ucd(meshfile.c_str());
-
-    // read the data file
-    vector<double> phi;
-    cout << "Reading potentials '" << datfile << "'" << endl;
-    ifstream in;
-    in.open(datfile.c_str());
-    if (!in.is_open())
-    {
-        cerr << "Could not open potentials data file '" << datfile << "'" << endl;
-        usage(argv[0]);
-    }
-    while (!in.eof())
-    {
-        string line;
-
-        getline(in, line);
-        if (line.empty())
-            break;
-
-        try {
-            phi.push_back(boost::lexical_cast<double>(line));
-        } catch (boost::bad_lexical_cast &) {
-            cerr << "Bad line in potentials data file: " << line << endl;
-            exit(2);
-        }
-    }
-    in.close();
 
     // only cells are associated with materials, but we want an association
     // between nodes and material ids. so, we need to walk through each of the
@@ -280,15 +237,14 @@ int main(int argc, char *argv[])
     // write out the electrodes file
     ofstream out;
     out.open(outfile.c_str());
-    out << total_num << " 0" << endl;
     cout << "Writing " << total_num << " electrodes to '" << outfile << "'" << endl;
     for (map_id_vector_t::iterator it = random_nodes.begin(); it != random_nodes.end(); ++it)
     {
         mat = it->first;
         for (vector_t::iterator vit = it->second->begin(); vit != it->second->end(); ++vit)
         {
-            unsigned int node_id = *vit;
-            out << node_id << " " << phi[node_id] << endl;
+            const unsigned int node_id = *vit;
+            out << node_id << endl;
         }
     }
     out.close();
