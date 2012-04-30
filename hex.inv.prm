@@ -1,6 +1,6 @@
 # hex.inv.prm
 set verbose = true
-set electrodes = ./hex_electrodes.dat
+set electrodes = ./hex.em1
 set output_sources = ./hex_sources.dipole
 
 subsection Forward Problem Parameters

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Use this script to serve files from the login nodes.
+Use this script to serve files from the login nodes of the cluster.
 
 We can use this script to set up a temporary web server on the examples directory,
 and view any generated images directly in a browser. It serves files under the

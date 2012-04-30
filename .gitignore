@@ -2,6 +2,7 @@
 .*.swp
 *.o
 *.g.o
+*.pyc
 /tmp
 /lib/Makefile.dep
 /debug.log
@@ -11,7 +12,8 @@
 /*.stl
 /*_mat.dat
 /*_phi.dat
-/*_electrodes.dat
+/*.ec*
+/*.em*
 /*_sources.dipole
 /*.sigma
 /*.surf.ucd
@@ -22,6 +24,8 @@ bin/bem_solve
 bin/bem_inverse_solver
 bin/fem_solve
 bin/select_electrodes
+bin/measure_electrodes
+bin/mpi_jobarray
 
 tests/hello
 tests/test_*[^cc]

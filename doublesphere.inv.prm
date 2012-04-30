@@ -1,6 +1,6 @@
 # doublesphere.inv.prm
 set verbose = true
-set electrodes = ./doublesphere_electrodes.dat
+set electrodes = ./doublesphere.em1
 set output_sources = ./doublesphere_sources.dipole
 
 subsection Forward Problem Parameters

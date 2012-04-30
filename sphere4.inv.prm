@@ -1,6 +1,6 @@
 # sphere4.inv.prm
 set verbose = true
-set electrodes = ./sphere4_electrodes.dat
+set electrodes = ./sphere4.em1
 set output_sources = ./sphere4_sources.dipole
 
 subsection Forward Problem Parameters
