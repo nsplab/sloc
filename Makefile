@@ -64,6 +64,12 @@ run: bin/$(target)$(EXEEXT)
 	@echo "============================ Running $<"
 	./bin/$(target)$(EXEEXT) $(run-parameters)
 
+# rule for stuff in bin
+bin: $(bin-cc:.cc=$(EXEEXT))
+
+# rule for stuff in tests
+tests: $(tests-cc:.cc=$(EXEEXT))
+
 # rule for building everything
 all: $(targets)
 
