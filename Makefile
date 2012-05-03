@@ -56,8 +56,8 @@ else
   objext    = $(OBJEXT)
 endif
 
-# by default, build only the main target
-default: bin/$(target)$(EXEEXT)
+# by default, build only the stuff in bin
+default: bin
 
 # run the main target
 run: bin/$(target)$(EXEEXT)
