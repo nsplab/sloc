@@ -1,3 +1,9 @@
+//
+// A few helpful URLs:
+// http://www.boost.org/doc/libs/1_46_1/doc/html/boost_random.html
+// http://www.boost.org/doc/libs/1_49_0/doc/html/boost_random.html
+// http://stackoverflow.com/questions/6470074/boostrandom-and-boostuniform-real-works-with-doubles-not-with-floats
+//
 #include "random_utils.h"
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int.hpp>
@@ -21,7 +27,7 @@ int sloc::randint(int a, int b)
 
 double sloc::uniform(double a, double b)
 {
-    boost::uniform_int<> dist(a,b);
+    boost::uniform_real<> dist(a,b);
     return dist(gen);
 }
 
