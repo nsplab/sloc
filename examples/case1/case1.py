@@ -207,7 +207,10 @@ def generate_noise():
         # generate the noise we'll be adding
         phi_rms = numpy.sqrt(sum(true_phi * true_phi) / len(true_phi))
         sigma = phi_rms * factor[snr]
-        noise = normal(loc=0, scale=sigma, size=total_electrodes)
+        n = 0
+        for layout in electrodes_layout[ec]:
+            n += layout['num']
+        noise = normal(loc=0, scale=sigma, size=n)
 
         # write it out
         filename = noise_dat(**kw)
