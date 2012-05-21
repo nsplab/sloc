@@ -45,6 +45,7 @@ bin-cc := \
 	bin/measure_electrodes.cc \
 	bin/bem_inverse_solver.cc \
 	bin/mpi_jobarray.cc \
+	bin/set_material_id.cc \
 	bin/fem_solve.cc
 
 # target source files from tests/ directory
