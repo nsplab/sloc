@@ -1,0 +1,6 @@
+
+Using a four-layer spherical head model, test the effect of random measurement noise on
+the source localization problem.
+
+In this simulation, make use of the bem_solve and bem_inverse_solver programs.
+
