@@ -45,6 +45,8 @@ bin-cc := \
 	bin/measure_electrodes.cc \
 	bin/bem_inverse_solver.cc \
 	bin/mpi_jobarray.cc \
+	bin/stl_to_ucd.cc \
+	bin/tri_to_quad.cc \
 	bin/set_material_id.cc \
 	bin/merge_ucd_files.cc \
 	bin/fem_solve.cc
