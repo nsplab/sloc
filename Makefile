@@ -46,6 +46,7 @@ targets := $(targets-cc:.cc=$(EXEEXT))
 # -----------------------------------------------------------------------------
 # Rules
 
+
 ifeq ($(debug-mode),on)
   flags     = $(CXXFLAGS.g) -Iinclude
   libraries = $(common-go) $(lib-deal2.g)
@@ -55,6 +56,11 @@ else
   libraries = $(common-o) $(lib-deal2.o)
   objext    = $(OBJEXT)
 endif
+
+flags += -I$(HOME)/opt/local/include
+LDFLAGS += -L$(HOME)/opt/local/lib
+LDFLAGS += -Wl,-rpath,$(HOME)/opt/local/lib
+LIBS += -lboost_filesystem-mt -lboost_system-mt
 
 # by default, build only the stuff in bin
 default: bin
