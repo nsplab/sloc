@@ -49,6 +49,7 @@ bin-cc := \
 	bin/tri_to_quad.cc \
 	bin/set_material_id.cc \
 	bin/merge_ucd_files.cc \
+	bin/mesh_info.cc \
 	bin/fem_solve.cc
 
 # target source files from tests/ directory
