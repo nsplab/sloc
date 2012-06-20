@@ -3,7 +3,7 @@
 *.o
 *.g.o
 *.pyc
-/tmp
+/tmp*
 /lib/Makefile.dep
 /debug.log
 /system_matrix.dat
@@ -23,6 +23,10 @@
 bin/bem_solve
 bin/bem_inverse_solver
 bin/fem_solve
+bin/stl_to_ucd
+bin/tri_to_quad
+bin/merge_ucd_files
+bin/set_material_id
 bin/select_electrodes
 bin/measure_electrodes
 bin/mpi_jobarray
