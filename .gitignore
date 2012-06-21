@@ -29,6 +29,8 @@ bin/merge_ucd_files
 bin/set_material_id
 bin/select_electrodes
 bin/measure_electrodes
+bin/mesh_info
+bin/spherical_head_model
 bin/mpi_jobarray
 
 tests/hello
