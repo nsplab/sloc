@@ -50,12 +50,12 @@ bin-cc := \
 	bin/set_material_id.cc \
 	bin/merge_ucd_files.cc \
 	bin/mesh_info.cc \
+	bin/spherical_head_model.cc \
 	bin/fem_solve.cc
 
 # target source files from tests/ directory
 tests-cc := \
 	tests/hex_inverse_solver.cc \
-	tests/spherical_head_model.cc \
 	tests/bone_stl_to_ucd.cc \
 	tests/mat_for_bone.cc \
 	tests/mat_for_artery.cc \
