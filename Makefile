@@ -58,11 +58,13 @@ else
 endif
 
 flags += -I$(HOME)/opt/local/include
+flags += -I./contrib/cppzmq
 LDFLAGS += -L$(HOME)/opt/local/lib
 LDFLAGS += -Wl,-rpath,$(HOME)/opt/local/lib
 LIBS += -lboost_filesystem-mt -lboost_system-mt
 LIBS += -lboost_program_options-mt
 LIBS += -lmsgpack
+LIBS += -lzmq
 
 # by default, build only the stuff in bin
 default: bin
