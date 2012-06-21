@@ -61,6 +61,7 @@ flags += -I$(HOME)/opt/local/include
 LDFLAGS += -L$(HOME)/opt/local/lib
 LDFLAGS += -Wl,-rpath,$(HOME)/opt/local/lib
 LIBS += -lboost_filesystem-mt -lboost_system-mt
+LIBS += -lmsgpack
 
 # by default, build only the stuff in bin
 default: bin

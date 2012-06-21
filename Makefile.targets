@@ -71,6 +71,7 @@ tests-cc := \
 	tests/test_random.cc \
 	tests/test_ptree.cc \
 	tests/test_functor.cc \
+	tests/test_msgpack.cc \
 	tests/hello.cc
 ifeq ($(DEAL_II_USE_MPI),yes)
 tests-cc += \
