@@ -1,3 +1,10 @@
+---immediate-------------------------------------------------------------------
+- move spherical_head_model.cc to bin/ directory, and add better cli support
+- make bin/create_dipoles.cc
+- make bin/create_material_layers.cc
+- finish bin/test_localization.cc
+- prepare simulation pipeline for head model (see examples/head/ directory)
+
 ---high------------------------------------------------------------------------
 - create VTK_File class for saving PointData and CellData fields
 - given a set of points, define a function whose value at a point x, is the value of the nearest point to x ... use this to visualize the cost function (countour plot in 3d)
@@ -8,6 +15,8 @@
 - work on hptimer code
 - pass functor to SimplexSearch class, instead of just a pointer
 - verify that files are opened properly (proper error handling)
+- create libsloc.a library and have binaries link against that
+- move src and header files to use sloc prefix (e.g. #include <sloc/geometry_utils.h>)
 
 ---normal----------------------------------------------------------------------
 - Validate the BEM equation (examine the solver residuals)
