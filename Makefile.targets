@@ -44,7 +44,6 @@ bin-cc := \
 	bin/select_electrodes.cc \
 	bin/measure_electrodes.cc \
 	bin/bem_inverse_solver.cc \
-	bin/mpi_jobarray.cc \
 	bin/stl_to_ucd.cc \
 	bin/tri_to_quad.cc \
 	bin/set_material_id.cc \
@@ -52,6 +51,10 @@ bin-cc := \
 	bin/mesh_info.cc \
 	bin/spherical_head_model.cc \
 	bin/fem_solve.cc
+ifeq ($(DEAL_II_USE_MPI),yes)
+bin-cc += \
+	bin/mpi_jobarray.cc
+endif
 
 # target source files from tests/ directory
 tests-cc := \
@@ -68,11 +71,14 @@ tests-cc := \
 	tests/test_random.cc \
 	tests/test_ptree.cc \
 	tests/test_functor.cc \
+	tests/hello.cc
+ifeq ($(DEAL_II_USE_MPI),yes)
+tests-cc += \
 	tests/mpi_job_queue.cc \
 	tests/mpi_primes.cc \
 	tests/mpi_hello2.cc \
-	tests/mpi_hello.cc \
-	tests/hello.cc
+	tests/mpi_hello.cc
+endif
 
 # -----------------------------------------------------------------------------
 # vim: ft=make
