@@ -20,6 +20,7 @@ common-cc := \
 	src/dipole_sources.cc \
 	src/material_data.cc \
 	src/bem_fwd_problem.cc \
+	src/hptimer.cc \
 	src/progress_timer.cc
 
 common-h := \
@@ -35,6 +36,7 @@ common-h := \
 	include/material_data.h \
 	include/bem_fwd_problem.h \
 	include/nelder_mead.h \
+	include/hptimer.h \
 	include/progress_timer.h \
 	include/config.h
 
@@ -69,6 +71,7 @@ tests-cc := \
 	tests/test_dipoles.cc \
 	tests/test_materials.cc \
 	tests/test_random.cc \
+	tests/test_hptimer.cc \
 	tests/test_ptree.cc \
 	tests/test_functor.cc \
 	tests/test_msgpack.cc \
