@@ -35,8 +35,8 @@ set output_sources = {output_sources}
 subsection Forward Problem Parameters
     set debug = {fwd_debug}
     set verbose = {fwd_verbose}
-    set material_data = model.sigma
-    set surface_mesh = model.surf.ucd
+    set material_data = {fwd_material_data}
+    set surface_mesh = {fwd_surface_mesh}
 end
 
 subsection Simplex Search Parameters
