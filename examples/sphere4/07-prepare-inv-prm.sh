@@ -2,14 +2,15 @@
 
 create_inverse_params.py \
     debug=true \
-    verbose=false \
+    verbose=true \
     electrode_measurements=sphere4_dp1_ec1.em \
     output_sources=sphere4_dp1_ec1.sources \
     fwd_surface_mesh=sphere4.surf.ucd \
     fwd_material_data=sphere4.sigma \
-    fwd_verbose=true \
+    fwd_verbose=false \
+    fwd_debug=false \
     search_verbose=true \
-    search_debug=true \
+    search_debug=false \
     search_initial_point='0, 0, 0' \
     search_initial_radius=10e-3 \
     search_tolerance=1e-8 \
