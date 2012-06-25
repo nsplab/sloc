@@ -39,6 +39,11 @@ public:
 
     void configure()
     {
+        // first, create a dummy dipole source
+        dealii::Point<3> dummy_x(0,0,0), dummy_p(0,0,1);
+        dipole_sources.add_source(dummy_x, dummy_p);
+
+        // configure the rest of the parameters
         sloc::BEM_ForwardProblem::configure();
     }
 
@@ -247,7 +252,7 @@ public:
         sloc::BEM_ForwardProblem::Parameters fwd_prm;
         fwd_prm.surface_mesh = parameters.surface_mesh;
         fwd_prm.material_data = parameters.material_data;
-        fwd_prm.dipole_sources = "data/dummy.dipole"; // XXX: move this out!
+        fwd_prm.dipole_sources = "";
         fwd_prm.verbose = parameters.fwd_verbose;
         fwd_prm.debug = parameters.fwd_debug;
         fwd_prm.logfile = "";

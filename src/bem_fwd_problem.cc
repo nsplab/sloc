@@ -136,8 +136,11 @@ void BEM_ForwardProblem::configure()
     verbose = parameters.verbose;
 
     // configure the dipole sources
-    Assert(!parameters.dipole_sources.empty(), ExcEmptyObject());
-    dipole_sources.read(parameters.dipole_sources.c_str());
+    if (dipole_sources.n_sources() == 0)
+    {
+        Assert(!parameters.dipole_sources.empty(), ExcEmptyObject());
+        dipole_sources.read(parameters.dipole_sources.c_str());
+    }
 
     // configure the material data
     // http://ijbem.k.hosei.ac.jp/volume1/number1/pdf/ijbem_a4-10.pdf
