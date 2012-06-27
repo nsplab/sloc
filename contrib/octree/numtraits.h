@@ -18,6 +18,9 @@
 #ifndef NUMTRAITS_H
 #define NUMTRAITS_H
 
+#include "nomis.h"
+BEGIN_NOMIS80_NAMESPACE
+
 template <typename T1, typename T2>
 class BinaryNumericTraits
 {
@@ -38,5 +41,7 @@ class BinaryNumericTraits<double, int>
 public:
     typedef double OpResult;
 };
+
+END_NOMIS80_NAMESPACE
 
 #endif

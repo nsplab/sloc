@@ -20,6 +20,8 @@
 
 #include "numtraits.h"
 
+BEGIN_NOMIS80_NAMESPACE
+
 template <typename T, int N>
 class TinyVector
 {
@@ -224,5 +226,7 @@ T norm(const TinyVector<T,N>& v)
 {
     return sqrt(sum(v*v));
 }
+
+END_NOMIS80_NAMESPACE
 
 #endif

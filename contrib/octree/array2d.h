@@ -20,6 +20,8 @@
 
 #include "array.h"
 
+BEGIN_NOMIS80_NAMESPACE
+
 template <typename T>
 class Array2D : public Array<T,2>
 {
@@ -101,5 +103,7 @@ Array2D<T> Array2D<T>::subarray(int iBegin, int jBegin, int iEnd, int jEnd)
     end(0) = jEnd;
     return Array<T,2>::subarray(begin, end);
 }
+
+END_NOMIS80_NAMESPACE
 
 #endif

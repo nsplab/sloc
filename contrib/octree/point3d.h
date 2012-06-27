@@ -20,6 +20,8 @@
 
 #include "tinyvector.h"
 
+BEGIN_NOMIS80_NAMESPACE
+
 template <typename T>
 class Point3D : public TinyVector<T,3>
 {
@@ -48,5 +50,7 @@ public:
     T& y() { return (*this)(1); }
     T& z() { return (*this)(2); }
 };
+
+END_NOMIS80_NAMESPACE
 
 #endif

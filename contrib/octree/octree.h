@@ -26,6 +26,8 @@
 #include <istream>
 #include <ostream>
 
+BEGIN_NOMIS80_NAMESPACE
+
 template <typename T, int AS = 1>
 class Octree
 {
@@ -160,5 +162,7 @@ private:
 };
 
 #include "octree.tcc"
+
+END_NOMIS80_NAMESPACE
 
 #endif

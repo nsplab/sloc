@@ -21,6 +21,8 @@
 #include "shareddata.h"
 #include "tinyvector.h"
 
+BEGIN_NOMIS80_NAMESPACE
+
 template <typename T, int N>
 class Array
 {
@@ -104,5 +106,7 @@ int Array<T,N>::dataIndex(const TinyVector<int,N>& indices) const
         assert(0 <= indices(i) && indices(i) < sizes_(i));
     return offset_ + sum(indices * strides_);
 }
+
+END_NOMIS80_NAMESPACE
 
 #endif

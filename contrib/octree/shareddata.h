@@ -20,6 +20,9 @@
 
 #include <algorithm>
 
+#include "nomis.h"
+BEGIN_NOMIS80_NAMESPACE
+
 /**
  * \warning This class isn't thread-safe! In particular, we should use atomic
  * operations when incrementing or decrementing the reference count. See Boost's
@@ -96,5 +99,7 @@ T& SharedData<T>::operator[](int i) const
     assert(data_);
     return data_[i];
 }
+
+END_NOMIS80_NAMESPACE
 
 #endif
