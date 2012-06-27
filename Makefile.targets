@@ -74,6 +74,7 @@ tests-cc := \
 	tests/test_hptimer.cc \
 	tests/test_ptree.cc \
 	tests/test_functor.cc \
+	tests/test_octree.cc \
 	tests/test_msgpack.cc \
 	tests/test_zmq_server.cc \
 	tests/test_zmq_client.cc \
