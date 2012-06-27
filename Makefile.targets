@@ -70,10 +70,10 @@ tests-cc := \
 	tests/test_sphere_surface.cc \
 	tests/test_dipoles.cc \
 	tests/test_materials.cc \
-	tests/test_random.cc \
-	tests/test_hptimer.cc \
-	tests/test_ptree.cc \
 	tests/test_functor.cc \
+	tests/test_random.cc \
+	tests/test_ptree.cc \
+	tests/test_hptimer.cc \
 	tests/test_octree.cc \
 	tests/test_msgpack.cc \
 	tests/test_zmq_server.cc \
