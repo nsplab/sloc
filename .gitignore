@@ -32,6 +32,9 @@ bin/measure_electrodes
 bin/mesh_info
 bin/spherical_head_model
 bin/mpi_jobarray
+bin/worker
+bin/controller
+bin/client
 
 tests/hello
 tests/test_*[^cc]
