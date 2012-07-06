@@ -9,6 +9,9 @@ clean-up-files = *~
 # location of deal.II installation
 D = $(HOME)/dev/deal.II
 
+# location of vcg installation
+VCGLIB_DIR = $(HOME)/dev/vcglib
+
 # -----------------------------------------------------------------------------
 include $D/common/Make.global_options
 
@@ -65,6 +68,9 @@ LDFLAGS += -Wl,-rpath,$(HOME)/opt/local/lib
 # include stuff in contrib
 flags += -I./contrib
 flags += -I./contrib/cppzmq
+
+# include vcglib
+flags += -I$(VCGLIB_DIR)
 
 # dynamic libs
 LIBS += -lboost_filesystem-mt -lboost_system-mt
