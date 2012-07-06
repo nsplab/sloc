@@ -1,4 +1,27 @@
 #include "point_cloud.h"
+#include <octree/point3d.h>
+#include <limits>
+
+
+namespace {
+
+typedef nomis80::Point3D<double> point_t;
+typedef nomis80::Point3D<int> voxel_t;
+
+double _nan = std::numeric_limits<double>::quiet_NaN();
+double epsilon = std::numeric_limits<double>::epsilon();
+point_t null_point(_nan, _nan, _nan);
+
+
+bool close_enough(const point_t& p)
+{
+    return false;
+}
+
+}
+
+
+// ----------------------------------------------------------------------------
 
 using namespace std;
 using namespace sloc;
@@ -85,6 +108,18 @@ bool PointCloud::naive_search(double x, double y, double z, long *id)
             return true;
         }
     }
+
+    return false;
+}
+
+bool PointCloud::search(double x, double y, double z, long *id)
+{
+    double tol = epsilon * epsilon;
+
+    double p[3];
+    p[0] = x; p[1] = y; p[2] = z;
+
+
 
     return false;
 }
