@@ -69,6 +69,7 @@ tests-cc := \
 	tests/test_simplex_search.cc \
 	tests/test_sphere_surface.cc \
 	tests/test_load_mesh.cc \
+	tests/test_filter_mesh.cc \
 	tests/test_dipoles.cc \
 	tests/test_materials.cc \
 	tests/test_functor.cc \
