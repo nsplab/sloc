@@ -8,5 +8,5 @@ create_forward_params.py \
     dipoles=head.dipoles \
     output_vtk=head.vtk \
     output_phi=head_phi.dat \
-    output=head.fwd.prm
+    output=head_dp1.fwd.prm
 
