@@ -562,12 +562,16 @@ void BEM_ForwardProblem::compute_area()
         cell = dh.begin_active(),
         endc = dh.end();
 
+    int e = 0;
     for (; cell != endc; ++cell)
     {
         fe_v.reinit(cell);
         cell->get_dof_indices(local_dof_indices);
+        double dA = 0;
         for (unsigned int q = 0; q < n_q_points; ++q)
-            area += one * fe_v.JxW(q);
+            dA += one * fe_v.JxW(q);
+        area += dA;
+        log << e++ << " " << dA << " " << area << std::endl;
     }
 
     deallog << "triangulation area = " << area << std::endl;
