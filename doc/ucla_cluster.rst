@@ -113,12 +113,12 @@ Installing zeromq
 
 On a login node::
     $ cd ~/dev
-    $ wget http://download.zeromq.org/zeromq-3.1.0-beta.tar.gz
+    $ wget http://download.zeromq.org/zeromq-3.2.0-rc1.tar.gz
 
 On an interactive session::
     $ cd ~/dev
-    $ tar xvfz zeromq-3.1.0-beta.tar.gz
-    $ cd zeromq-3.1.0
+    $ tar xvfz zeromq-3.2.0-rc1.tar.gz
+    $ cd zeromq-3.2.0
     $ ./configure --prefix=$HOME/opt/local 2>&1 | tee configure.log
     $ make 2>&1 | tee make.log
     $ make install 2>&1 | tee install.log
