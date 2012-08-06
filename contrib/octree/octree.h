@@ -161,8 +161,8 @@ private:
     int size_;
 };
 
-#include "octree.tcc"
-
 END_NOMIS80_NAMESPACE
+
+#include "octree.tcc"
 
 #endif

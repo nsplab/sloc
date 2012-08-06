@@ -17,6 +17,8 @@
 
 #include <cstring>
 
+BEGIN_NOMIS80_NAMESPACE
+
 /**
  * \class Octree
  * \brief Generic octree template
@@ -953,6 +955,8 @@ void Octree<T,AS>::readBinaryRecursive(std::istream& in, Node** node)
         break;
     }
 }
+
+END_NOMIS80_NAMESPACE
 
 // ----------------------------------------------------------------------------
 // vim: ft=cpp
