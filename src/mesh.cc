@@ -8,9 +8,12 @@
 #include "io_stl.h"
 #include "point_cloud.h"
 #include "progress_timer.h"
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace sloc;
+namespace fs = boost::filesystem;
 
 Mesh::Mesh()
 {
@@ -117,6 +120,34 @@ void Mesh::read_stl(const char *filename)
     stl_read(*this, filename);
 }
 
+int Mesh::read(const char *filename)
+{
+    fs::path p(filename);
+    string ext = p.extension().string();
+    boost::algorithm::to_lower(ext);
+    if (ext == ".ucd")
+        ucd_read(*this, filename);
+    else if (ext == ".stl")
+        stl_read(*this, filename);
+    else
+        return -1;
+    return 0;
+}
+
+int Mesh::write(const char *filename)
+{
+    fs::path p(filename);
+    string ext = p.extension().string();
+    boost::algorithm::to_lower(ext);
+    if (ext == ".ucd")
+        ucd_write(*this, filename);
+    else if (ext == ".stl")
+        stl_write(*this, filename);
+    else
+        return -1;
+    return 0;
+}
+
 // ----------------------------------------------------------------------------
 
 void sloc::ucd_write(Mesh& mesh, const char *filename)
@@ -211,6 +242,11 @@ void sloc::ucd_read(Mesh& mesh, const char *filename)
     delete [] cell;
 
     ucd.clear();
+}
+
+void sloc::stl_write(Mesh& tmesh, const char *filename)
+{
+    // XXX: to be implemented
 }
 
 void sloc::stl_read(Mesh& tmesh, const char *filename)

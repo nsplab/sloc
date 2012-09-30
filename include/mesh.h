@@ -1,5 +1,5 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef SLOC_MESH_H
+#define SLOC_MESH_H
 
 #include <valarray>
 
@@ -32,10 +32,12 @@ public:
     void set_cell(int e, long *cell);
     void set_mat(int e, int mat);
 
+    int write(const char *filename);
+    int read(const char *filename);
+
     void write_ucd(const char *filename);
     void read_ucd(const char *filename);
     void read_stl(const char *filename);
-
 
 private:
     int _ndim;
@@ -53,8 +55,11 @@ inline int Mesh::n_cells() const { return _ncells; }
 inline int Mesh::n_cell_nodes() const { return _ncellnodes; }
 
 void ucd_write(Mesh& mesh, const char *filename);
+void stl_write(Mesh& mesh, const char *filename);
+
 void ucd_read(Mesh& mesh, const char *filename);
 void stl_read(Mesh& mesh, const char *filename);
+
 
 // ----------------------------------------------------------------------------
 }

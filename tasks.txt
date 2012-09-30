@@ -1,4 +1,7 @@
 ---immediate-------------------------------------------------------------------
+- add bbox(mesh) to misc_utils.h
+- add centroid(mesh) to misc_utils.h
+- pass functor to SimplexSearch class, instead of just a pointer
 - move spherical_head_model.cc to bin/ directory, and add better cli support
 - make bin/create_dipoles.cc
 - make bin/create_material_layers.cc
@@ -12,11 +15,10 @@
     * output: vtk file
 - zmq-based remote logger (forward messages from logger)
 - figure out how to redirect a program's stdout/stderr streams
-- work on hptimer code
-- pass functor to SimplexSearch class, instead of just a pointer
 - verify that files are opened properly (proper error handling)
 - create libsloc.a library and have binaries link against that
 - move src and header files to use sloc prefix (e.g. #include <sloc/geometry_utils.h>)
+- importing obj / ply files
 
 ---normal----------------------------------------------------------------------
 - Validate the BEM equation (examine the solver residuals)
@@ -43,6 +45,7 @@
     * simulated annealing
 
 ---done------------------------------------------------------------------------
+- work on hptimer code
 - read initial search position from the inverse problem parameter file
 - implement octree (borrowed a GPL one, and figured out how to use it on 3d points)
 - Write down derivation of formulas used in bem_solve.cc

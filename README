@@ -4,7 +4,7 @@ Requirements
 
 The sloc project has a number of software dependencies.
 
-deal.II_ is a finite element differential equations analsys library.
+deal.II_ is a finite element differential equations analysis library.
 
 FLANN_ is a library for performing fast approximate nearest neighbor
 searches in high dimensional spaces.

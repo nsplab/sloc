@@ -3,44 +3,47 @@
 
 #include <vector>
 #include <octree/octree.h>
+#include <octree/point3d.h>
 #include <boost/smart_ptr.hpp>
+#include "spatial_index.h"
 
-namespace sloc {
-
-class PointCloud
+namespace sloc
 {
-public:
 
-    PointCloud();
-    ~PointCloud();
+    class PointCloud
+    {
 
-    void clear();
+    public:
 
-    inline int n_points() const { return npts; }
+        PointCloud();
+        ~PointCloud();
 
-    void set_tolerance(double tol);
+        void clear();
 
-    void create_index(int size);
+        inline int n_points() const { return npts; }
 
-    void add(double x, double y, double z, long *id);
+        void set_tolerance(double tol);
 
-    void get_point(int n, double *point);
+        void create_index(int size);
 
-    bool naive_search(double x, double y, double z, long *id);
-    bool search(double x, double y, double z, long *id);
+        void add(double x, double y, double z, long *id);
 
-public:
+        void get_point(int n, double *point);
 
-    double epsilon;
+        bool naive_search(double x, double y, double z, long *id);
+        bool octree_search(double x, double y, double z, long *id);
 
-    int npts;
-    std::vector<double*> points;
+    public:
 
-    typedef std::vector<int> bucket_t;
-    typedef boost::shared_ptr<bucket_t> shared_bucket_t;
-    typedef nomis80::Octree<shared_bucket_t> octree_idx;
-    boost::shared_ptr<octree_idx> idx;
-};
+        double epsilon;
+
+        int npts;
+        std::vector<double*> points;
+
+        typedef sloc::SpatialIndex<128> spatial_index_t;
+        boost::shared_ptr<spatial_index_t> spatial_index;
+
+    };
 
 } // namespace sloc
 #endif

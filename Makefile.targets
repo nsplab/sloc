@@ -13,6 +13,7 @@ common-cc := \
 	src/io_stl.cc \
 	src/io_ucd.cc \
 	src/mesh.cc \
+	src/bbox3.cc \
 	src/point_cloud.cc \
 	src/geometry_utils.cc \
 	src/random_utils.cc \
@@ -21,13 +22,15 @@ common-cc := \
 	src/material_data.cc \
 	src/bem_fwd_problem.cc \
 	src/hptimer.cc \
-	src/progress_timer.cc
+	src/progress_timer.cc \
+	src/misc_utils.cc
 
 common-h := \
 	include/io_dealii.h \
 	include/io_stl.h \
 	include/io_ucd.h \
 	include/mesh.h \
+	include/bbox3.h \
 	include/point_cloud.h \
 	include/geometry_utils.h \
 	include/random_utils.h \
@@ -38,6 +41,7 @@ common-h := \
 	include/nelder_mead.h \
 	include/hptimer.h \
 	include/progress_timer.h \
+	include/misc_utils.h \
 	include/config.h
 
 # target source files from bin/ directory
@@ -52,6 +56,8 @@ bin-cc := \
 	bin/merge_ucd_files.cc \
 	bin/mesh_info.cc \
 	bin/spherical_head_model.cc \
+	bin/filter_stl.cc \
+	bin/mesh_center.cc \
 	bin/fem_solve.cc
 ifeq ($(DEAL_II_USE_MPI),yes)
 bin-cc += \
