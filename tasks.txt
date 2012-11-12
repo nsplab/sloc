@@ -1,4 +1,6 @@
 ---immediate-------------------------------------------------------------------
+- import getfem code
+- revamp build system
 - add bbox(mesh) to misc_utils.h
 - add centroid(mesh) to misc_utils.h
 - pass functor to SimplexSearch class, instead of just a pointer
