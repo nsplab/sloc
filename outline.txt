@@ -1,5 +1,0 @@
-
-0. Mesh Preparation (coarsening + projection)
-1. Assembling the linear system (requires integration over cells) -- GetFM++
-2. Solving the linear system (deal.II) --
-
