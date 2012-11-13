@@ -1,0 +1,12 @@
+# sphere4.fwd.prm
+set verbose = true
+set debug = true
+
+set surface_mesh = sphere4.surf.mesh
+set surface_mesh_materials = sphere4.surf.mat
+set material_data = sphere4.sigma
+set dipole_sources = sphere4.dipoles
+
+set output_vtk = sphere4.phi.vtk
+set output_phi = sphere4.phi.dat
+

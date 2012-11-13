@@ -1,0 +1,66 @@
+# targets.txt -- loaded from CMakeLists.txt
+
+# Sources for libsloc.a
+set(LIBSLOC_SOURCES
+    src/greet.cc
+    src/random.cc
+    src/hptimer.cc
+    src/progress_timer.cc
+    src/mesh.cc
+    src/io_stl.cc
+    src/io_ucd.cc
+    src/io_getfem.cc
+    src/io_dealii.cc
+    src/sphere_surface.cc
+    src/material_data.cc
+    src/dipole_sources.cc
+    src/bem_forward_problem.cc
+)
+
+# Builds "bin/${target}.cc"
+set(BIN_TARGETS
+    hello
+    stl_to_mesh
+    make_spherical_head_model
+    make_head_model
+    measure_electrodes
+    select_electrodes
+    bem_forward_solver
+    bem_inverse_solver
+)
+
+# Builds "tests/${target}.cc"
+set(TEST_TARGETS
+    test_greet
+    test_functor
+    test_boost_po
+    test_boost_fs
+    test_poly
+    test_kdtree
+    test_random
+    test_hptimer
+    test_progress_timer
+    test_simplex_search
+    #test_vcglib
+    #test_muparser
+    #test_getfem
+    test_sloc
+)
+
+# deal.II specific builds
+if(DEALII_FOUND)
+    list(APPEND TEST_TARGETS
+        test_dealii
+        test_dealii_laplace_solver
+    )
+endif()
+
+# MPI specific builds
+if(MPI_CXX_FOUND)
+    list(APPEND TEST_TARGETS
+        test_mpi_hello
+        #test_mpi_primes
+    )
+endif()
+
+# vim: ft=cmake

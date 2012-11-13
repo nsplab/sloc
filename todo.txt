@@ -1,0 +1,31 @@
+---urgent----------------------------------------------------------------------
+write mesh_to_vtk (to save getfem's mesh format into a vtk file that can be visualized)
+calculate the shape of the cost function in the neighborhood of the true solution
+parallelize the assembly code
+
+---high------------------------------------------------------------------------
+given a volume mesh, evaluate the potential at each of the nodes, to obtain visualization of dipole field
+does the getfem mesh format allow you to assign user data to cells? (specifically, something like material ids)
+run grid search (generate random points inside bounding box)
+
+---normal----------------------------------------------------------------------
+use functor in simplex search algorithm
+rewrite sloc::Mesh, using the getfem::mesh structures and also storing along the surface-materials
+make a function called read_array()
+print mesh quality of each element in mesh
+
+---low-------------------------------------------------------------------------
+add command line overrides to settings in the .prm file (use boost::program_options)
+look at cmake's enable_testing() and add_test()
+use high precision timer in <sloc/simplex_search.h>
+
+---done------------------------------------------------------------------------
+create head model
+copy inverse solver source file to bin directory (don't refactor it yet)
+where to store per-element material-id information?
+writing out vtk file from dealii solution vector (use getfem's vtk_export?)
+mapping indices in solution vector to appropriate dof? (i.e. handling the degrees of freedom)
+write .stl to .mesh converter / adapter
+interpolation on elements
+print mesh area of each element in mesh
+load small mesh using getfem

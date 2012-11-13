@@ -1,0 +1,25 @@
+# head.inv.prm
+set verbose = true
+set electrodes = head.electrodes.dat
+set output_sources = head.sources
+
+subsection Forward Problem Parameters
+    set verbose = false
+    set debug = false
+    set surface_mesh = head.surf.mesh
+    set surface_mesh_materials = head.surf.mat
+    set material_data = head.sigma
+end
+
+subsection Simplex Search Parameters
+    set verbose = true
+    set debug = true
+    set initial_search_point = 0.20, 0.20, 0.20
+    set tolerance = 1e-8
+    set max_iterations = 1000
+    set reflection_coefficient = 1.0
+    set contraction_coefficient = 0.5
+    set expansion_coefficient = 2.0
+    set reduction_coefficient = 0.5
+end
+
