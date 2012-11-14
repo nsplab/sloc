@@ -31,6 +31,12 @@ After logging back in into the cluster, you can verify the above list of loaded 
 by issuing the following command::
     $ module list
 
+Additionally, in order for the `pkg-config` utility to detect certain
+software (like `muparser`) we'll need to set the `$PKG_CONFIG_PATH`
+environment variable. Just add the following line at the end of your
+`~/.bash_profile` file::
+    export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$HOME/opt/local/lib/pkgconfig"
+
 
 Software Installation
 =====================
@@ -70,7 +76,6 @@ Minor work-around for problem with deal.II finding the boost library directory::
     $ ln -sf ../lib
 
 On an interactive session::
-    $ cd ~/opt/local/include
     $ cd ~/dev/deal.II
     $ time ./configure --enable-mpi --with-boost=${HOME}/opt/local/include 2>&1 | tee configure.log
     $ time make -j5 optimized 2>&1 | tee make.log
@@ -83,7 +88,7 @@ On a login node::
 
 On an interactive session::
     $ ./configure --disable-debug --disable-dependency-tracking --prefix=$HOME/opt/local 2>&1 | tee configure.log
-    $ make 2>&1 | tee make.log
+    $ time make 2>&1 | tee make.log
     $ make install 2>&1 | tee install.log
     $ pkg-config muparser --cflags --libs
 
@@ -95,8 +100,9 @@ On a login node::
 
 On an interactive session::
     $ bash autogen.sh
-    $ ./configure --with-pic 2>&1 | tee configure.log
-    $ make 2>&1 | tee make.log
+    $ ./configure --prefix=$HOME/opt/getfem --with-pic 2>&1 | tee configure.log
+    $ time make 2>&1 | tee make.log
+    $ make install 2>&1 | tee install.log
 
 Installing sloc
 ---------------
