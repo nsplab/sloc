@@ -1,7 +1,8 @@
 
 CMAKE_FLAGS = \
-	-DGETFEM_PREFIX=$(HOME)/opt/getfem \
+	-DBOOST_ROOT=$(HOME)/opt/local \
 	-DDEALII_PREFIX=$(HOME)/dev/deal.II \
+	-DGETFEM_PREFIX=$(HOME)/opt/getfem \
 	-DBUILD_TESTS=1
 
 default: build

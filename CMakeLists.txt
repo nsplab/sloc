@@ -46,7 +46,8 @@ endif()
 # Configure Boost
 set(BOOST_USE_STATIC_LIBS ON)
 set(BOOST_USE_MULTITHREADED ON)
-find_package(Boost 1.49
+set(REQUIRED_BOOST_VERSION 1.49)
+find_package(Boost ${REQUIRED_BOOST_VERSION}
              COMPONENTS
              exception
              system
@@ -58,6 +59,8 @@ find_package(Boost 1.49
 )
 include_directories(${Boost_INCLUDE_DIR})
 list(APPEND COMMON_LIBRARIES ${Boost_LIBRARIES})
+message(STATUS "Boost settings:")
+message(STATUS "  BOOST_ROOT = ${BOOST_ROOT}")
 
 # Configure GetFEM
 #set(GETFEM_PREFIX "$ENV{HOME}/opt/getfem")
@@ -94,6 +97,7 @@ message(STATUS "  MUPARSER_LDFLAGS = ${MUPARSER_LDFLAGS}")
 # See also http://www.cmake.org/Wiki/CMake_Useful_Variables
 message(STATUS "Other project settings:")
 message(STATUS "  PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}")
+message(STATUS "  CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
 # -----------------------------------------------------------------------------
 

@@ -15,12 +15,24 @@ if(NOT DEALII_CFLAGS)
         #"-DBOOST_NO_SLIST"
         #"-mmacosx-version-min=10.7"
     )
+
     set(DEALII_LDFLAGS
         "-L${DEALII_PREFIX}/lib"
         "-lpthread"
-        "${DEALII_PREFIX}/lib/libdeal_II.dylib"
-        "${DEALII_PREFIX}/lib/libtbb.dylib"
+        "-lz"
     )
+    if(APPLE)
+        set(DEALII_LDFLAGS ${DEALII_LDFLAGS}
+            "${DEALII_PREFIX}/lib/libdeal_II.dylib"
+            "${DEALII_PREFIX}/lib/libtbb.dylib"
+        )
+    else()
+        set(DEALII_LDFLAGS ${DEALII_LDFLAGS}
+            "${DEALII_PREFIX}/lib/libdeal_II.so"
+            "${DEALII_PREFIX}/lib/libtbb.so"
+        )
+    endif()
+
     #set(DEALII_LIBS "-lz -lboost_thread-mt -lboost_serialization-mt -lboost_system-mt")
 
     if(DEALII_CFLAGS)
