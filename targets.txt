@@ -11,6 +11,7 @@ set(LIBSLOC_SOURCES
     src/io_ucd.cc
     src/io_getfem.cc
     src/io_dealii.cc
+    src/geometry.cc
     src/sphere_surface.cc
     src/material_data.cc
     src/dipole_sources.cc
