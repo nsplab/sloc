@@ -16,6 +16,7 @@ set(LIBSLOC_SOURCES
     src/material_data.cc
     src/dipole_sources.cc
     src/bem_forward_problem.cc
+    src/bem_forward_problem_par.cc
 )
 
 # Builds "bin/${target}.cc"
