@@ -23,6 +23,7 @@ set(BIN_TARGETS
     stl_to_mesh
     make_spherical_head_model
     make_head_model
+    make_dipoles
     measure_electrodes
     select_electrodes
     bem_forward_solver
