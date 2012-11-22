@@ -1,3 +1,6 @@
+/*
+ * Test MPI_Send and MPI_Recv on array data
+ */
 #include <sloc/config.h>
 #include <sloc/utils.h>
 #include <iostream>
