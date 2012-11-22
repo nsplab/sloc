@@ -2,6 +2,7 @@
  * Creates a file head.surf.mesh suitable for bem_forward_solver
  */
 
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -110,7 +111,9 @@ int main(int argc, char *argv[])
 {
     try
     {
-        string prefix = "/Users/luis/meshes";
+        string home = fs::path(getenv("HOME")).string();
+        string prefix = home + "/meshes";
+
         parameters p;
         p.scalp_stl = prefix + "/scalp11.stl";
         p.outer_skull_stl = prefix + "/new/outer-skull-20.stl";
