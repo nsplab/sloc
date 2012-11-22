@@ -275,6 +275,7 @@ void BEM_Forward_Problem::assemble_system()
     //
     // contribution from surface integral terms
     //
+
     for (dal::bv_visitor cv(surface_mesh.convex_index()); !cv.finished(); ++cv)
     {
 
@@ -381,6 +382,7 @@ void BEM_Forward_Problem::assemble_system()
             for (j = 0; j < fe_dofs_per_cell; ++j)
             {
                 system_matrix(i, elt_dof_indices[j]) += -local_matrix_row_i(j);
+                //cout << "  k=0 cv=" << cv << " i=" << i << " j=" << j << " M(" << i << "," << elt_dof_indices[j] << ") += " << -local_matrix_row_i(j) << endl;
             }
         }
 
@@ -422,14 +424,11 @@ void BEM_Forward_Problem::output_results()
         sloc::write_vector(parameters.output_phi.c_str(), phi);
     }
 
-    // XXX: what is this for, again?
-
     if (!parameters.output_vtk.empty())
     {
         // copy the solution vector phi into a getfem vector that we can save
         getfem::modeling_standard_plain_vector phi_data;
         std::copy(phi.begin(), phi.end(), std::back_inserter(phi_data));
-        //mf.write_to_file("tetra.meshfem", true);
 
         // write out vtk file
         getfem::vtk_export exp(parameters.output_vtk.c_str(), true);
