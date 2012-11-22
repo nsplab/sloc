@@ -25,6 +25,10 @@ public:
     void run();
     void assemble_system();
 
+private:
+    void assemble_range_contrib(unsigned int cv_begin, unsigned int cv_end, std::valarray<double>& contrib);
+    void assemble_system_from_contrib(unsigned int cv_begin, unsigned int cv_end, std::valarray<double>& contrib, const int kth_proc);
+
 public:
 
     // number of processes
