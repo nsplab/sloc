@@ -9,10 +9,12 @@ fi
     -v tetra.dipoles.vtk -o tetra.dipoles \
     0.3,0.3,0.3/0,0,1
 
-./select_electrodes \
-    -m tetra.surf.mesh -i tetra.surf.mat \
-    -v tetra.electrodes.vtk -o tetra.electrodes \
-    1/4
+if [ ! -f tetra.electrodes ]; then
+    ./select_electrodes \
+        -m tetra.surf.mesh -i tetra.surf.mat \
+        -v tetra.electrodes.vtk -o tetra.electrodes \
+        1/4
+fi
 
 cat >tetra.fwd.prm <<DOC
 # tetra.fwd.prm
@@ -24,13 +26,13 @@ set surface_mesh_materials = tetra.surf.mat
 set material_data = tetra.sigma
 set dipole_sources = tetra.dipoles
 
-set output_vtk = tetra.vtk
-set output_phi = tetra.phi.dat
+set output_vtk = tetra.p$N.vtk
+set output_phi = tetra.p$N.phi.dat
 DOC
 
-mpiexec -n $N ./bem_forward_solver tetra.fwd.prm | tee tetra.fwd.log
+mpiexec -n $N ./bem_forward_solver tetra.fwd.prm >tetra.p$N.fwd.log
 
-./measure_electrodes -p tetra.phi.dat -e tetra.electrodes -o tetra.electrodes.dat -n 1e12
+#./measure_electrodes -p tetra.phi.dat -e tetra.electrodes -o tetra.electrodes.dat -n 1e12
 
 cat >tetra.inv.prm <<DOC
 # tetra.inv.prm
