@@ -101,6 +101,7 @@ void print_getfem_info(string filename)
     cout << ANSI_BLUE << "bbox     = " << ANSI_CYAN << bbox << endl;
     cout << ANSI_BLUE << "center   = " << ANSI_CYAN << center << endl;
     cout << ANSI_BLUE << "dim      = " << ANSI_CYAN << dim << endl;
+    cout << ANSI_RESET;
 }
 
 int print_info(fs::path meshpath)
