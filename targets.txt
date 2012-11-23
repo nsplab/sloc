@@ -24,6 +24,7 @@ set(BIN_TARGETS
     hello
     stl_to_mesh
     mesh_to_vtk
+    mesh_info
     make_spherical_head_model
     make_head_model
     make_dipoles
