@@ -9,7 +9,7 @@ fi
 
 ./make_dipoles \
     -v head.dipoles.vtk -o head.dipoles \
-    0,0,0/0,0,100e-9
+    4.81851,-129.829,-117.922/0,0,1000e-9
 
 if [ ! -f head.electrodes ]; then
     ./select_electrodes \
@@ -61,7 +61,7 @@ end
 subsection Simplex Search Parameters
     set verbose = true
     set debug = true
-    set initial_search_point = 0.20, 0.20, 0.20
+    set initial_search_point = 3.5, -127, -119
     set tolerance = 1e-8
     set max_iterations = 1000
     set reflection_coefficient = 1.0
