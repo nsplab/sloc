@@ -45,7 +45,7 @@ set(TEST_TARGETS
     test_hptimer
     test_progress_timer
     test_simplex_search
-    #test_vcglib
+    test_vcglib
     #test_muparser
     #test_getfem
     test_sloc
