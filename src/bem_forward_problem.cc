@@ -411,8 +411,17 @@ void BEM_Forward_Problem::solve_system()
     // See http://en.wikipedia.org/wiki/Generalized_minimal_residual_method
     //
     deallog << "BEM_Forward_Problem::solve_system() T=" << timer.wall_time() << endl;
-    SolverGMRES<Vector<double> > solver(solver_control);
-    solver.solve(system_matrix, phi, system_rhs, PreconditionIdentity());
+    try
+    {
+        SolverGMRES<Vector<double> > solver(solver_control);
+        solver.solve(system_matrix, phi, system_rhs, PreconditionIdentity());
+    }
+    catch (std::exception& exc)
+    {
+        sloc::write_matrix("system_matrix.dat", system_matrix);
+        sloc::write_vector("system_rhs.dat", system_rhs);
+        throw exc;
+    }
 }
 
 void BEM_Forward_Problem::output_results()

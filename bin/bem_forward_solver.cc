@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
         cerr << endl << sep << endl
              << "Exception: " << exc.what() << endl
              << "Aborting!" << endl;
+        MPI::Finalize();
         return 1;
     }
     catch (...)
@@ -93,6 +94,7 @@ int main(int argc, char *argv[])
         cerr << endl << sep << endl
              << "Unknown exception!" << endl
              << "Aborting!" << endl;
+        MPI::Finalize();
         return 1;
     }
 
