@@ -286,6 +286,12 @@ void BEM_Forward_Problem_P::assemble_system()
         }
     }
 
+    if ((rank == 0) && debug)
+    {
+        sloc::write_vector("system_rhs.dat", system_rhs);
+        sloc::write_matrix("system_matrix.dat", system_matrix);
+    }
+
     return;
 }
 
