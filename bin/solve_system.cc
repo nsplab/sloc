@@ -17,6 +17,7 @@
 #include <deal.II/base/timer.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/precondition.h>
+#include <deal.II/lac/eigen.h>
 #include <sloc/io_dealii.h>
 #include <sloc/utils.h>
 
@@ -137,6 +138,45 @@ void run_dealii_linear_solver(const po::variables_map& vm)
     sloc::write_vector(outfile.c_str(), x);
     cout << "Wrote solution to " << fs::path(outfile) << endl;
 
+    if (vm.count("condition"))
+    {
+        //
+        // Calculate the matrix condition number using the von Mises
+        // power iteration method to approximate the largest and
+        // smallest eigenvalues.
+        //
+        // See:
+        //  http://en.wikipedia.org/wiki/Power_iteration
+        //  http://www.mcs.csueastbay.edu/~malek/Class/power.pdf
+        //  http://wolfgang.math.tamu.edu/svn/public/deal.II/trunk/tests/lac/eigen.cc
+        //
+
+        SolverControl eigen_solver_control(1000, 1e-10, false, true);
+        GrowingVectorMemory<> mem;
+
+        Vector<double> u(n);
+
+        // compute max eigenvalue
+        double eigen_max;
+        u = 1.;
+        cout << "Calculating maximum eigenvalue of system_matrix..." << endl;
+        EigenPower<> von_Mises(eigen_solver_control, mem);
+        von_Mises.solve(eigen_max, system_matrix, u);
+        cout << "Max eigenvalue = " << eigen_max << endl;
+
+        // compute min eigenvalue
+        double eigen_min = 0.;
+        u = 1.;
+        cout << "Calculating minimum eigenvalue of system_matrix..." << endl;
+        EigenInverse<> wieland(eigen_solver_control, mem);
+        wieland.solve(eigen_min, system_matrix, u);
+        cout << "Min eigenvalue = " << eigen_min << endl;
+
+        // report condition number
+        double cond = eigen_max / eigen_min;
+        cout << "Approximate condition number = " << cond << endl;
+    }
+
     // done!
 }
 
@@ -163,6 +203,7 @@ int main(int argc, char *argv[])
             ("log-result", po::value<bool>()->default_value(true)->zero_tokens(), "log result in solver")
             ("max-steps", po::value<int>()->default_value(100), "max steps for iterative solver")
             ("tolerance", po::value<double>()->default_value(1e-10), "convergence tolerance")
+            ("condition", "calculate condition number")
             ;
 
         po::variables_map vm;
