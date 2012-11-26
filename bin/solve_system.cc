@@ -116,8 +116,7 @@ void run_dealii_linear_solver(const po::variables_map& vm)
     const unsigned int n = system_rhs.size();
 
     // represents solution of linear system
-    dealii::Vector<double> x;
-    x.reinit(n);
+    dealii::Vector<double> x(n);
 
     // measures wallclock time
     Timer timer;
