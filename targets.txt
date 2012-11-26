@@ -30,6 +30,7 @@ set(BIN_TARGETS
     make_dipoles
     measure_electrodes
     select_electrodes
+    solve_system
     bem_forward_solver
     bem_inverse_solver
 )
