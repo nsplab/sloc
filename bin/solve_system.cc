@@ -10,6 +10,7 @@
 #include <cmath>
 #include <vector>
 #include <stdexcept>
+#include <typeinfo>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 
@@ -20,6 +21,7 @@
 #include <deal.II/lac/eigen.h>
 #include <sloc/io_dealii.h>
 #include <sloc/utils.h>
+#include <sloc/colors.h>
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
@@ -81,6 +83,62 @@ void read_matrix(const char *filename, dealii::FullMatrix<double>& mat)
 
 // ----------------------------------------------------------------------------
 
+void calculate_condition_number(dealii::FullMatrix<double>& mat)
+{
+    try
+    {
+        using namespace dealii;
+
+        //
+        // Calculate the matrix condition number using the von Mises
+        // power iteration method to approximate the largest and
+        // smallest eigenvalues.
+        //
+        // See:
+        //  http://en.wikipedia.org/wiki/Power_iteration
+        //  http://www.mcs.csueastbay.edu/~malek/Class/power.pdf
+        //  http://wolfgang.math.tamu.edu/svn/public/deal.II/trunk/tests/lac/eigen.cc
+        //
+
+        // XXX: assert that mat is a square matrix
+        const int n = mat.n();
+
+        // XXX: pass an appropriate solver_control to this function (filled out from values specified on the command line)
+        SolverControl solver_control(1000, 1e-10, false, true);
+        GrowingVectorMemory<> mem;
+
+        Vector<double> u(n);
+
+        // compute max eigenvalue
+        double eigen_max;
+        u = 1.;
+        cout << "Calculating maximum eigenvalue of matrix..." << endl;
+        EigenPower<> von_Mises(solver_control, mem);
+        von_Mises.solve(eigen_max, mat, u);
+        cout << "Max eigenvalue = " << eigen_max << ANSI_RESET << endl;
+
+        // compute min eigenvalue
+        double eigen_min = 0.;
+        u = 1.;
+        cout << "Calculating minimum eigenvalue of matrix..." << endl;
+        EigenInverse<> wieland(solver_control, mem);
+        wieland.solve(eigen_min, mat, u);
+        cout << "Min eigenvalue = " << eigen_min << ANSI_RESET << endl;
+
+        // report condition number
+        double cond = eigen_max / eigen_min;
+        cout << ANSI_GREEN << "Approximate condition number = " << cond << ANSI_RESET << endl;
+    }
+    catch (std::exception& exc)
+    {
+        cout << ANSI_RED << "Exception: " << exc.what() << ANSI_RESET << endl;
+    }
+    catch (...)
+    {
+        cout << ANSI_RED << "what?" << ANSI_RESET << endl;
+    }
+}
+
 void run_dealii_linear_solver(const po::variables_map& vm)
 {
     using namespace dealii;
@@ -131,53 +189,27 @@ void run_dealii_linear_solver(const po::variables_map& vm)
     solver_control.set_tolerance(vm["tolerance"].as<double>());
 
     // solve the linear system!
-    SolverGMRES< Vector<double> > solver(solver_control);
-    solver.solve(system_matrix, x, system_rhs, dealii::PreconditionIdentity());
+    try
+    {
+        SolverGMRES< Vector<double> > solver(solver_control);
+        solver.solve(system_matrix, x, system_rhs, dealii::PreconditionIdentity());
+    }
+    catch (std::exception& exc)
+    {
+        cout << ANSI_RED << "Error: Linear system did not converge!" << ANSI_RESET << endl;
+        calculate_condition_number(system_matrix);
+        return;
+    }
+
+    if (vm.count("condition"))
+        calculate_condition_number(system_matrix);
 
     // save the solution
     sloc::write_vector(outfile.c_str(), x);
     cout << "Wrote solution to " << fs::path(outfile) << endl;
 
-    if (vm.count("condition"))
-    {
-        //
-        // Calculate the matrix condition number using the von Mises
-        // power iteration method to approximate the largest and
-        // smallest eigenvalues.
-        //
-        // See:
-        //  http://en.wikipedia.org/wiki/Power_iteration
-        //  http://www.mcs.csueastbay.edu/~malek/Class/power.pdf
-        //  http://wolfgang.math.tamu.edu/svn/public/deal.II/trunk/tests/lac/eigen.cc
-        //
-
-        SolverControl eigen_solver_control(1000, 1e-10, false, true);
-        GrowingVectorMemory<> mem;
-
-        Vector<double> u(n);
-
-        // compute max eigenvalue
-        double eigen_max;
-        u = 1.;
-        cout << "Calculating maximum eigenvalue of system_matrix..." << endl;
-        EigenPower<> von_Mises(eigen_solver_control, mem);
-        von_Mises.solve(eigen_max, system_matrix, u);
-        cout << "Max eigenvalue = " << eigen_max << endl;
-
-        // compute min eigenvalue
-        double eigen_min = 0.;
-        u = 1.;
-        cout << "Calculating minimum eigenvalue of system_matrix..." << endl;
-        EigenInverse<> wieland(eigen_solver_control, mem);
-        wieland.solve(eigen_min, system_matrix, u);
-        cout << "Min eigenvalue = " << eigen_min << endl;
-
-        // report condition number
-        double cond = eigen_max / eigen_min;
-        cout << "Approximate condition number = " << cond << endl;
-    }
-
     // done!
+    return;
 }
 
 void run_getfem_linear_solver(const po::variables_map& vm)
@@ -240,13 +272,13 @@ int main(int argc, char *argv[])
     }
     catch (std::exception& exc)
     {
-        cerr << "Exception: " << exc.what() << endl;
+        cerr << ANSI_RED << "Exception: " << exc.what() << ANSI_RESET << endl;
         cerr << "Aborting!" << endl;
         return 1;
     }
     catch (...)
     {
-        cerr << "Exception of unknown type!" << endl;
+        cerr << ANSI_RED << "Exception of unknown type!" << ANSI_RESET << endl;
         return 1;
     }
 
