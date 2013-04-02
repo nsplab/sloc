@@ -1,8 +1,11 @@
 ---urgent----------------------------------------------------------------------
-parallelize the assembly code
+generate random cloud of points near a center
+plotting function defined only on points... (plotting point cloud)
+    http://stackoverflow.com/questions/9419451/3d-contour-plot-from-data-using-mayavi-python
 add an output_frequency parameter to control the progress timer (update every N cells, instead of all the time)
 write mesh_to_vtk (to save getfem's mesh format into a vtk file that can be visualized)
 calculate the shape of the cost function in the neighborhood of the true solution
+store mesh and related data in hdf5 format
 
 ---high------------------------------------------------------------------------
 given a volume mesh, evaluate the potential at each of the nodes, to obtain visualization of dipole field
@@ -22,6 +25,7 @@ use high precision timer in <sloc/simplex_search.h>
 fix BOOST_ROOT in build system
 
 ---done------------------------------------------------------------------------
+parallelize the assembly code
 create head model
 copy inverse solver source file to bin directory (don't refactor it yet)
 where to store per-element material-id information?

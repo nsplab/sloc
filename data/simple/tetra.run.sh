@@ -5,7 +5,8 @@ if [[ -n "$1" ]]; then
     N="$1"
 fi
 
-./make_dipoles \
+# Create file "tetra.dipoles"
+make_dipoles \
     -v tetra.dipoles.vtk -o tetra.dipoles \
     0.3,0.3,0.3/0,0,1
 
