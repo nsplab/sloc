@@ -9,27 +9,24 @@ if(NOT DEALII_CFLAGS)
     set(DEALII_INCLUDE_DIR "${DEALII_PREFIX}/include")
 
     set(DEALII_CFLAGS
-        "-I${DEALII_INCLUDE_DIR}"
-        "-I${DEALII_PREFIX}/contrib/tbb/tbb30_104oss/include"
-        #"-DBOOST_NO_HASH"
-        #"-DBOOST_NO_SLIST"
+        "-I${DEALII_PREFIX}/include"
+        "-I${DEALII_PREFIX}/build/include"
+        "-I${DEALII_PREFIX}/bundled/tbb30_104oss/include"
         #"-mmacosx-version-min=10.7"
     )
 
     set(DEALII_LDFLAGS
-        "-L${DEALII_PREFIX}/lib"
+        "-L${DEALII_PREFIX}/build/source"
         "-lpthread"
         "-lz"
     )
     if(APPLE)
         set(DEALII_LDFLAGS ${DEALII_LDFLAGS}
-            "${DEALII_PREFIX}/lib/libdeal_II.dylib"
-            "${DEALII_PREFIX}/lib/libtbb.dylib"
+            ${DEALII_PREFIX}/build/source/libdeal_II.dylib
         )
     else()
         set(DEALII_LDFLAGS ${DEALII_LDFLAGS}
-            "${DEALII_PREFIX}/lib/libdeal_II.so"
-            "${DEALII_PREFIX}/lib/libtbb.so"
+            ${DEALII_PREFIX}/build/source/libdeal_II.so
         )
     endif()
 
