@@ -33,6 +33,7 @@ set(BIN_TARGETS
     solve_system
     bem_forward_solver
     bem_inverse_solver
+    bem_cost_function
 )
 
 # Builds "tests/${target}.cc"
