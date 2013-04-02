@@ -1,9 +1,12 @@
+CMAKE_BUILD_TYPE = Debug
+BUILD_TESTS = 1
 
 CMAKE_FLAGS = \
 	-DBOOST_ROOT=$(HOME)/opt/local \
 	-DDEALII_PREFIX=$(HOME)/dev/deal.II \
 	-DGETFEM_PREFIX=$(HOME)/opt/getfem \
-	-DBUILD_TESTS=1
+	-DCMAKE_BUILD_TYPE="$(CMAKE_BUILD_TYPE)" \
+	-DBUILD_TESTS="${BUILD_TESTS}"
 
 default: build
 

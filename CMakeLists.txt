@@ -23,6 +23,18 @@ if(NOT DEFINED BUILD_TESTS)
     set(BUILD_TESTS FALSE)
 endif()
 
+# Set a default build type for single-configuration
+# CMake generators if no build type is set.
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif()
+
+# Select flags
+set(CMAKE_CXX_FLAGS "-Wall -Wno-unused-variable")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+
 # -----------------------------------------------------------------------------
 
 # Configure MPI
