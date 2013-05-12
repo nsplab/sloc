@@ -10,13 +10,14 @@ if(NOT DEALII_CFLAGS)
 
     set(DEALII_CFLAGS
         "-I${DEALII_PREFIX}/include"
-        "-I${DEALII_PREFIX}/build/include"
-        "-I${DEALII_PREFIX}/bundled/tbb30_104oss/include"
+        #"-I${DEALII_PREFIX}/build/include"
+        #"-I${DEALII_PREFIX}/bundled/tbb30_104oss/include"
         #"-mmacosx-version-min=10.7"
     )
 
     set(DEALII_LDFLAGS
-        "-L${DEALII_PREFIX}/build/source"
+        "-L${DEALII_PREFIX}/lib"
+        #"-L${DEALII_PREFIX}/build/source"
         "-lpthread"
         "-lz"
     )
@@ -26,7 +27,8 @@ if(NOT DEALII_CFLAGS)
         )
     else()
         set(DEALII_LDFLAGS ${DEALII_LDFLAGS}
-            ${DEALII_PREFIX}/build/source/libdeal_II.so
+            ${DEALII_PREFIX}/lib/libdeal_II.so
+            #${DEALII_PREFIX}/build/source/libdeal_II.so
         )
     endif()
 
