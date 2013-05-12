@@ -5,18 +5,18 @@ if [[ -n "$1" ]]; then
     N="$1"
 fi
 
-./make_spherical_head_model 2
+make_spherical_head_model 2
 
 # Other values to try:
 #   0,0,0/1000e-9,0,0
 #   0.010,-0.012,0.013/5.5e-8,-2.0e-7,1.0e-7
-./make_dipoles \
+make_dipoles \
     -v sphere4.dipoles.vtk -o sphere4.dipoles \
     0,0,0/1,0,0
     #0,0,0/100e-9,0,0
 
 if [ ! -f sphere4.electrodes ]; then
-    ./select_electrodes \
+    select_electrodes \
         -m sphere4.surf.mesh -i sphere4.surf.mat \
         -v sphere4.electrodes.vtk -o sphere4.electrodes \
         1/30 4/35 3/30
@@ -36,10 +36,10 @@ set output_vtk = sphere4.phi.vtk
 set output_phi = sphere4.phi.dat
 DOC
 
-mpiexec -n $N ./bem_forward_solver sphere4.fwd.prm >sphere4.p$N.fwd.log
+mpiexec -n $N bem_forward_solver sphere4.fwd.prm >sphere4.p$N.fwd.log
 
 if [ ! -f sphere4.electrodes.dat ]; then
-    ./measure_electrodes \
+    measure_electrodes \
         -p sphere4.phi.dat \
         -e sphere4.electrodes \
         -o sphere4.electrodes.dat \
@@ -74,6 +74,6 @@ end
 
 DOC
 
-#./bem_inverse_solver sphere4.inv.prm
+#bem_inverse_solver sphere4.inv.prm
 #colordiff -u sphere4.dipoles sphere4.sources
 

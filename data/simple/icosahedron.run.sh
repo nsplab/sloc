@@ -7,13 +7,13 @@ fi
 
 center=0,0,0
 
-./make_dipoles \
+make_dipoles \
     -v icosahedron.dipoles.vtk \
     -o icosahedron.dipoles \
     ${center}/0,0,1
 
 if [ ! -f icosahedron.electrodes ]; then
-    ./select_electrodes \
+    select_electrodes \
         -m icosahedron.surf.mesh -i icosahedron.surf.mat \
         -v icosahedron.electrodes.vtk -o icosahedron.electrodes \
         4/12
@@ -33,10 +33,10 @@ set output_vtk = icosahedron.p$N.phi.vtk
 set output_phi = icosahedron.p$N.phi.dat
 DOC
 
-mpiexec -n $N ./bem_forward_solver icosahedron.fwd.prm >icosahedron.p$N.fwd.log
+mpiexec -n $N bem_forward_solver icosahedron.fwd.prm >icosahedron.p$N.fwd.log
 
 if [ ! -f icosahedron.electrodes.dat ]; then
-    ./measure_electrodes \
+    measure_electrodes \
         -p icosahedron.p$N.phi.dat \
         -e icosahedron.electrodes \
         -o icosahedron.electrodes.dat
@@ -59,4 +59,4 @@ subsection Grid Parameters
 end
 DOC
 
-mpiexec -n $N ./bem_cost_function icosahedron.grid.prm >icosahedron.p$N.grid.log
+mpiexec -n $N bem_cost_function icosahedron.grid.prm >icosahedron.p$N.grid.log

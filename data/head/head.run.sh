@@ -5,14 +5,14 @@ if [[ -n "$1" ]]; then
     N="$1"
 fi
 
-./make_head_model
+make_head_model
 
-./make_dipoles \
+make_dipoles \
     -v head.dipoles.vtk -o head.dipoles \
     4.81851,-129.829,-117.922/0,0,1000e-9
 
 if [ ! -f head.electrodes ]; then
-    ./select_electrodes \
+    select_electrodes \
         -m head.surf.mesh -i head.surf.mat \
         -v head.electrodes.vtk -o head.electrodes \
         0/30 3/5 4/0
@@ -34,10 +34,10 @@ set output_vtk = head.phi.vtk
 set output_phi = head.phi.dat
 DOC
 
-mpiexec -n $N ./bem_forward_solver head.fwd.prm >head.p$N.fwd.log
+mpiexec -n $N bem_forward_solver head.fwd.prm >head.p$N.fwd.log
 
 if [ ! -f head.electrodes.dat ]; then
-    ./measure_electrodes \
+    measure_electrodes \
         -p head.phi.dat \
         -e head.electrodes \
         -o head.electrodes.dat \
@@ -71,6 +71,6 @@ subsection Simplex Search Parameters
 end
 DOC
 
-#./bem_inverse_solver head.inv.prm
+#bem_inverse_solver head.inv.prm
 #colordiff -u head.dipoles head.sources
 
