@@ -1,11 +1,6 @@
 ---urgent----------------------------------------------------------------------
-generate random cloud of points near a center
-plotting function defined only on points... (plotting point cloud)
-    http://stackoverflow.com/questions/9419451/3d-contour-plot-from-data-using-mayavi-python
-add an output_frequency parameter to control the progress timer (update every N cells, instead of all the time)
-write mesh_to_vtk (to save getfem's mesh format into a vtk file that can be visualized)
+in make_head_model.cc, shift the center of each mesh by a specified amount (or calculate it)
 calculate the shape of the cost function in the neighborhood of the true solution
-store mesh and related data in hdf5 format
 
 ---high------------------------------------------------------------------------
 given a volume mesh, evaluate the potential at each of the nodes, to obtain visualization of dipole field
@@ -13,10 +8,16 @@ does the getfem mesh format allow you to assign user data to cells? (specificall
 run grid search (generate random points inside bounding box)
 
 ---normal----------------------------------------------------------------------
+generate random cloud of points near a center
+plotting function defined only on points... (plotting point cloud)
+    http://stackoverflow.com/questions/9419451/3d-contour-plot-from-data-using-mayavi-python
 use functor in simplex search algorithm
 rewrite sloc::Mesh, using the getfem::mesh structures and also storing along the surface-materials
 make a function called read_array()
 print mesh quality of each element in mesh
+add an output_frequency parameter to control the progress timer (update every N cells, instead of all the time)
+write mesh_to_vtk (to save getfem's mesh format into a vtk file that can be visualized)
+store mesh and related data in hdf5 format
 
 ---low-------------------------------------------------------------------------
 add command line overrides to settings in the .prm file (use boost::program_options)
