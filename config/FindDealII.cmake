@@ -15,17 +15,21 @@ if(NOT DEALII_CFLAGS)
     )
 
     set(DEALII_LDFLAGS
+        "-L${DEALII_PREFIX}/lib"
         "-L${DEALII_PREFIX}/build/source"
         "-lpthread"
         "-lz"
     )
+
     if(APPLE)
         set(DEALII_LDFLAGS ${DEALII_LDFLAGS}
+            #${DEALII_PREFIX}/lib/libdeal_II.dylib
             ${DEALII_PREFIX}/build/source/libdeal_II.dylib
         )
     else()
         set(DEALII_LDFLAGS ${DEALII_LDFLAGS}
-            ${DEALII_PREFIX}/build/source/libdeal_II.so
+            ${DEALII_PREFIX}/lib/libdeal_II.so
+            #${DEALII_PREFIX}/build/source/libdeal_II.so
         )
     endif()
 
