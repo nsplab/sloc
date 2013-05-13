@@ -218,7 +218,7 @@ void process_args(int argc, char *argv[], string& meshfile, string& matfile, str
 
 int main(int argc, char *argv[])
 {
-    int i,j;
+    unsigned int i,j;
     unsigned int mat, num;
     unsigned int total_num;
 

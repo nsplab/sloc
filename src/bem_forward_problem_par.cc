@@ -56,7 +56,7 @@ void BEM_Forward_Problem_P::assemble_range_contrib(unsigned int cv_begin, unsign
     const unsigned int num_elts_by_proc = num_elts / numprocs;
 
     const unsigned int n_dofs = mf.nb_basic_dof();
-    const int fe_dofs_per_cell = mf.nb_basic_dof_of_element(0);
+    const unsigned int fe_dofs_per_cell = mf.nb_basic_dof_of_element(0);
     assert(fe_dofs_per_cell == 3);
 
     std::vector<unsigned int> local_dof_indices(fe_dofs_per_cell);
@@ -142,7 +142,7 @@ void BEM_Forward_Problem_P::assemble_range_contrib(unsigned int cv_begin, unsign
 void BEM_Forward_Problem_P::assemble_system_from_contrib(unsigned int cv_begin, unsigned int cv_end, std::valarray<double>& contrib, const int k)
 {
     const unsigned int n_dofs = mf.nb_basic_dof();
-    const int fe_dofs_per_cell = mf.nb_basic_dof_of_element(0);
+    const unsigned int fe_dofs_per_cell = mf.nb_basic_dof_of_element(0);
     assert(fe_dofs_per_cell == 3);
 
     // loop indices

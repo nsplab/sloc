@@ -73,8 +73,8 @@ void read_dipole_from_str(sloc::DipoleSources &dipole_sources, const std::string
 // XXX: move this function into DipoleSources as .write_vtk()
 void write_vtk_dipoles(sloc::DipoleSources &dipole_sources, const char *filename)
 {
-    int npts = dipole_sources.n_sources();
-    int i;
+    unsigned int npts = dipole_sources.n_sources();
+    unsigned int i;
 
     if (npts == 0)
         return;
@@ -90,7 +90,7 @@ void write_vtk_dipoles(sloc::DipoleSources &dipole_sources, const char *filename
 
     // points
     out << "POINTS " << npts << " float" << endl;
-    for (i = 0; i < dipole_sources.n_sources(); ++i)
+    for (i = 0; i < npts; ++i)
     {
         const sloc::DipoleSource ds = dipole_sources(i);
         dealii::Point<3> x = ds.location;
@@ -100,7 +100,7 @@ void write_vtk_dipoles(sloc::DipoleSources &dipole_sources, const char *filename
     // point data
     out << "POINT_DATA " << npts << endl;
     out << "VECTORS dipole float" << endl;
-    for (i = 0; i < dipole_sources.n_sources(); ++i)
+    for (i = 0; i < npts; ++i)
     {
         const sloc::DipoleSource ds = dipole_sources(i);
         dealii::Point<3> p = ds.dipole;

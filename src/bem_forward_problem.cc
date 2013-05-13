@@ -230,7 +230,7 @@ void BEM_Forward_Problem::assemble_system()
     const bool debug_assembly = true;
 
     const unsigned int n_dofs = mf.nb_basic_dof();
-    const int fe_dofs_per_cell = mf.nb_basic_dof_of_element(0);
+    const unsigned int fe_dofs_per_cell = mf.nb_basic_dof_of_element(0);
     assert(fe_dofs_per_cell == 3);
 
     std::vector<unsigned int> local_dof_indices(fe_dofs_per_cell);

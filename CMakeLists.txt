@@ -75,16 +75,13 @@ message(STATUS "Boost settings:")
 message(STATUS "  BOOST_ROOT = ${BOOST_ROOT}")
 
 # Configure GetFEM
-#set(GETFEM_PREFIX "$ENV{HOME}/opt/getfem")
 find_package(GetFEM REQUIRED)
-#set(CMAKE_CXX_FLAGS "${GETFEM_CFLAGS} -Wno-return-type-c-linkage") # bad!
 add_definitions(${GETFEM_CFLAGS})
 add_definitions("-Wno-return-type-c-linkage")
 add_definitions("-Wno-deprecated-declarations")
 list(APPEND COMMON_LIBRARIES ${GETFEM_LIBS})
 
 # Configure dealII
-#set(DEALII_PREFIX "$ENV{HOME}/dev/deal.II")
 find_package(DealII)
 if(DEALII_FOUND)
     add_definitions(${DEALII_CFLAGS})
