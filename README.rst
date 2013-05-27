@@ -66,5 +66,7 @@ Units
 Multiplying dipole magnitude by a constant 
 ===============
 Let 
+
 .. image:: https://github.com/nsplab/sloc/blob/master/doc/phi.png?raw=true 
+
 be the solution of the forward problem with dipole p at location r.
