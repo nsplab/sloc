@@ -58,3 +58,11 @@ reads the *.vtk file produced by 'bin/bem_cost_function.cc'.
 
 ---
 
+===============
+Units
+===============
+
+===============
+Multiplying dipole magnitude by a constant 
+===============
+Let ![system Modules](./doc/phi.png) be the solution of the forward problem with dipole p at location r.
