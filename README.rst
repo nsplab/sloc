@@ -85,5 +85,6 @@ can estimate the magnitude of the dipole for the given potential measurements,
 .. |phitrue| image:: https://github.com/nsplab/sloc/blob/master/doc/phitrue.png?raw=true 
 .. |ptrueasterisk| image:: https://github.com/nsplab/sloc/blob/master/doc/ptrueasterisk.png?raw=true 
 .. |pprime| image:: https://github.com/nsplab/sloc/blob/master/doc/pprime.png?raw=true 
-.. |pasterisk| image:: https://github.com/nsplab/sloc/blob/master/doc/pasteriskpng?raw=true 
+.. |phiprime| image:: https://github.com/nsplab/sloc/blob/master/doc/phiprime.png?raw=true 
+.. |pasterisk| image:: https://github.com/nsplab/sloc/blob/master/doc/pasterisk.png?raw=true 
 
