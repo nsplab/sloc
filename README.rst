@@ -65,15 +65,11 @@ Units
 ===============
 Multiplying dipole magnitude by a constant 
 ===============
-Let 
+Let |phi| be the solution of the forward problem with dipole p at location r. 
+|rtrue| and |ptrue| are the location and the magnitude of the dipole use in the
+ forward problem to simulate the electrode measurments.
 
-.. image:: https://github.com/nsplab/sloc/blob/master/doc/phi.png?raw=true 
-
-be the solution of the forward problem with dipole p at location r. 
-
-.. image:: https://github.com/nsplab/sloc/blob/master/doc/rtrue.png?raw=true 
-.. image:: https://github.com/nsplab/sloc/blob/master/doc/ptrue.png?raw=true 
-
-are the location and the magnitude of the dipole use in the forward problem to simulate the electrode measurments.
-
+.. |phi| image:: https://github.com/nsplab/sloc/blob/master/doc/phi.png?raw=true 
+.. |rtrue| image:: https://github.com/nsplab/sloc/blob/master/doc/rtrue.png?raw=true 
+.. |ptrue| image:: https://github.com/nsplab/sloc/blob/master/doc/ptrue.png?raw=true 
 
