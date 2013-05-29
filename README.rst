@@ -61,6 +61,16 @@ reads the \*.vtk file produced by 'bin/bem_cost_function.cc'.
 ===============
 Units
 ===============
+To verify the units of the equation match let consider only the first term on the right hand side:
+
+|unit_phi_of_r|
+
+In the SI:
+
+|unit_phi_of_r_si|
+
+.. |unit_phi_of_r| image:: https://github.com/nsplab/sloc/blob/master/doc/unit_phi_of_r.png?raw=true 
+.. |unit_phi_of_r_si| image:: https://github.com/nsplab/sloc/blob/master/doc/unit_phi_of_r_si.png?raw=true 
 
 ===============
 Multiplying dipole magnitude by a constant 

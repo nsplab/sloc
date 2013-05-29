@@ -1,5 +1,13 @@
 
+Units
 
+To verify the units of the equation match let consider only the first term on the right hand side:
+
+$\overline{\sigma} \Phi( \overrightarrow{r} ) =  \sigma_{0} g(\overrightarrow{r}),\;\; g(\overrightarrow{r}) = \frac{1}{4\pi\sigma_{0}} \frac{\overrightarrow{p}.\overrightarrow{R}}{R^{3}}$.
+
+In the SI:
+
+$\frac{1}{\Omega m} v =  \frac{1}{\Omega m}  \frac{1}{\frac{1}{\Omega m}} \frac{Am\; m}{m^{3}}  \Rightarrow v = \Omega A$.
 
 
 Multiplying dipole magnitude by a constant
