@@ -251,18 +251,6 @@ void BEM_Forward_Problem::assemble_system()
         log << "fe_dofs_per_cell = " << fe_dofs_per_cell << endl;
     }
 
-
-    //
-    // contribution from current dipole sources
-    //
-    for (i = 0; i < n_dofs; ++i)
-    {
-        bgeot::base_node p = mf.point_of_basic_dof(i);
-        dealii::Point<3> pt(p[0], p[1], p[2]);
-        system_rhs(i) = 2 * dipole_sources.primary_contribution(pt);
-    }
-
-
     ProgressTimer ptimer;
     long e = 0;
     if (verbose)
@@ -301,6 +289,16 @@ void BEM_Forward_Problem::assemble_system()
         const double sigma_avg = (sigma_int + sigma_ext) / 2;
 
         const double K = (1.0 / (4 * numbers::PI)) * (sigma_int - sigma_ext) / sigma_avg;
+
+        //
+        // contribution from current dipole sources
+        //
+        for (j = 0; j < fe_dofs_per_cell; ++j)
+        {
+            bgeot::base_node p = mf.point_of_basic_dof(elt_dof_indices[j]);
+            dealii::Point<3> pt(p[0], p[1], p[2]);
+            system_rhs(elt_dof_indices[j]) = dipole_sources.primary_contribution(pt) / sigma_avg;
+        }
 
         if (debug_assembly)
         {

@@ -3,6 +3,9 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+
 \author{Mosalam}
 \title{SLOC}
 \begin{document}
@@ -58,6 +61,38 @@ Then, you can estimate the magnitude of the dipole for the given potential measu
 & = & c L^{+} \Phi_{true} \nonumber \\ 
 & = & c  \overrightarrow{p^{*}}\!\!_{true}.
 \end{eqnarray}
+
+\section{Forward Solution}
+
+
+\section{Tetrahedron}
+
+\tdplotsetmaincoords{70}{110}
+\begin{center}
+\begin{tikzpicture}[scale=2,tdplot_main_coords]
+
+	%draw a grid in the x-y plane
+	\foreach \x in {-0.5,0,...,2.5}
+		\foreach \y in {-0.5,0,...,2.5}
+		{
+			\draw[grid] (\x,-0.5) -- (\x,2.5);
+			\draw[grid] (-0.5,\y) -- (2.5,\y);
+		}
+
+\coordinate (O) at (0,0,0) node[anchor=south west, color=blue]{$A$};
+\draw[->] (0,0,0) -- (1.5,0,0) node[anchor=north east]{$x$};
+\draw[->] (0,0,0) -- (0,1.5,0) node[anchor=north west]{$y$};
+\draw[->] (0,0,0) -- (0,0,1.5) node[anchor=south]{$z$};
+
+\draw[thick, dashed, color=blue] (1,0,0) -- (0,1,0) node[anchor=north]{$C$};
+\draw[thick, dashed, color=blue] (0,1,0) -- (0,0,1) node[anchor=east]{$D$};
+\draw[thick, dashed, color=blue] (0,0,1) -- (1,0,0) node[anchor=north west]{$B$};
+\draw[thick, dashed, color=blue] (0,0,0) -- (1,0,0);
+\draw[thick, dashed, color=blue] (0,0,0) -- (0,1,0);
+\draw[thick, dashed, color=blue] (0,0,0) -- (0,0,1);
+
+\end{tikzpicture}
+\end{center}
 
 \begin{thebibliography}{9}
 
