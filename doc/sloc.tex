@@ -5,6 +5,7 @@
 \usepackage{amssymb}
 \usepackage{tikz}
 \usepackage{tikz-3dplot}
+\usetikzlibrary{positioning}
 
 \author{Mosalam}
 \title{SLOC}
@@ -72,17 +73,17 @@ Then, you can estimate the magnitude of the dipole for the given potential measu
 \begin{tikzpicture}[scale=2,tdplot_main_coords]
 
 	%draw a grid in the x-y plane
-	\foreach \x in {-0.5,0,...,2.5}
-		\foreach \y in {-0.5,0,...,2.5}
+	\foreach \x in {-1,0,1,2}
+		\foreach \y in {-1,0,1,2}
 		{
-			\draw[grid] (\x,-0.5) -- (\x,2.5);
-			\draw[grid] (-0.5,\y) -- (2.5,\y);
+			\draw[gray,very thin,dotted] (\x,-1) -- (\x,2);
+			\draw[gray,very thin,dotted] (-1,\y) -- (2,\y);
 		}
 
 \coordinate (O) at (0,0,0) node[anchor=south west, color=blue]{$A$};
-\draw[->] (0,0,0) -- (1.5,0,0) node[anchor=north east]{$x$};
-\draw[->] (0,0,0) -- (0,1.5,0) node[anchor=north west]{$y$};
-\draw[->] (0,0,0) -- (0,0,1.5) node[anchor=south]{$z$};
+\draw[very thick,->] (0,0,0) -- (1.5,0,0) node[anchor=north east]{$x$};
+\draw[very thick,->] (0,0,0) -- (0,1.5,0) node[anchor=north west]{$y$};
+\draw[very thick,->] (0,0,0) -- (0,0,1.5) node[anchor=south]{$z$};
 
 \draw[thick, dashed, color=blue] (1,0,0) -- (0,1,0) node[anchor=north]{$C$};
 \draw[thick, dashed, color=blue] (0,1,0) -- (0,0,1) node[anchor=east]{$D$};

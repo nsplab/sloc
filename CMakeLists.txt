@@ -32,8 +32,8 @@ endif()
 # Select flags
 set(CMAKE_CXX_FLAGS "-Wall -Wno-unused-variable")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2")
-set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -ltbb")
+set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -ltbb")
 
 # -----------------------------------------------------------------------------
 

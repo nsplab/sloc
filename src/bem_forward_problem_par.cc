@@ -43,10 +43,37 @@ void BEM_Forward_Problem_P::run()
     // and for saving the results to disk
     if (rank == 0)
     {
+        this->assemble_rhs();
         sloc::BEM_Forward_Problem::solve_system();
         sloc::BEM_Forward_Problem::output_results();
     }
 }
+
+void BEM_Forward_Problem_P::assemble_rhs()
+{
+    bgeot::size_type num_elts = surface_mesh.nb_convex();
+    bgeot::size_type cv, j;
+    const unsigned int fe_dofs_per_cell = mf.nb_basic_dof_of_element(0);
+
+    for (cv=0; cv<num_elts; cv++) {
+
+        // retrieve material data
+        const unsigned int mat_id = material_data.get_material_id(cv);
+        const double sigma_int = material_data.get_sigma_int(mat_id);
+        const double sigma_ext = material_data.get_sigma_ext(mat_id);
+        const double sigma_avg = (sigma_int + sigma_ext) / 2;
+
+        // Add up contribution from dipoles
+        getfem::mesh_fem::ind_dof_ct elt_dof_indices = mf.ind_basic_dof_of_element(cv);
+        for (j = 0; j < fe_dofs_per_cell; ++j)
+        {
+            bgeot::base_node p = mf.point_of_basic_dof(elt_dof_indices[j]);
+            dealii::Point<3> pt(p[0], p[1], p[2]);
+            system_rhs(elt_dof_indices[j]) = dipole_sources.primary_contribution(pt) / sigma_avg;
+        }
+    }
+}
+
 
 void BEM_Forward_Problem_P::assemble_range_contrib(unsigned int cv_begin, unsigned int cv_end, std::valarray<double>& contrib)
 {
@@ -94,15 +121,6 @@ void BEM_Forward_Problem_P::assemble_range_contrib(unsigned int cv_begin, unsign
         const double sigma_ext = material_data.get_sigma_ext(mat_id);
         const double sigma_avg = (sigma_int + sigma_ext) / 2;
         const double K = (1.0 / (4 * numbers::PI)) * (sigma_int - sigma_ext) / sigma_avg;
-
-        // Add up contribution from dipoles
-        getfem::mesh_fem::ind_dof_ct elt_dof_indices = mf.ind_basic_dof_of_element(cv);
-        for (j = 0; j < fe_dofs_per_cell; ++j)
-        {
-            bgeot::base_node p = mf.point_of_basic_dof(elt_dof_indices[j]);
-            dealii::Point<3> pt(p[0], p[1], p[2]);
-            system_rhs(elt_dof_indices[j]) = dipole_sources.primary_contribution(pt) / sigma_avg;
-        }
 
         for (i = 0; i < n_dofs; ++i)
         {
