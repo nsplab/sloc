@@ -1,5 +1,15 @@
+// spherical_head_model_solution.cc
 //
-// Main papers used here
+// In this file, we seek to compute an approximation to the analytical solution
+// to the electric potential field of a current dipole inside a series of
+// concentric spherical shells. Conductivity is piecewise constant inside
+// each of those layers.
+//
+// It is important to note that the dipole is assumed to lie within the
+// innermost sphere (i.e., the brain).
+//
+//
+// Main papers referenced:
 //
 // [1] Mosher, J. C., Leahy, R. M., \& Lewis, P. S. (1997).
 // Matrix kernels for the forward problem in EEG and MEG.
