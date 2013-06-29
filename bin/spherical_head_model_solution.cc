@@ -22,6 +22,7 @@
 //
 #include <iostream>
 #include <cassert>
+#include <cmath>
 
 #include <boost/math/special_functions/legendre.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -191,7 +192,7 @@ double spherical_head_model_potential(double point[3], int numterms)
     double cosb = cos(beta);
     
     // accumulate terms
-    const double v = 0.0;
+    double v = 0.0;
 
     for (int n = 1; n < numterms; n++)
     {
