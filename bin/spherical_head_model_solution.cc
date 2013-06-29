@@ -211,7 +211,7 @@ double spherical_head_model_potential(double point[3], int numterms)
     const double K = q / (4 * pi * sigma[M]);
 
     // finalize the computation of the potential at given point
-    v *= K / r2;
+    v *= K / ublas::inner_prod(r,r);
 
     return v;
 }
