@@ -88,10 +88,10 @@ const double sigma[M+1] = {
  * TODO: Again, use globals for now. Fix later.
  */
 
-// dipole strength (typically in units of nAm)
+// dipole strength (typically scale is in the nAm)
 const double dipole[3] = {0, 0, 10e-9};
 
-// location of dipole
+// location of dipole (in meters)
 const double dipole_location[3] = { 10e-3, 11e-3, 12e-2 };
 
 
@@ -102,7 +102,6 @@ const double dipole_location[3] = { 10e-3, 11e-3, 12e-2 };
 // sense for 3d vectors. So let's make up our own cross product function.
 void cross(ublas::vector<double> a, ublas::vector<double> b, ublas::vector<double>& c)
 {
-
     // Basic check
     assert(a.size() == 3);
     assert(b.size() == 3);
@@ -199,8 +198,8 @@ double spherical_head_model_potential(double point[3], int numterms)
         double f_n = f(n);
         double r_n = std::pow(r_q / r, n - 1);
         double P_n = boost::math::legendre_p(n, cosg);
-        double Q_n = boost::math:legendre_p(n, 1, cosg);
-        v += ((2*n + 1.0) / n) * r_n * f_n * (n * cosb * P_n + cosb * sina * Q_n);
+        double P_n1 = boost::math:legendre_p(n, 1, cosg);
+        v += ((2*n + 1.0) / n) * r_n * f_n * (n * cosb * P_n + cosb * sina * P_n1);
     }
 
     // TODO: wait a minute..why do we divide by sigma[M] here?
