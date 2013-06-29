@@ -30,6 +30,7 @@
 
 using namespace boost::numeric;
 
+
 // ----------------------------------------------------------------------------
 
 /*
@@ -48,6 +49,7 @@ const double radius_brain = 70e-3;
 const double csf_thickness = 1.5e-3;
 const double skull_thickness = 6.5e-3;
 const double scalp_thickness = 7e-3;
+
 
 // ----------------------------------------------------------------------------
 
@@ -68,6 +70,8 @@ const double radius[M] = {
 };
 
 // conductivities of each shell (innermost to outermost)
+// TODO: wait a minute..does the paper already assume the outermost layer has
+// conductivity of zero? or do we have to list it explicitly
 const double sigma[M+1] = {
     sigma_brain,
     sigma_csf,
@@ -75,6 +79,7 @@ const double sigma[M+1] = {
     sigma_scalp,
     sigma_air
 };
+
 
 // ----------------------------------------------------------------------------
 
@@ -89,9 +94,6 @@ const double dipole[3] = {0, 0, 10e-9};
 // location of dipole
 const double dipole_location[3] = { 10e-3, 11e-3, 12e-2 };
 
-// distance
-const double q = norm(dipole);
-const double r_q = norm(dipole_location);
 
 // ----------------------------------------------------------------------------
 
@@ -127,9 +129,10 @@ double f(int n)
 
     // calculate matrix products.
     // TODO: paper warns that the highest index matrix should be
-    // multiplied first... does this mean that we have to count
-    // down from M-1 all the way down to 0?
-    for (int k = 0; k < M; k++)
+    // multiplied first... does this mean that we have to instead
+    // count down from M-1 all the way down to 0 (as opposed to
+    // the usual from 0 to M-1)..
+    for (int k = M-1; k >= 0; k++)
     {
         double s_k = sigma[k] / sigma[k+1];
         double r_kn = std::pow(rq / radius[k], 2*n + 1);
@@ -140,7 +143,8 @@ double f(int n)
         m_k(1,1) = (n + 1) + n * s_k;
 
         // accumulate the product
-        m *= m_k;
+        // (do this explicitly...the *= operator was ambiguous)
+        m = m * m_k;
     }
 
     m /= std::pow(2*n + 1, M - 1);
@@ -199,6 +203,10 @@ double spherical_head_model_potential(double point[3], int numterms)
         v += ((2*n + 1.0) / n) * r_n * f_n * (n * cosb * P_n + cosb * sina * Q_n);
     }
 
+    // TODO: wait a minute..why do we divide by sigma[M] here?
+    // the last layer is air, so that would be a division by zero...
+    // what is going on?? is it a one-based index thing? (we're using zero-based
+    // indices here)...
     const double pi = M_PI;
     const double K = q / (4 * pi * sigma[M]);
 
