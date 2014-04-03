@@ -1,4 +1,11 @@
 ===============
+Structure
+===============
+.. |block diagram| image:: https://github.com/nsplab/sloc/blob/master/doc/block_diag.png?raw=true 
+
+
+
+===============
 README for sloc
 ===============
 
