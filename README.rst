@@ -3,7 +3,7 @@ Structure
 
 |block_diagram|
 
-|block_diagram| image:: https://github.com/nsplab/sloc/blob/master/doc/block_diag.png?raw=true 
+.. |block_diagram| image:: https://github.com/nsplab/sloc/blob/master/doc/block_diag.png?raw=true 
 
 README for sloc
 ===============
