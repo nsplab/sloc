@@ -17,6 +17,7 @@ set(LIBSLOC_SOURCES
     src/dipole_sources.cc
     src/bem_forward_problem.cc
     src/bem_forward_problem_par.cc
+    src/bem_forward_problem_grid.cc
 )
 
 # Builds "bin/${target}.cc"
@@ -24,16 +25,20 @@ set(BIN_TARGETS
     hello
     stl_to_mesh
     mesh_to_vtk
-    mesh_info
+#    mesh_info
     make_spherical_head_model
     make_head_model
+    make_sphere_head
     make_dipoles
     measure_electrodes
     select_electrodes
+    select_electrodes_given_3d_pos
     solve_system
     bem_forward_solver
+    bem_forward_solver_grid
     bem_inverse_solver
     bem_cost_function
+    bem_cost_function_omp
 )
 
 # Builds "tests/${target}.cc"
