@@ -1,18 +1,17 @@
-===============
-Structure
-===============
-|block_diagram|
-
-.. |block_diagram| image:: https://github.com/nsplab/sloc/blob/master/doc/block_diag.png?raw=true 
-
-
-
-
-===============
 README for sloc
 ===============
 
 For installation instructions refer to ``doc/hoffman2.rst``.
+
+** Manuscript Drafts **
+
+### Endovascular Source Localization (simulation study) #
+
+https://www.writelatex.com/784824tywgtg#/1721178/
+
+### Derivation of boundary element method (BEM) equation used in forward model, based on Luis' notes #
+
+https://www.writelatex.com/784817tfvqwp#/1721170/
 
 ===============
 README for sloc
