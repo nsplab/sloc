@@ -1,9 +1,16 @@
+Structure
+=========
+
+|block_diagram|
+
+|block_diagram| image:: https://github.com/nsplab/sloc/blob/master/doc/block_diag.png?raw=true 
+
 README for sloc
 ===============
 
 For installation instructions refer to ``doc/hoffman2.rst``.
 
-** Manuscript Drafts **
+**Manuscript Drafts**
 
 ### Endovascular Source Localization (simulation study) #
 
