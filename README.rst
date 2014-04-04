@@ -12,11 +12,11 @@ For installation instructions refer to ``doc/hoffman2.rst``.
 
 **Manuscript Drafts**
 
-### Endovascular Source Localization (simulation study) #
+###Endovascular Source Localization (simulation study)
 
 https://www.writelatex.com/784824tywgtg#/1721178/
 
-### Derivation of boundary element method (BEM) equation used in forward model, based on Luis' notes #
+###Derivation of boundary element method (BEM) equation used in forward model, based on Luis' notes
 
 https://www.writelatex.com/784817tfvqwp#/1721170/
 
