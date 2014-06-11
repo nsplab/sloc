@@ -252,10 +252,6 @@ void BEM_Forward_Problem::assemble_system()
         log << "fe_dofs_per_cell = " << fe_dofs_per_cell << endl;
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> de94026b88db9b9963b4c3397caf7496fde8ae6c
     ProgressTimer ptimer;
     long e = 0;
     if (verbose)
@@ -304,22 +300,8 @@ void BEM_Forward_Problem::assemble_system()
 
         const double K = (1.0 / (4 * numbers::PI)) * (sigma_int - sigma_ext) / sigma_avg;
 
-<<<<<<< HEAD
 
         //if (debug_assembly)
-=======
-        //
-        // contribution from current dipole sources
-        //
-        for (j = 0; j < fe_dofs_per_cell; ++j)
-        {
-            bgeot::base_node p = mf.point_of_basic_dof(elt_dof_indices[j]);
-            dealii::Point<3> pt(p[0], p[1], p[2]);
-            system_rhs(elt_dof_indices[j]) = dipole_sources.primary_contribution(pt) / sigma_avg;
-        }
-
-        if (debug_assembly)
->>>>>>> de94026b88db9b9963b4c3397caf7496fde8ae6c
         {
             cout << "convex " << cv << endl;
             //log << "convex " << cv << " - " << typeid(cv).name() << endl;
