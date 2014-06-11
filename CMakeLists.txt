@@ -30,10 +30,10 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Select flags
-set(CMAKE_CXX_FLAGS "-Wall -Wno-unused-variable")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2")
-set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+set(CMAKE_CXX_FLAGS "-Wall -Wno-unused-variable -DNDEBUG -std=c++11")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 ")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -fopenmp")
+set(CMAKE_CXX_FLAGS_DEBUG  "-O2 -fopenmp")
 
 # -----------------------------------------------------------------------------
 
@@ -120,7 +120,7 @@ add_library(sloc STATIC ${LIBSLOC_SOURCES})
 # Build stuff in "bin"
 foreach(target ${BIN_TARGETS})
     add_executable(${target} "bin/${target}.cc")
-    target_link_libraries(${target} sloc ${COMMON_LIBRARIES})
+    target_link_libraries(${target} sloc ${COMMON_LIBRARIES} tbb)
 endforeach()
 
 # Build stuff in "tests"
