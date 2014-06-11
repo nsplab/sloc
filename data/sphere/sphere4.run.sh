@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-N=1
+N=8
 if [[ -n "$1" ]]; then
     N="$1"
 fi
@@ -12,7 +12,7 @@ make_spherical_head_model 2
 #   0.010,-0.012,0.013/5.5e-8,-2.0e-7,1.0e-7
 make_dipoles \
     -v sphere4.dipoles.vtk -o sphere4.dipoles \
-    0,0,0/1,0,0
+    0,0,0/0,0,1
     #0,0,0/100e-9,0,0
 
 if [ ! -f sphere4.electrodes ]; then

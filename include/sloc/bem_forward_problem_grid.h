@@ -2,8 +2,8 @@
  * Parallelized version of sloc::BEM_Forward_Problem
  */
 
-#ifndef BEM_FORWARD_PROBLEM_PAR_H
-#define BEM_FORWARD_PROBLEM_PAR_H
+#ifndef BEM_FORWARD_PROBLEM_G_H
+#define BEM_FORWARD_PROBLEM_G_H
 
 #include <valarray>
 #include <iostream>
@@ -15,12 +15,12 @@
 namespace sloc {
 // ----------------------------------------------------------------------------
 
-class BEM_Forward_Problem_P : public BEM_Forward_Problem
+class BEM_Forward_Problem_G : public BEM_Forward_Problem
 {
 public:
 
-    BEM_Forward_Problem_P(const Parameters& parameters);
-    ~BEM_Forward_Problem_P();
+    BEM_Forward_Problem_G(const Parameters& parameters);
+    ~BEM_Forward_Problem_G();
 
     void run();
     void assemble_system();
