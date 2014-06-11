@@ -1,0 +1,148 @@
+path   = "Artery2.stl"
+points = 2514 x 3
+cells  = 5000 x 3
+-----
+path   = "Artery3.stl"
+points = 461 x 3
+cells  = 898 x 3
+-----
+path   = "Artery.stl"
+points = 7930 x 3
+cells  = 15836 x 3
+-----
+path   = "Bone2.stl"
+points = 4456 x 3
+cells  = 9000 x 3
+-----
+path   = "Bone3.stl"
+points = 956 x 3
+cells  = 2000 x 3
+-----
+path   = "Bone.stl"
+points = 100016 x 3
+cells  = 200000 x 3
+-----
+path   = "Brain2.stl"
+points = 4531 x 3
+cells  = 9058 x 3
+-----
+path   = "Brain3.stl"
+points = 1134 x 3
+cells  = 2264 x 3
+-----
+path   = "Brain.stl"
+points = 72676 x 3
+cells  = 145124 x 3
+-----
+path   = "Vessels2.stl"
+points = 3484 x 3
+cells  = 7000 x 3
+-----
+path   = "Vessels3.stl"
+points = 638 x 3
+cells  = 1300 x 3
+-----
+path   = "Vessels.stl"
+points = 20342 x 3
+cells  = 40704 x 3
+-----
+path   = "Artery2-tri.ucd"
+points = 2514 x 3
+cells  = 5000 x 3
+-----
+path   = "Artery2.ucd"
+points = 15014 x 3
+cells  = 15000 x 4
+-----
+path   = "Artery3-tri.ucd"
+points = 461 x 3
+cells  = 898 x 3
+-----
+path   = "Artery3.ucd"
+points = 2704 x 3
+cells  = 2694 x 4
+-----
+path   = "Artery-tri.ucd"
+points = 7930 x 3
+cells  = 15836 x 3
+-----
+path   = "Artery.ucd"
+points = 47520 x 3
+cells  = 47508 x 4
+-----
+path   = "Bone2-tri.ucd"
+points = 4456 x 3
+cells  = 9000 x 3
+-----
+path   = "Bone2.ucd"
+points = 26899 x 3
+cells  = 27000 x 4
+-----
+path   = "Bone3-quad.ucd"
+points = 5869 x 3
+cells  = 6000 x 4
+-----
+path   = "Bone3-tri.ucd"
+points = 956 x 3
+cells  = 2000 x 3
+-----
+path   = "Bone3.ucd"
+points = 5869 x 3
+cells  = 6000 x 4
+-----
+path   = "Bone-tri.ucd"
+points = 100016 x 3
+cells  = 200000 x 3
+-----
+path   = "Bone.ucd"
+points = 599680 x 3
+cells  = 600000 x 4
+-----
+path   = "Brain2-tri.ucd"
+points = 4531 x 3
+cells  = 9058 x 3
+-----
+path   = "Brain2.ucd"
+points = 27176 x 3
+cells  = 27174 x 4
+-----
+path   = "Brain3-tri.ucd"
+points = 1134 x 3
+cells  = 2264 x 3
+-----
+path   = "Brain3.ucd"
+points = 6794 x 3
+cells  = 6792 x 4
+-----
+path   = "Brain-tri.ucd"
+points = 72676 x 3
+cells  = 145124 x 3
+-----
+path   = "Brain.ucd"
+points = 434962 x 3
+cells  = 435372 x 4
+-----
+path   = "Vessels2-tri.ucd"
+points = 3484 x 3
+cells  = 7000 x 3
+-----
+path   = "Vessels2.ucd"
+points = 20980 x 3
+cells  = 21000 x 4
+-----
+path   = "Vessels3-tri.ucd"
+points = 638 x 3
+cells  = 1300 x 3
+-----
+path   = "Vessels3.ucd"
+points = 3865 x 3
+cells  = 3900 x 4
+-----
+path   = "Vessels-tri.ucd"
+points = 20342 x 3
+cells  = 40704 x 3
+-----
+path   = "Vessels.ucd"
+points = 122057 x 3
+cells  = 122112 x 4
+-----

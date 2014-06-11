@@ -78,10 +78,10 @@ void BEM_Forward_Problem_P::assemble_rhs()
     bgeot::size_type num_elts = surface_mesh.nb_convex();
 
     bgeot::size_type cv, j;
-
     const unsigned int fe_dofs_per_cell = mf.nb_basic_dof_of_element(0);
 
 ofstream mapping("mapping.dat");
+
     for (cv=0; cv<num_elts; cv++) {
 
         // retrieve material data

@@ -1,0 +1,109 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{positioning}
+
+\author{Mosalam}
+\title{SLOC}
+\begin{document}
+
+\section{Units}
+
+The current dipole strength (of postsynaptic potentials) is \cite{matti93} 
+\begin{equation}
+Q = I\lambda, \;\; \lambda = (g_m r_s)^{\frac{-1}{2}}
+\end{equation}
+where $\lambda$ is the length constant of exponential decay, $g_m$ and $r_s$ are the conductance of the membrane and the resistance of the intracellular fluid per unit length. Hence, the unit of $Q$ is: 
+\begin{equation}
+Am = A \frac{1}{\frac{1}{\Omega}\frac{\Omega}{m}}.
+\end{equation}
+
+
+In the main equation,
+\begin{equation}\overline{\sigma} \Phi( \overrightarrow{r} ) =  \sigma_{0} g(\overrightarrow{r}) + \frac{1}{4\pi}\sum_{k=1}^{L}(\sigma_{k}^{-}-\sigma_{k}^{+})\int_{s_k} \! \Phi(\overrightarrow{r'}) \frac{\overrightarrow{R}}{R^3}.\mathrm{d}\overrightarrow{S}_k(\overrightarrow{r'}) ,
+\end{equation}
+to verify the units of the left and right side match consider only the first term on the right hand side:
+\begin{equation}
+\overline{\sigma} \Phi( \overrightarrow{r} ) =  \sigma_{0} g(\overrightarrow{r}),\;\; g(\overrightarrow{r}) = \frac{1}{4\pi\sigma_{0}} \frac{\overrightarrow{p}.\overrightarrow{R}}{R^{3}}.
+\end{equation}
+
+In SI:
+\begin{eqnarray}
+\frac{1}{\Omega m} v & = & \frac{1}{\Omega m}  \frac{1}{\frac{1}{\Omega m}} \frac{Am\; m}{m^{3}} \nonumber \\ 
+v & = & \Omega A.
+\end{eqnarray}
+
+
+\section{Multiplying dipole magnitude by a constant}
+
+Let $\Phi( \overrightarrow{r}, \overrightarrow{p} ) = L_{\overrightarrow{r}} \overrightarrow{p}$ be the solution of the forward problem with dipole $p$ at location $r$. $\overrightarrow{r}_{true} = [r_{1}\;\; r_{2}\;\; r_{3}]^T$ and $\overrightarrow{r}_{true} = [r_{1}\;\; r_{2}\;\; r_{3}]^T$ are the location and the magnitude of the dipole used in the forward problem to simulate the potential measurements, $\Phi_{true} = \Phi( \overrightarrow{r}\!_{true}, \overrightarrow{p}\!_{true} )$.
+
+You can estimate the magnitude of the dipole for the given set of true potential
+measurements and the true location of the dipole by 
+\begin{equation}
+\overrightarrow{p^{*}}\!\!_{true} = \arg\!\min\limits_{\overrightarrow{p}} | \Phi_{true} - L_{\overrightarrow{r}\!\!_{true}} \overrightarrow{p} |.
+\end{equation}
+
+If you multiply the magnitude of the dipole by a constant scalar value, c, 
+$\overrightarrow{p'} = c \overrightarrow{p}\!_{true}$, you get a new set of potential measurements, 
+\begin{equation}
+\Phi^{'} = \Phi( \overrightarrow{r}\!\!_{true},  \overrightarrow{p^{'}}  ) = c \Phi_{true}.
+\end{equation}
+
+Then, you can estimate the magnitude of the dipole for the given potential measurements,
+\begin{eqnarray}
+\overrightarrow{p^{*}} & = & \arg\!\min\limits_{\overrightarrow{p}} | \Phi^{'} - L_{\overrightarrow{r}\!\!_{true}} \overrightarrow{p} | \nonumber \\
+& = & L^{+} \Phi^{'} \nonumber \\
+& = & L^{+} (c \Phi_{true}) \nonumber \\
+& = & c L^{+} \Phi_{true} \nonumber \\ 
+& = & c  \overrightarrow{p^{*}}\!\!_{true}.
+\end{eqnarray}
+
+\section{Forward Solution}
+
+
+\section{Tetrahedron}
+
+\tdplotsetmaincoords{70}{110}
+\begin{center}
+\begin{tikzpicture}[scale=2,tdplot_main_coords]
+
+	%draw a grid in the x-y plane
+	\foreach \x in {-1,0,1,2}
+		\foreach \y in {-1,0,1,2}
+		{
+			\draw[gray,very thin,dotted] (\x,-1) -- (\x,2);
+			\draw[gray,very thin,dotted] (-1,\y) -- (2,\y);
+		}
+
+\coordinate (O) at (0,0,0) node[anchor=south west, color=blue]{$A$};
+\draw[very thick,->] (0,0,0) -- (1.5,0,0) node[anchor=north east]{$x$};
+\draw[very thick,->] (0,0,0) -- (0,1.5,0) node[anchor=north west]{$y$};
+\draw[very thick,->] (0,0,0) -- (0,0,1.5) node[anchor=south]{$z$};
+
+\draw[thick, dashed, color=blue] (1,0,0) -- (0,1,0) node[anchor=north]{$C$};
+\draw[thick, dashed, color=blue] (0,1,0) -- (0,0,1) node[anchor=east]{$D$};
+\draw[thick, dashed, color=blue] (0,0,1) -- (1,0,0) node[anchor=north west]{$B$};
+\draw[thick, dashed, color=blue] (0,0,0) -- (1,0,0);
+\draw[thick, dashed, color=blue] (0,0,0) -- (0,1,0);
+\draw[thick, dashed, color=blue] (0,0,0) -- (0,0,1);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{thebibliography}{9}
+
+\bibitem{matti93}
+  H\"am\"al\"ainen, Matti and Hari, Riitta and Ilmoniemi, Risto J. and Knuutila, Jukka and Lounasmaa, Olli V.:
+  \emph{Magnetoencephalography theory, instrumentation, and applications
+to noninvasive studies of the working human brain}.
+  American Physical Society,
+  Rev. Mod. Phys, Issue 65,
+  1993.
+
+\end{thebibliography}
+\end{document}
