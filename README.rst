@@ -1,14 +1,53 @@
+==========================
+Source Localization (sloc)
+==========================
+
 Installation
 ============
 
 Dependencies
 ------------
 
+Boost
+  (Version 1.54.0.1ubuntu1 from apt-get)
+  libboost-dev
+
+muparser
+  http://muparser.beltoforion.de/ Version 2.2.3
+
+GetFEM++
+  http://download.gna.org/getfem/stable/getfem-4.2.tar.gz Version 4.2
+  May need to run
+  >> export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}/usr/local/lib
+  
+Deal.II Version 8.1.0
+  http://www.dealii.org/
+  http://www.ces.clemson.edu/dealii/deal.II-8.1.0.tar.gz
+  cmake -DDEAL_II_WITH_MPI=ON .
+
+Thread Building Blocks (tbb) [check if this generates an error in cmake when missing]
+  libtbb-dev (4.2~20130725-1.1ubuntu1)
+
+MPI
+  apt-get install libopenmpi-dev
+  libmpich-dev seems to be another option
+
+
+
+
+
 Compiling
 ---------
 
+g++ Version 4.8.3
+
 Running
 -------
+
+Running code
+add `pwd` to path
+run icosahedron.run.sh from data/simple
+
 
 
 Structure
@@ -93,6 +132,13 @@ example
   head.mat - contains the material information for each triangle, including the material index for the inside and the outside of each triangle
   head.sigma - contains a lookup table that relates the material index to the inner and outer conductivity
 
+Alternative Methods
+===================
+Need to compare results with
+
+eeglab - NFT (directory: mfiles) version 2.3 (Mosalam)
+          includes forward problem solutions
+Field Trip
 
 README for sloc
 ===============
