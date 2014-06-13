@@ -2,7 +2,8 @@
 Source Localization (sloc)
 ==========================
 
-.. contents::
+.. contents:: Contents
+   :backlinks: top
 
 Installation
 ============
