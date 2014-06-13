@@ -5,35 +5,43 @@ Source Localization (sloc)
 Installation
 ============
 
+Tested for Ubuntu 14.04 LTS 64-bit Desktop
+
 Dependencies
 ------------
 
 Boost
-  (Version 1.54.0.1ubuntu1 from apt-get)
-  libboost-dev
+  - Version 1.54.0.1ubuntu1 from apt-get
+  - libboost-dev
 
 muparser
-  http://muparser.beltoforion.de/ Version 2.2.3
+  - http://muparser.beltoforion.de/ Version 2.2.3
 
 GetFEM++
-  http://download.gna.org/getfem/stable/getfem-4.2.tar.gz Version 4.2
-  May need to run
-  >> export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}/usr/local/lib
+  - http://download.gna.org/getfem/stable/getfem-4.2.tar.gz Version 4.2
+  - If default install location is used, you may need to run
+  
+    >> export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+    
+    in every terminal before you can run programs from sloc, or you can add it to your .bashrc.
   
 Deal.II Version 8.1.0
-  http://www.dealii.org/
-  http://www.ces.clemson.edu/dealii/deal.II-8.1.0.tar.gz
-  cmake -DDEAL_II_WITH_MPI=ON .
+  - http://www.dealii.org/
+  - http://www.ces.clemson.edu/dealii/deal.II-8.1.0.tar.gz
+  - Make sure you use 
+    
+    >> cmake -DDEAL_II_WITH_MPI=ON .
+    
+    while installing Deal.II, or Deal.II uses it's own MPI include file (mpi.h), which causes some issues with sloc code.
 
 Thread Building Blocks (tbb) [check if this generates an error in cmake when missing]
-  libtbb-dev (4.2~20130725-1.1ubuntu1)
+  - libtbb-dev (Version 4.2~20130725-1.1ubuntu1) from apt-get
 
 MPI
-  apt-get install libopenmpi-dev
-  libmpich-dev seems to be another option
-
-
-
+  - Not working for Bryan (6/13/14) yet
+  - Possible Options:
+      - apt-get install libopenmpi-dev
+      - libmpich-dev seems to be another option
 
 
 Compiling
