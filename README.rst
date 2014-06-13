@@ -10,6 +10,9 @@ Tested for Ubuntu 14.04 LTS 64-bit Desktop
 Dependencies
 ------------
 
+On most distributions of Linux or Macs, Boost, Thread Building Blocks, and MPI can be installed from a standard package manager.
+muparser, GetFEM++, and Deal.II are less standard libraries which will have to be installed from source.
+
 Boost
   - Version 1.54.0.1ubuntu1 from apt-get
   - libboost-dev
