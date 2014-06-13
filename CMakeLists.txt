@@ -17,6 +17,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/config")
 
 # Build out a list of common libraries (initialize to empty list)
 set(COMMON_LIBRARIES)
+list(APPEND COMMON_LIBRARIES ${Boost_LIBRARIES})
 
 # Decide whether to build the tests or not (default is 'false')
 if(NOT DEFINED BUILD_TESTS)
@@ -91,6 +92,13 @@ endif()
 # Configure VCGLib
 set(VCGLIB_DIR "$ENV{HOME}/dev/vcglib")
 include_directories(${VCGLIB_DIR})
+
+# Configure omp
+find_package(OpenMP)
+if(OPENMP_FOUND)
+    add_definitions(${OPENMP_CFLAGS})
+    list(APPEND COMMON_LIBRARIES ${OPENMP_LDFLAGS} -lgomp)
+endif()
 
 # Configure pkg-config (used for configuring other libraries: see "pkg-config --list-all")
 find_package(PkgConfig)
