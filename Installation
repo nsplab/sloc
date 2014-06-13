@@ -31,3 +31,7 @@ g++ Version 4.8.3
 Running code
 add `pwd` to path
 run icosahedron.run.sh from data/simple
+
+
+eeglab - NFT (directory: mfiles) version 2.3 (Mosalam)
+          includes forward problem solutions
