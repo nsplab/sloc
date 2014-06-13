@@ -21,8 +21,9 @@ GetFEM++
   - http://download.gna.org/getfem/stable/getfem-4.2.tar.gz Version 4.2
   - If default install location is used, you may need to run
   
-    >> export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+    ::
     
+      export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
     in every terminal before you can run programs from sloc, or you can add it to your .bashrc.
   
 Deal.II Version 8.1.0
@@ -30,7 +31,9 @@ Deal.II Version 8.1.0
   - http://www.ces.clemson.edu/dealii/deal.II-8.1.0.tar.gz
   - Make sure you use 
     
-    >> cmake -DDEAL_II_WITH_MPI=ON .
+    ::
+    
+      cmake -DDEAL_II_WITH_MPI=ON .
     
     while installing Deal.II, or Deal.II uses it's own MPI include file (mpi.h), which causes some issues with sloc code.
 
@@ -55,8 +58,8 @@ Run
 
 ::
 
-  >> cmake .
-  >> make all
+  cmake .
+  make all
 
 Running
 -------
