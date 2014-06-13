@@ -2,6 +2,8 @@
 Source Localization (sloc)
 ==========================
 
+.. contents::
+
 Installation
 ============
 
