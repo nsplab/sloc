@@ -17,7 +17,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/config")
 
 # Build out a list of common libraries (initialize to empty list)
 set(COMMON_LIBRARIES)
-list(APPEND COMMON_LIBRARIES ${Boost_LIBRARIES})
+list(APPEND COMMON_LIBRARIES -ldl) # include dynamic linking library
 
 # Decide whether to build the tests or not (default is 'false')
 if(NOT DEFINED BUILD_TESTS)
