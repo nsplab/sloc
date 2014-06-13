@@ -170,6 +170,50 @@ eeglab - NFT (directory: mfiles) version 2.3 (Mosalam)
 Field Trip
 
 
+Derivation
+==========
+
+Units
+-----
+
+To verify the units of the equation match let consider only the first term on the right hand side:
+
+|unit_phi_of_r|
+
+In the SI:
+
+|unit_phi_of_r_si|
+
+.. |unit_phi_of_r| image:: https://github.com/nsplab/sloc/blob/master/doc/unit_phi_of_r.png?raw=true 
+.. |unit_phi_of_r_si| image:: https://github.com/nsplab/sloc/blob/master/doc/unit_phi_of_r_si.png?raw=true 
+
+Multiplying dipole magnitude by a constant 
+------------------------------------------
+
+Let |phi| be the solution of the forward problem with dipole p at location r. 
+
+|rtrue| and |ptrue| are the location and the magnitude of the dipole used in the
+forward problem to simulate the potential measurements, |phitrue|.
+
+You can estimate the magnitude of the dipole for the given set of true potential 
+measurements and the true location of the dipole by |ptrueasterisk|.
+
+If you multiply the magnitude of the dipole by a constant scalar value, c, 
+|pprime|, you get a new set of potential measurements, |phiprime|. Then, you
+can estimate the magnitude of the dipole for the given potential measurements,
+
+|pasterisk|.
+
+.. |phi| image:: https://github.com/nsplab/sloc/blob/master/doc/phi.png?raw=true 
+.. |rtrue| image:: https://github.com/nsplab/sloc/blob/master/doc/rtrue.png?raw=true 
+.. |ptrue| image:: https://github.com/nsplab/sloc/blob/master/doc/ptrue.png?raw=true 
+.. |phitrue| image:: https://github.com/nsplab/sloc/blob/master/doc/phitrue.png?raw=true 
+.. |ptrueasterisk| image:: https://github.com/nsplab/sloc/blob/master/doc/ptrueasterisk.png?raw=true 
+.. |pprime| image:: https://github.com/nsplab/sloc/blob/master/doc/pprime.png?raw=true 
+.. |phiprime| image:: https://github.com/nsplab/sloc/blob/master/doc/phiprime.png?raw=true 
+.. |pasterisk| image:: https://github.com/nsplab/sloc/blob/master/doc/pasterisk.png?raw=true 
+
+
 README for sloc
 ===============
 
@@ -236,43 +280,4 @@ projected onto the mesh is visualized using paraview, which
 
 reads the \*.vtk file produced by 'bin/bem_cost_function.cc'.
 
----
-
-Units
-===============
-To verify the units of the equation match let consider only the first term on the right hand side:
-
-|unit_phi_of_r|
-
-In the SI:
-
-|unit_phi_of_r_si|
-
-.. |unit_phi_of_r| image:: https://github.com/nsplab/sloc/blob/master/doc/unit_phi_of_r.png?raw=true 
-.. |unit_phi_of_r_si| image:: https://github.com/nsplab/sloc/blob/master/doc/unit_phi_of_r_si.png?raw=true 
-
-Multiplying dipole magnitude by a constant 
-===============
-Let |phi| be the solution of the forward problem with dipole p at location r. 
-
-|rtrue| and |ptrue| are the location and the magnitude of the dipole used in the
-forward problem to simulate the potential measurements, |phitrue|.
-
-You can estimate the magnitude of the dipole for the given set of true potential 
-measurements and the true location of the dipole by |ptrueasterisk|.
-
-If you multiply the magnitude of the dipole by a constant scalar value, c, 
-|pprime|, you get a new set of potential measurements, |phiprime|. Then, you
-can estimate the magnitude of the dipole for the given potential measurements,
-
-|pasterisk|.
-
-.. |phi| image:: https://github.com/nsplab/sloc/blob/master/doc/phi.png?raw=true 
-.. |rtrue| image:: https://github.com/nsplab/sloc/blob/master/doc/rtrue.png?raw=true 
-.. |ptrue| image:: https://github.com/nsplab/sloc/blob/master/doc/ptrue.png?raw=true 
-.. |phitrue| image:: https://github.com/nsplab/sloc/blob/master/doc/phitrue.png?raw=true 
-.. |ptrueasterisk| image:: https://github.com/nsplab/sloc/blob/master/doc/ptrueasterisk.png?raw=true 
-.. |pprime| image:: https://github.com/nsplab/sloc/blob/master/doc/pprime.png?raw=true 
-.. |phiprime| image:: https://github.com/nsplab/sloc/blob/master/doc/phiprime.png?raw=true 
-.. |pasterisk| image:: https://github.com/nsplab/sloc/blob/master/doc/pasterisk.png?raw=true 
 
