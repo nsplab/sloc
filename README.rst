@@ -26,6 +26,73 @@ Programs
 File Types
 ==========
 
+.mesh file
+  this is a standard file format, not custom made by us.
+  for geometric meshes (tetrahedron) created by hand; for sphere, stl file was created in blender, and then stl_to_mesh was used to convert from .stl to .mesh.
+  Not sure exactly how icosahedron was created (mosalam, 6/12/14 @ 7:38pm)
+  for anatomical meshes, .stl file created in Vitrea was converted to .mesh using make_head_model
+
+.sigma file
+  custom file format made by us; 
+  lookup table for the material index
+  each “material index” is actually an index for an interface between two materials with same or different conductivities.
+  one row for each material index - eg. with a 7 layer model, there are 7 material indices
+  first column: material index
+  second column: inner conductivity
+  third column: outer conductivity
+
+.mat file
+  custom file format made by us; 
+  each mesh has a separate .mat file
+  .mat stands for “material”
+  the class sloc::MaterialData defined in material_data.cc creates the .mat and .sigma files.
+  first line: # of triangles in mesh
+  second line onwards (one row for each triangles)
+	first column: index of vertex
+	second column: material index (also called material number)
+
+.dat file
+  custom file format made by Luis
+  potentials on electrodes
+  first line: number of electrodes N
+  next N lines: electrode index (integer) and potential on electrode (floating-point)
+
+.stl file
+  format from Vitrea
+
+.vtk file
+  Format from the Visualization Toolkit
+  contains information equivalent to .dat files, but in a format supported by the Visualization Toolkit
+
+.prm file
+  format from deal.II Parameter Handler
+  specifies parameters for a function as a text file
+
+.log file
+  custom format
+  debugging output
+  not essential for later use
+
+.cost_at_grid_pts
+  created by mosalam with this program:  bem_cost_function , which reads potentials from two .dat files
+  called within this shell script : head.run_grid.sh
+  content: the cost computed by putting the candidate dipole source at the grid points
+  stores the cost of best dipole fit at each candidate location in a grid of candidate points.
+  the cost is the sum of squared errors between predicted and “measured” potentials (?)
+  7 columns: (x, y, z, angleX, angleY, angleZ, cost)
+  one row for each candidate point
+
+
+.electrodes
+  created by select_electrodes_given_3d_pos (see head.run_grid.sh that calls this)
+  the vertex indices of the electrodes (10-20 system)
+  takes .stl vertices for scalp and points for 10-20 electrode configuration and gives the vertices closest to the true locations
+
+example
+  head.mesh - contains nearly 16,000 triangles.
+  head.mat - contains the material information for each triangle, including the material index for the inside and the outside of each triangle
+  head.sigma - contains a lookup table that relates the material index to the inner and outer conductivity
+
 
 README for sloc
 ===============
