@@ -42,7 +42,6 @@ https://www.writelatex.com/784824tywgtg#/1721178/
 
 https://www.writelatex.com/784817tfvqwp#/1721170/
 
-===============
 README for sloc
 ===============
 
@@ -96,7 +95,6 @@ reads the \*.vtk file produced by 'bin/bem_cost_function.cc'.
 
 ---
 
-===============
 Units
 ===============
 To verify the units of the equation match let consider only the first term on the right hand side:
@@ -110,7 +108,6 @@ In the SI:
 .. |unit_phi_of_r| image:: https://github.com/nsplab/sloc/blob/master/doc/unit_phi_of_r.png?raw=true 
 .. |unit_phi_of_r_si| image:: https://github.com/nsplab/sloc/blob/master/doc/unit_phi_of_r_si.png?raw=true 
 
-===============
 Multiplying dipole magnitude by a constant 
 ===============
 Let |phi| be the solution of the forward problem with dipole p at location r. 
