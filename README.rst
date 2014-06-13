@@ -9,6 +9,7 @@ Installation
 ============
 
 Tested for Ubuntu 14.04 LTS 64-bit Desktop
+For installation instructions refer to ``doc/hoffman2.rst``.
 
 Dependencies
 ------------
@@ -214,20 +215,12 @@ can estimate the magnitude of the dipole for the given potential measurements,
 .. |pasterisk| image:: https://github.com/nsplab/sloc/blob/master/doc/pasterisk.png?raw=true 
 
 
-README for sloc
-===============
+Manuscript Drafts
+=================
 
-For installation instructions refer to ``doc/hoffman2.rst``.
+  - `Endovascular Source Localization (simulation study) <https://www.writelatex.com/784824tywgtg#/1721178/>`_
 
-**Manuscript Drafts**
-
-###Endovascular Source Localization (simulation study)
-
-https://www.writelatex.com/784824tywgtg#/1721178/
-
-###Derivation of boundary element method (BEM) equation used in forward model, based on Luis' notes
-
-https://www.writelatex.com/784817tfvqwp#/1721170/
+  - `Derivation of boundary element method (BEM) equation used in forward model, based on Luis' notes <https://www.writelatex.com/784817tfvqwp#/1721170/>`_
 
 README for sloc
 ===============
