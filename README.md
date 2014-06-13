@@ -14,7 +14,7 @@ Running
 Structure
 =========
 
-![Alt text](doc/block_diagram.png)
+![Alt text](https://github.com/nsplab/sloc/blob/master/doc/block_diag.png?raw=true )
 
 
 Programs
