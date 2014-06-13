@@ -12,6 +12,7 @@ Dependencies
 
 On most distributions of Linux or Macs, Boost, Thread Building Blocks, and MPI can be installed from a standard package manager.
 muparser, GetFEM++, and Deal.II are less standard libraries which will have to be installed from source.
+In addition, install_script.txt contains the commands that will install these libraries.
 
 Boost
   - Version 1.54.0.1ubuntu1 from apt-get
