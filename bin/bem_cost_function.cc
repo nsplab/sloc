@@ -24,16 +24,16 @@
 namespace fs = boost::filesystem;
 
 using namespace std;
-using boost::shared_ptr;
+//using boost::shared_ptr;
 
 // ----------------------------------------------------------------------------
 
-class ForwardProblem : public sloc::BEM_Forward_Problem_P
+class ForwardProblem : public sloc::BEM_Forward_Problem
 {
 public:
 
     ForwardProblem(const sloc::BEM_Forward_Problem::Parameters& fwd_params)
-        : sloc::BEM_Forward_Problem_P(fwd_params)
+        : sloc::BEM_Forward_Problem(fwd_params)
     {
     }
 
@@ -44,20 +44,26 @@ public:
         dipole_sources.add_source(dummy_x, dummy_p);
 
         // configure the rest of the parameters
-        sloc::BEM_Forward_Problem_P::configure();
+        sloc::BEM_Forward_Problem::configure();
     }
 
     void solve(double x, double y, double z, double px, double py, double pz)
     {
         // Assume we only have a single dipole
         Assert(dipole_sources.n_sources() == 1, dealii::ExcInvalidState());
+        cout<<"after dipole_sources.n_sources()"<<endl;
         sloc::DipoleSource *src = dipole_sources._sources[0];
+        cout<<"after dipole_sources._sources[0]"<<endl;
         src->location = dealii::Point<3>(x,y,z);
+        cout<<"after dealii::Point<3>(x,y,z)"<<endl;
         src->dipole = dealii::Point<3>(px,py,pz);
+        cout<<"after dealii::Point<3>(px,py,pz)"<<endl;
 
         // build the linear system, and solve it
         this->assemble_system();
+        cout<<"after assemble_system()"<<endl;
         this->solve_system();
+        cout<<"after solve_system()"<<endl;
     }
 
     void solve(double *points, double *dipoles)
@@ -192,7 +198,7 @@ public:
 class CostFunction
 {
 private:
-    shared_ptr<ForwardProblem> forward_problem;
+    boost::shared_ptr<ForwardProblem> forward_problem;
     sloc::BEM_Forward_Problem::Parameters fwd_prm;
 
 public:
@@ -209,7 +215,7 @@ public:
         fwd_prm.logfile = "";
 
         // Initialize cost function
-        forward_problem = shared_ptr<ForwardProblem>(new ForwardProblem(fwd_prm));
+        forward_problem = boost::shared_ptr<ForwardProblem>(new ForwardProblem(fwd_prm));
 
         // disable dealii logging (fwd solver needs to be quiet)
         dealii::deallog.depth_console(0);
@@ -255,9 +261,10 @@ public:
         dipole.reinit(3);
     }
 
-    double cost_for_single_source_at(double pt[3], double dp[3])
+    double cost_for_single_source_at(int pt[3], double dp[3])
     {
-        forward_problem->configure();
+        //forward_problem->configure();
+        cout<<"after forward_problem->configure()"<<endl;
 
         int m;
         const int M = num_electrodes;
@@ -267,28 +274,92 @@ public:
         double z = pt[2];
 
         // find L[:,0]
-        forward_problem->solve(x, y, z, 1, 0, 0);
-        for (m = 0; m < M; m++)
-            L(m,0) = forward_problem->get_phi(electrode_dof_index[m]);
+        //forward_problem->solve(x, y, z, 1, 0, 0);
+        //cout<<"forward_problem->solve"<<endl;
+
+        cout<<"reading first phi file"<<endl;
+        stringstream ss1;
+        ss1<<"head.phi."<<x<<"."<<y<<"."<<z<<".1,0,0.dat";
+        std::ifstream is1;
+        is1.open(ss1.str().c_str()); // XXX: check that open succeeded
+        vector<float> phi_values1;
+        for (int m = 0; m < 8432; m++)
+        {
+            float phi_value;
+            is1 >> phi_value;
+            phi_values1.push_back(phi_value);
+        }
+
+        for (m = 0; m < M; m++) {
+            L(m,0) = phi_values1[electrode_dof_index[m]];
+            cout<<phi_values1[electrode_dof_index[m]]<<" ";
+        }
+        cout<<endl;
+
+	cout<<"after find L[:,0]"<<endl;
 
         // find L[:,1]
-        forward_problem->solve(x, y, z, 0, 1, 0);
+        //forward_problem->solve(x, y, z, 0, 1, 0);
+
+    stringstream ss2;
+    ss2<<"head.phi."<<x<<"."<<y<<"."<<z<<".1,0,0.dat";
+    std::ifstream is2;
+    is2.open(ss2.str().c_str()); // XXX: check that open succeeded
+    vector<float> phi_values2;
+    for (int m = 0; m < 8432; m++)
+    {
+        float phi_value;
+        is2 >> phi_value;
+        phi_values2.push_back(phi_value);
+    }
+
         for (m = 0; m < M; m++)
-            L(m,1) = forward_problem->get_phi(electrode_dof_index[m]);
+            L(m,1) = phi_values2[electrode_dof_index[m]];
+	cout<<"after find L[:,1]"<<endl;
 
         // find L[:,2]
-        forward_problem->solve(x, y, z, 0, 0, 1);
+        //forward_problem->solve(x, y, z, 0, 0, 1);
+
+    stringstream ss3;
+    ss3<<"head.phi."<<x<<"."<<y<<"."<<z<<".1,0,0.dat";
+    std::ifstream is3;
+    is3.open(ss3.str().c_str()); // XXX: check that open succeeded
+    vector<float> phi_values3;
+    for (int m = 0; m < 8432; m++)
+    {
+        float phi_value;
+        is3 >> phi_value;
+        phi_values3.push_back(phi_value);
+    }
+
         for (m = 0; m < M; m++)
-            L(m,2) = forward_problem->get_phi(electrode_dof_index[m]);
+            L(m,2) = phi_values3[electrode_dof_index[m]];
+	cout<<"after find L[:,2]"<<endl;
 
         // find the pseudo-inverse of L, and store it in the matrix L_pinv
         L_pinv.left_invert(L);
+        sloc::write_matrix("system_L.dat", L);
+        sloc::write_matrix("system_L_pinv.dat", L_pinv);
+        sloc::write_vector("system_phi_measured.dat", phi_measured);
 
         // calculate: dipole = pinv(L) * phi_measured
         L_pinv.vmult(dipole, phi_measured);
         dp[0] = dipole(0);
         dp[1] = dipole(1);
         dp[2] = dipole(2);
+	cout<<"after pinv(L) * phi_measured"<<endl;
+
+	cout<<"after L_pinv.left_invert(L)"<<endl;
+        /*int rank = MPI::COMM_WORLD.Get_rank();
+        if (rank == 0) {
+		dealii::FullMatrix<double> L_pinv_pinv;
+		L_pinv_pinv.left_invert(L_pinv);
+		sloc::write_matrix("L_pinv.mat", L_pinv);
+		sloc::write_matrix("L_pinv_pinv.mat", L_pinv_pinv);
+		sloc::write_matrix("L.mat", L);
+        }*/
+
+
 
         // compute cost ||phi - L * dipole||
         double cost = 0.0;
@@ -319,6 +390,7 @@ public:
 
 int main(int argc, char *argv[])
 {
+    cout<<"cost function started"<<endl;
     MPI::Init(argc, argv);
     int rank = MPI::COMM_WORLD.Get_rank();
     int numprocs = MPI::COMM_WORLD.Get_size();
@@ -383,9 +455,9 @@ int main(int argc, char *argv[])
         center[2] = parameters.grid_center[2];
 
         double x0, y0, z0;
-        x0 = center[0] - (nx * dx / 2);
-        y0 = center[1] - (ny * dy / 2);
-        z0 = center[2] - (nz * dz / 2);
+        x0 = center[0] - ((nx-1) * dx / 2);
+        y0 = center[1] - ((ny-1) * dy / 2);
+        z0 = center[2] - ((nz-1) * dz / 2);
 
         valarray<double> X(nx);
         for (i = 0; i < nx; i++)
@@ -400,19 +472,27 @@ int main(int argc, char *argv[])
             Z[k] = z0 + k * dz;
 
         ofstream out(parameters.output_file.c_str());
-        for (i = 0; i < nx; i++)
+        for (i = 0; i < 3; i++)
         {
+            cout<<"i: "<<i<<endl;
             double x = X[i];
-            for (j = 0; j < ny; j++)
+            for (j = 0; j < 3; j++)
             {
+                cout<<"j: "<<j<<endl;
                 double y = Y[j];
-                for (k = 0; k < nz; k++)
+                for (k = 0; k < 3; k++)
                 {
                     double z = Z[k];
 
-                    double pt[3] = {x,y,z};
+                    int pt[3] = {i,j,k};
                     double dp[3] = {0,0,0};
+                    cout<<"before cost_function.cost_for_single_source_at({"<<pt[0]<<","<<pt[1]<<","<<pt[2]<<"},dp)"<<endl;
                     double cost = cost_function.cost_for_single_source_at(pt, dp);
+                    cout<<"after cost_function.cost_for_single_source_at()"<<endl;
+
+                    cout << pt[0] << " " << pt[1] << " " << pt[2] << " "
+                        << dp[0] << " " << dp[1] << " " << dp[2] << ": "
+                        << cost << endl;
 
                     out << pt[0] << " " << pt[1] << " " << pt[2] << " "
                         << dp[0] << " " << dp[1] << " " << dp[2] << " "
