@@ -72,7 +72,7 @@ protected:
 
     // this "parameters" object encapsulates our access to any parameter
     // we might need during the configuration step
-    const Parameters& parameters;
+    Parameters parameters;
 
     // location and components of the current dipole sources
     DipoleSources dipole_sources;
