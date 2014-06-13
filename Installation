@@ -1,0 +1,33 @@
+Library Dependencies
+
+Boost (Version 1.54.0.1ubuntu1 from apt-get)
+  libboost-dev
+
+muparser http://muparser.beltoforion.de/ Version 2.2.3
+GetFEM++ http://download.gna.org/getfem/stable/getfem-4.2.tar.gz Version 4.2
+May need to run
+>> export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}/usr/local/lib
+Deal.II Version 8.1.0
+  http://www.dealii.org/
+  http://www.ces.clemson.edu/dealii/deal.II-8.1.0.tar.gz
+  cmake -DDEAL_II_WITH_MPI=ON .
+
+Thread Building Blocks (tbb) [check if this generates an error in cmake when missing]
+Version
+libtbb-dev (4.2~20130725-1.1ubuntu1)
+
+CMakeLists.txt:
+set(CMAKE_CXX_FLAGS "-Wall -Wno-unused-variable")
+changed to
+set(CMAKE_CXX_FLAGS "-Wall -Wno-unused-variable -std=c++11")
+
+MPI
+apt-get install libopenmpi-dev
+libmpich-dev seems to be another option
+
+g++ Version 4.8.3
+
+
+Running code
+add `pwd` to path
+run icosahedron.run.sh from data/simple
