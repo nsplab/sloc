@@ -47,7 +47,16 @@ MPI
 Compiling
 ---------
 
-g++ Version 4.8.3
+Currently using
+  - g++ Version 4.8.3-19
+  - cmake Version 2.8.12.2
+  
+Run
+
+::
+
+  >> cmake .
+  >> make all
 
 Running
 -------
