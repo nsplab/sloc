@@ -49,9 +49,12 @@ Thread Building Blocks (tbb) [check if this generates an error in cmake when mis
   - libtbb-dev (Version 4.2~20130725-1.1ubuntu1) from apt-get
 
 MPI
-  - Not working for Bryan (6/13/14) yet
-  - Possible Options:
-      - apt-get install libopenmpi-dev
+  - Works when installing from source
+      - http://www.open-mpi.org/
+      - http://www.open-mpi.org/software/ompi/v1.8/downloads/openmpi-1.8.1.tar.gz
+      - Version 1.8.1
+  - Probably could also install with apt-get
+      - libopenmpi-dev
       - libmpich-dev seems to be another option
 
 
