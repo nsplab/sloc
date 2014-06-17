@@ -1,0 +1,75 @@
+# -----------------------------------------------------------------------------
+
+# Download cmake
+$ cd ~/dev/
+$ git clone git://cmake.org/cmake.git
+
+# Download boost
+$ cd ~/dev/archive/
+$ wget http://downloads.sourceforge.net/project/boost/boost/1.53.0/boost_1_53_0.tar.gz
+
+# Download deal.II
+$ cd ~/dev/
+$ svn checkout https://svn.dealii.org/trunk/deal.II
+
+# Download GetFEM++
+$ cd ~/dev/
+$ svn checkout svn://svn.gna.org/svn/getfem/trunk/getfem
+
+# Download VCGLib
+$ cd ~/dev/
+$ svn co https://vcg.svn.sourceforge.net/svnroot/vcg/trunk/vcglib
+
+# Download sloc
+$ cd ~/dev/
+$ git clone git@github.com:nsplab/sloc.git ~/dev/sloc
+
+# -----------------------------------------------------------------------------
+
+# Install CMake
+$ cd ~/dev/cmake
+$ ./bootstrap --prefix=$HOME/opt/local 2>&1 | tee bootstrap.log
+$ make -j4 2>&1 | tee make.log
+$ make install 2>&1 | tee install.log
+
+# Install boost
+$ cd ~/dev/
+$ tar xvfz archive/boost_1_53_0.tar.gz
+$ cd ~/dev/boost_1_53_0/
+$ ./bootstrap.sh 2>&1 | tee bootstrap.log
+$ ./b2 --help | less
+$ ./b2 --show-libraries
+$ vim user-config.jam # add line "using mpi ;" to this file
+$ time ./b2 -j5 \
+    --prefix=${HOME}/opt/local \
+    --libdir=${HOME}/opt/local/lib \
+    --layout=tagged \
+    --user-config=user-config.jam \
+    threading=multi \
+    install \
+    2>&1 | tee install.log
+
+# Install deal.II
+$ cd ~/dev/deal.II/
+$ mkdir build
+$ cd ~/dev/deal.II/build/
+$ cmake .. \
+    -DCMAKE_INSTALL_PREFIX=${HOME}/opt/local \
+    -DBOOST_ROOT=${HOME}/opt/local \
+    -DDEAL_II_WITH_MPI=ON \
+    -DDEAL_II_WITH_HDF5=OFF -DDEAL_II_WITH_TBB=OFF -DDEAL_II_HAVE_CXX11_FLAG=OFF
+$ time make -j5
+$ make install
+
+# Install GetFEM++
+$ cd ~/dev/getfem/
+$ bash autogen.sh
+$ ./configure --prefix=${HOME}/opt/local --with-pic 2>&1 | tee configure.log
+$ time make -j4 2>&1 | tee make.log
+$ make install 2>&1 | tee install.log
+ 
+# Install sloc
+$ cd ~/dev/sloc
+$ make
+
+# -----------------------------------------------------------------------------

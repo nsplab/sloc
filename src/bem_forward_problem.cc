@@ -209,7 +209,8 @@ void BEM_Forward_Problem::configure()
     solver_control.log_history(false);
     solver_control.log_result(true);
     solver_control.set_max_steps(100);
-    solver_control.set_tolerance(1.0e-10);
+    //solver_control.set_tolerance(1.0e-10);
+    solver_control.set_tolerance(6.0e-5);
 
     // open logging stream, but only in debug mode
     if (debug && !parameters.logfile.empty())
@@ -263,9 +264,11 @@ void BEM_Forward_Problem::assemble_system()
     //
     // contribution from surface integral terms
     //
-
+    ofstream mapping("mapping.dat");
     for (dal::bv_visitor cv(surface_mesh.convex_index()); !cv.finished(); ++cv)
     {
+
+
 
         bgeot::pgeometric_trans pgt = surface_mesh.trans_of_convex(cv);
         getfem::papprox_integration pai = getfem::get_approx_im_or_fail(mim.int_method_of_element(cv));
@@ -281,36 +284,34 @@ void BEM_Forward_Problem::assemble_system()
 
         // get current element's dof indices
         getfem::mesh_fem::ind_dof_ct elt_dof_indices = mf.ind_basic_dof_of_element(cv);
+        getfem::mesh_fem::ind_dof_face_ct elt_dof_f_indices = mf.ind_basic_dof_of_face_of_element(cv,0);
+        //getfem::mesh cv_mesh = mf.linked_mesh();
+	//getfem::mesh::ref_mesh_pt_ct mesh_ptc_idx = cv_mesh.points_of_convex(cv);
+	std::vector< getfem::size_type > global_ind;
+	mf.get_global_dof_index(global_ind);
+	for (size_t tidx=0; tidx<global_ind.size(); tidx++)
+		cout<<"tidx: "<<tidx<<" "<<global_ind[tidx]<<endl;
 
         // retrieve material data
         const unsigned int mat_id = material_data.get_material_id(cv);
         const double sigma_int = material_data.get_sigma_int(mat_id);
         const double sigma_ext = material_data.get_sigma_ext(mat_id);
-        const double sigma_avg = (sigma_int + sigma_ext) / 2;
+        const double sigma_avg = (sigma_int + sigma_ext) / 2.0;
 
         const double K = (1.0 / (4 * numbers::PI)) * (sigma_int - sigma_ext) / sigma_avg;
 
-        //
-        // contribution from current dipole sources
-        //
-        for (j = 0; j < fe_dofs_per_cell; ++j)
-        {
-            bgeot::base_node p = mf.point_of_basic_dof(elt_dof_indices[j]);
-            dealii::Point<3> pt(p[0], p[1], p[2]);
-            system_rhs(elt_dof_indices[j]) = dipole_sources.primary_contribution(pt) / sigma_avg;
-        }
 
-        if (debug_assembly)
+        //if (debug_assembly)
         {
-            log << "convex " << cv << endl;
+            cout << "convex " << cv << endl;
             //log << "convex " << cv << " - " << typeid(cv).name() << endl;
 
-            log << "G = " << G;
-            log << "normal_q = " << normal_q << endl;
-            log << "mat_id = " << mat_id << endl;
-            log << "sigma_int = " << sigma_int << endl;
-            log << "sigma_ext = " << sigma_ext << endl;
-            log << "sigma_avg = " << sigma_avg << endl;
+            cout << "G = " << G;
+            cout << "normal_q = " << normal_q << endl;
+            cout << "mat_id = " << mat_id << endl;
+            cout << "sigma_int = " << sigma_int << endl;
+            cout << "sigma_ext = " << sigma_ext << endl;
+            cout << "sigma_avg = " << sigma_avg << endl;
 
             //copy_to_cout(elt_dof_indices, " "); cout << endl;
             log << "elt_dof_indices = ";
@@ -319,12 +320,46 @@ void BEM_Forward_Problem::assemble_system()
             log << endl;
         }
 
+    //
+    // contribution from current dipole sources
+    //
+	mapping<<cv;
+    for (j = 0; j < fe_dofs_per_cell; ++j)
+    {
+        bgeot::base_node p = mf.point_of_basic_dof(elt_dof_indices[j]);
+        dealii::Point<3> pt(p[0], p[1], p[2]);
+	cout<<"cv: "<<cv<<endl;
+	cout<<"j: "<<j<<endl;
+	cout<<"elt dof indx: "<<elt_dof_indices[j]<<endl;
+	cout<<"elt dof face indx: "<<elt_dof_f_indices[j]<<endl;
+	cout<<"elt dof mesh: "<<global_ind[elt_dof_indices[j]]<<endl;
+	cout<<"loc: "<<p[0]<<" "<<p[1]<<" "<<p[2]<<endl;
+	cout<<"red: "<<mf.is_reduced()<<endl;
+        system_rhs(elt_dof_indices[j]) = dipole_sources.primary_contribution(pt) / sigma_avg;
+	mapping<<" "<<elt_dof_indices[j];
+    }
+	mapping<<endl;
+
+        if (verbose) cout<<"n_dofs: "<<n_dofs<<endl;
+        if (verbose) cout<<"pai->nb_points_on_convex(): "<<(pai->nb_points_on_convex())<<endl;
+        if (verbose) cout<<"fe_dofs_per_cell: "<<fe_dofs_per_cell<<endl;
         for (i = 0; i < n_dofs; ++i)
         {
             local_matrix_row_i = 0;
 
+            //
+            // contribution from current dipole sources
+            //
             bgeot::base_node p = mf.point_of_basic_dof(i);
+            //dealii::Point<3> pt(p[0], p[1], p[2]);
+            //cout<<"sigma_avg: "<<sigma_avg<<endl;
+            //system_rhs(i) = dipole_sources.primary_contribution(pt) / sigma_avg;
+            //cout<<"rhs "<<i<<": "<<dipole_sources.primary_contribution(pt)<<endl;
+            //cout<<"rhs "<<i<<": "<<system_rhs(i)<<endl;
+
+
             const Point<3> node_position(p[0], p[1], p[2]);
+	cout<<"i: "<<i<<" "<<p[0]<<" "<<p[1]<<" "<<p[2]<<endl;
             if (debug_assembly)
             {
                 log << "  dof " << i << ", pt [" << node_position << "], nq = " << pai->nb_points_on_convex() << endl;
@@ -379,7 +414,7 @@ void BEM_Forward_Problem::assemble_system()
 
             for (j = 0; j < fe_dofs_per_cell; ++j)
             {
-                system_matrix(i, elt_dof_indices[j]) += -local_matrix_row_i(j);
+                system_matrix(i, elt_dof_indices[j]) += local_matrix_row_i(j);
                 //cout << "  k=0 cv=" << cv << " i=" << i << " j=" << j << " M(" << i << "," << elt_dof_indices[j] << ") += " << -local_matrix_row_i(j) << endl;
             }
         }
@@ -393,12 +428,12 @@ void BEM_Forward_Problem::assemble_system()
         system_matrix(i,i) += 1.0;
 
     // Write the linear system to disk, for debugging
-    if (debug)
+    //if (debug)
     {
-        sloc::write_vector("system_rhs.dat", system_rhs);
+        sloc::write_vector("system_rhs_s.dat", system_rhs);
 
         if (n_dofs < 1000)
-            sloc::write_matrix("system_matrix.dat", system_matrix);
+            sloc::write_matrix("system_matrix_s.dat", system_matrix);
     }
 
 }
@@ -411,14 +446,22 @@ void BEM_Forward_Problem::solve_system()
     deallog << "BEM_Forward_Problem::solve_system() T=" << timer.wall_time() << endl;
     try
     {
+        cout<<"before SolverGMRES"<<endl;
         SolverGMRES<Vector<double> > solver(solver_control);
+        cout<<"after SolverGMRES"<<endl;
         solver.solve(system_matrix, phi, system_rhs, PreconditionIdentity());
+        cout<<"after solve"<<endl;
     }
     catch (std::exception& exc)
     {
-        sloc::write_matrix("system_matrix.dat", system_matrix);
-        sloc::write_vector("system_rhs.dat", system_rhs);
-        throw exc;
+        //cout<<exc.what()<<endl;
+        ofstream out;
+        out.open("head.threshold_error", std::ofstream::out | std::ofstream::app);
+        out<<exc.what()<<endl;
+        out.close();
+        //sloc::write_matrix("system_matrix.dat", system_matrix);
+        //sloc::write_vector("system_rhs.dat", system_rhs);
+        //throw exc;
     }
 }
 

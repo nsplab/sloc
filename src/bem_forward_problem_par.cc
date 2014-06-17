@@ -34,6 +34,30 @@ BEM_Forward_Problem_P::~BEM_Forward_Problem_P()
 void BEM_Forward_Problem_P::run()
 {
     sloc::BEM_Forward_Problem::configure();
+    if (rank == 0)
+    {
+    //ofstream mapping("mapping.dat");
+    bgeot::size_type num_elts = surface_mesh.nb_convex();
+const unsigned int n_dofs = mf.nb_basic_dof();
+    bgeot::size_type cv, j;
+	cout<<"---------------------------------------------------------------------"<<endl;
+    //for (cv=0; cv<n_dofs; cv++) {
+        //getfem::mesh_fem::ind_dof_ct elt_dof_indices = mf.ind_basic_dof_of_element(cv);
+	//cout<<cv;
+        //for (j = 0; j < 3; ++j)
+        //{
+		//cout<<" "<<elt_dof_indices[j];
+      //      bgeot::base_node p = mf.point_of_basic_dof(cv);
+       ///     dealii::Point<3> pt(p[0], p[1], p[2]);
+//	mapping<<cv<<" "<<p[0]<<" "<<p[1]<<" "<<p[2]<<endl;
+	//}
+	//cout<<endl;
+  //  }
+	cout<<endl;
+
+cout<<"=================================================================="<<endl;
+
+}
 
     // this class overrides the assemble_system() method, and builds
     // the system_matrix in parallel using multiple processes
@@ -52,8 +76,11 @@ void BEM_Forward_Problem_P::run()
 void BEM_Forward_Problem_P::assemble_rhs()
 {
     bgeot::size_type num_elts = surface_mesh.nb_convex();
+
     bgeot::size_type cv, j;
     const unsigned int fe_dofs_per_cell = mf.nb_basic_dof_of_element(0);
+
+ofstream mapping("mapping.dat");
 
     for (cv=0; cv<num_elts; cv++) {
 
@@ -62,18 +89,29 @@ void BEM_Forward_Problem_P::assemble_rhs()
         const double sigma_int = material_data.get_sigma_int(mat_id);
         const double sigma_ext = material_data.get_sigma_ext(mat_id);
         const double sigma_avg = (sigma_int + sigma_ext) / 2;
+//	cout <<"cv: "<<cv<<endl;
 
+        //cout<<"before Add up contribution from dipoles"<<endl;
         // Add up contribution from dipoles
+mapping<<cv;
         getfem::mesh_fem::ind_dof_ct elt_dof_indices = mf.ind_basic_dof_of_element(cv);
         for (j = 0; j < fe_dofs_per_cell; ++j)
         {
+mapping<<" "<<elt_dof_indices[j];
+//	cout<<elt_dof_indices[j]<<endl;
             bgeot::base_node p = mf.point_of_basic_dof(elt_dof_indices[j]);
             dealii::Point<3> pt(p[0], p[1], p[2]);
             system_rhs(elt_dof_indices[j]) = dipole_sources.primary_contribution(pt) / sigma_avg;
         }
+mapping<<endl;
+        //cout<<"after Add up contribution from dipoles"<<endl;
+    }
+
+    if (debug)
+    {
+        sloc::write_vector("system_rhs_parallel.dat", system_rhs);
     }
 }
-
 
 void BEM_Forward_Problem_P::assemble_range_contrib(unsigned int cv_begin, unsigned int cv_end, std::valarray<double>& contrib)
 {
@@ -99,6 +137,7 @@ void BEM_Forward_Problem_P::assemble_range_contrib(unsigned int cv_begin, unsign
     // parallelized contribution from surface integral terms
     for (cv = cv_begin; cv < cv_end; ++cv)
     {
+        //cout<<"cv: "<<cv<<endl;
         e = cv - cv_begin;
 
         bgeot::pgeometric_trans pgt = surface_mesh.trans_of_convex(cv);
@@ -124,6 +163,7 @@ void BEM_Forward_Problem_P::assemble_range_contrib(unsigned int cv_begin, unsign
 
         for (i = 0; i < n_dofs; ++i)
         {
+            //cout<<"i: "<<i<<endl;
             local_matrix_row_i = 0;
 
             bgeot::base_node p = mf.point_of_basic_dof(i);
@@ -158,7 +198,7 @@ void BEM_Forward_Problem_P::assemble_range_contrib(unsigned int cv_begin, unsign
             for (j = 0; j < fe_dofs_per_cell; ++j)
             {
                 //system_matrix(i, elt_dof_indices[j]) += -local_matrix_row_i(j);
-                contrib[j + fe_dofs_per_cell * (i + n_dofs * e)] = -local_matrix_row_i(j);
+                contrib[j + fe_dofs_per_cell * (i + n_dofs * e)] = local_matrix_row_i(j);
             }
         }
     }
@@ -194,6 +234,7 @@ void BEM_Forward_Problem_P::assemble_system_from_contrib(unsigned int cv_begin, 
 
     return;
 }
+
 
 void BEM_Forward_Problem_P::assemble_system()
 {
@@ -246,21 +287,26 @@ void BEM_Forward_Problem_P::assemble_system()
     // array containing the integrals we'll need for assembling system_matrix
     std::valarray<double> kth_contrib;
     kth_contrib.resize(num_elts_by_proc * n_dofs * fe_dofs_per_cell);
-
+    cout<<"after kth_contrib.resize"<<endl;
     // break up the list of elements into a range
     unsigned int cv_begin = rank * num_elts_by_proc;
     unsigned int cv_end = (rank + 1) * num_elts_by_proc;
 
+    cout<<"cv_begin: "<<cv_begin<<endl;
+    cout<<"cv_end: "<<cv_end<<endl;
     // compute contributions on designated range of elements
+    cout<<"before assemble range"<<endl;
     assemble_range_contrib(cv_begin, cv_end, kth_contrib);
-
+    cout<<"assemble range"<<endl;
     if (rank > 0)
     {
+        cout<<"rank > 0"<<endl;
         // non-zero processes report results back: send message to process 0 (with tag 0)
         MPI::COMM_WORLD.Send(&kth_contrib[0], kth_contrib.size(), MPI::DOUBLE, 0, 0);
     }
     else if (rank == 0)
     {
+        cout<<"rank == 0"<<endl;
         // what data do we currently own?
         //cout << std::flush << "owned by k=0\n\t" << kth_contrib << endl;
 
@@ -304,13 +350,12 @@ void BEM_Forward_Problem_P::assemble_system()
             assemble_system_from_contrib(cv_begin, cv_end, kth_contrib, k);
         }
     }
-
+    cout<<"writing matrices"<<endl;
     if ((rank == 0) && debug)
     {
-        sloc::write_vector("system_rhs.dat", system_rhs);
-        sloc::write_matrix("system_matrix.dat", system_matrix);
+        sloc::write_matrix("system_matrix_parallel.dat", system_matrix);
     }
-
+    cout<<"system assembled"<<endl;
     return;
 }
 

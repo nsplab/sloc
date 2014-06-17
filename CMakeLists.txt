@@ -17,6 +17,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/config")
 
 # Build out a list of common libraries (initialize to empty list)
 set(COMMON_LIBRARIES)
+list(APPEND COMMON_LIBRARIES -ldl) # include dynamic linking library
 
 # Decide whether to build the tests or not (default is 'false')
 if(NOT DEFINED BUILD_TESTS)
@@ -30,10 +31,10 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Select flags
-set(CMAKE_CXX_FLAGS "-Wall -Wno-unused-variable")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2")
-set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+set(CMAKE_CXX_FLAGS "-Wall -Wno-unused-variable -DNDEBUG -std=c++11")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 ")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -fopenmp")
+set(CMAKE_CXX_FLAGS_DEBUG  "-O2 -fopenmp")
 
 # -----------------------------------------------------------------------------
 
@@ -92,6 +93,13 @@ endif()
 set(VCGLIB_DIR "$ENV{HOME}/dev/vcglib")
 include_directories(${VCGLIB_DIR})
 
+# Configure omp
+find_package(OpenMP)
+if(OPENMP_FOUND)
+    add_definitions(${OPENMP_CFLAGS})
+    list(APPEND COMMON_LIBRARIES ${OPENMP_LDFLAGS} -lgomp)
+endif()
+
 # Configure pkg-config (used for configuring other libraries: see "pkg-config --list-all")
 find_package(PkgConfig)
 
@@ -120,7 +128,7 @@ add_library(sloc STATIC ${LIBSLOC_SOURCES})
 # Build stuff in "bin"
 foreach(target ${BIN_TARGETS})
     add_executable(${target} "bin/${target}.cc")
-    target_link_libraries(${target} sloc ${COMMON_LIBRARIES})
+    target_link_libraries(${target} sloc ${COMMON_LIBRARIES} tbb)
 endforeach()
 
 # Build stuff in "tests"

@@ -8,6 +8,7 @@
 #include <sstream>
 #include <valarray>
 #include <dlfcn.h>
+#include <signal.h>
 
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/matrix_out.h>
@@ -28,7 +29,7 @@
 namespace fs = boost::filesystem;
 
 using namespace std;
-using boost::shared_ptr;
+//using boost::shared_ptr;
 
 // ----------------------------------------------------------------------------
 
@@ -202,7 +203,7 @@ public:
 class CostFunction
 {
 private:
-    shared_ptr<ForwardProblem> forward_problem;
+    boost::shared_ptr<ForwardProblem> forward_problem;
     sloc::BEM_Forward_Problem::Parameters fwd_prm;
 
 public:
@@ -219,7 +220,7 @@ public:
         fwd_prm.logfile = "";
 
         // Initialize cost function
-        forward_problem = shared_ptr<ForwardProblem>(new ForwardProblem(fwd_prm));
+        forward_problem = boost::shared_ptr<ForwardProblem>(new ForwardProblem(fwd_prm));
 
         // disable dealii logging (fwd solver needs to be quiet)
         dealii::deallog.depth_console(0);
